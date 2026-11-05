@@ -42,7 +42,7 @@ site.Params.brand) -}}
   {{- $css := . | css.Sass $opts | fingerprint "sha512" }}
   <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
   {{- end }}
-  <link rel="icon" href="{{ " favicon.svg" | relURL }}" type="image/svg+xml">
+  <link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
 
   {{ partial "seo-jsonld.html" . }}
 </head>

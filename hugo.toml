@@ -48,6 +48,10 @@ disableKinds = ["taxonomy", "term", "rss"]
 
 [minify]
   minifyOutput = true
+  [minify.tdewolff]
+    [minify.tdewolff.html]
+      # Запрещает удалять кавычки вокруг атрибутов при минификации
+      keepQuotes = true
 
 [[menus.main]]
   name = "Каталог"

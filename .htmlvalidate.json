@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "doctype-style": [
+      "error",
+      {
+        "style": "lowercase"
+      }
+    ]
+  }
+}
