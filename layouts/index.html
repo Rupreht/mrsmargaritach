@@ -1,0 +1,183 @@
+{{ define "main" }}
+{{- $p := .Params -}}
+{{- $hero := $p.hero | default dict -}}
+{{- $heroImg := "" -}}
+{{- with $hero.image }}{{ $heroImg = $.Resources.GetMatch . }}{{ end -}}
+
+<section class="hero" id="hero">
+  <div class="container hero__inner">
+    <div class="hero__content">
+      {{- with $hero.eyebrow }}<p class="hero__eyebrow">{{ . }}</p>{{ end }}
+      <h1 class="hero__title">{{ $hero.title | default site.Params.tagline }}</h1>
+      <p class="hero__subtitle">{{ $hero.subtitle }}</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="{{ printf "/#%s" ($hero.cta_anchor | default "contacts") | relURL }}">{{ $hero.cta_label | default "Написать мне" }}</a>
+        <a class="btn btn--ghost" href="{{ "/catalog/" | relURL }}">Смотреть модели</a>
+      </div>
+    </div>
+    <div class="hero__media">
+      {{- with $heroImg }}
+      <img class="hero__image" src="{{ .RelPermalink }}" alt="{{ $hero.image_alt | default $.Title }}" width="{{ .Width }}" height="{{ .Height }}" fetchpriority="high" decoding="async">
+      {{- else }}
+      <div class="hero__placeholder" aria-hidden="true"></div>
+      {{- end }}
+    </div>
+  </div>
+</section>
+
+<section class="section section--benefits">
+  <div class="container">
+    <ul class="benefits">
+      {{- range $i, $benefit := hugo.Data.benefits }}
+      <li class="benefits__item">
+        <span class="benefits__num" aria-hidden="true">{{ printf "%02d" (add $i 1) }}</span>
+        <h2 class="benefits__title">{{ $benefit.title }}</h2>
+        <p class="benefits__text">{{ $benefit.text }}</p>
+      </li>
+      {{- end }}
+    </ul>
+  </div>
+</section>
+
+{{- with $p.manifest }}
+<section class="section section--manifest">
+  <div class="container container--narrow">
+    <h2 class="section__title">{{ .title }}</h2>
+    <ul class="manifest">
+      {{- range .questions }}
+      <li class="manifest__item">{{ . }}</li>
+      {{- end }}
+    </ul>
+    <p class="manifest__conclusion">{{ .conclusion }}</p>
+  </div>
+</section>
+{{- end }}
+
+{{- with $p.about_short }}
+<section class="section section--about" id="about">
+  <div class="container about-teaser">
+    <div class="about-teaser__content">
+      <h2 class="section__title">{{ .title }}</h2>
+      <p class="about-teaser__lead">{{ .lead }}</p>
+      <ul class="about-teaser__points">
+        {{- range .points }}<li>{{ . }}</li>{{ end }}
+      </ul>
+      <a class="btn btn--secondary" href="{{ "/about/" | relURL }}">{{ .cta_label | default "Читать историю" }}</a>
+    </div>
+  </div>
+</section>
+{{- end }}
+
+{{- with $p.weight_quote }}
+<section class="section section--quote">
+  <div class="container container--narrow">
+    <figure class="quote quote--large">
+      <blockquote class="quote__text"><p>{{ .text }}</p></blockquote>
+      <figcaption class="quote__author">{{ .author }}</figcaption>
+    </figure>
+  </div>
+</section>
+{{- end }}
+
+{{- $models := where site.RegularPages "Section" "catalog" }}
+{{- with $models }}
+<section class="section" id="models">
+  <div class="container">
+    <div class="section__head">
+      <h2 class="section__title">Модели</h2>
+      <a class="section__link" href="{{ "/catalog/" | relURL }}">Весь каталог</a>
+    </div>
+    <div class="card-grid">
+      {{- range first 6 . }}{{ partial "model-card.html" . }}{{ end }}
+    </div>
+  </div>
+</section>
+{{- end }}
+
+{{- with $p.quality }}
+<section class="section section--quality" id="quality">
+  <div class="container quality">
+    <div class="quality__content">
+      <h2 class="section__title">{{ .title }}</h2>
+      <p class="quality__text">{{ .text }}</p>
+      <a class="btn btn--ghost" href="{{ "/#contacts" | relURL }}">Спросить про ткань</a>
+    </div>
+    <dl class="quality__facts">
+      {{- range .facts }}
+      <div class="quality__fact">
+        <dt>{{ .label }}</dt>
+        <dd>{{ .value }}</dd>
+      </div>
+      {{- end }}
+    </dl>
+  </div>
+</section>
+{{- end }}
+
+<section class="section" id="sizes">
+  <div class="container container--narrow">
+    <h2 class="section__title">Размеры 54–72</h2>
+    {{ partial "size-table.html" (dict "caption" "Обхваты в сантиметрах") }}
+    {{- with $p.sizes_note }}<p class="section__note">{{ . }}</p>{{ end }}
+    <p class="section__note">Как снять мерки: грудь — по самой выступающей точке, талия — по самому узкому месту, бёдра — по самым выступающим точкам. Если сомневаетесь, напишите — помогу.</p>
+    <a class="btn btn--primary" href="{{ "/#contacts" | relURL }}">Помогите с размером</a>
+  </div>
+</section>
+
+<section class="section section--steps" id="steps">
+  <div class="container">
+    <h2 class="section__title">Как это работает</h2>
+    <ol class="steps">
+      {{- range $i, $step := hugo.Data.steps }}
+      <li class="steps__item">
+        <span class="steps__num" aria-hidden="true">{{ add $i 1 }}</span>
+        <h3 class="steps__title">{{ $step.title }}</h3>
+        <p class="steps__text">{{ $step.text }}</p>
+      </li>
+      {{- end }}
+    </ol>
+  </div>
+</section>
+
+{{ partial "reviews.html" . }}
+
+{{- with $p.delivery_brief }}
+<section class="section section--delivery" id="delivery">
+  <div class="container">
+    <div class="section__head">
+      <h2 class="section__title">Доставка и оплата</h2>
+      <a class="section__link" href="{{ "/delivery/" | relURL }}">Все условия</a>
+    </div>
+    <ul class="delivery-brief">
+      {{- range . }}
+      <li class="delivery-brief__item">
+        <h3 class="delivery-brief__title">{{ .title }}</h3>
+        <p class="delivery-brief__text">{{ .text }}</p>
+      </li>
+      {{- end }}
+    </ul>
+  </div>
+</section>
+{{- end }}
+
+{{- with site.GetPage "/faq" }}
+{{- with .Params.faq }}
+<section class="section" id="faq">
+  <div class="container container--narrow">
+    <div class="section__head">
+      <h2 class="section__title">Частые вопросы</h2>
+      <a class="section__link" href="{{ "/faq/" | relURL }}">Все вопросы</a>
+    </div>
+    {{ partial "faq.html" (dict "items" (first 4 .) "id" "faq-home") }}
+  </div>
+</section>
+{{- end }}
+{{- end }}
+
+{{- $final := $p.final_cta | default dict }}
+{{ partial "cta.html" (dict
+  "id" "contacts"
+  "title" ($final.title | default "Давайте подберём ваш размер")
+  "text" ($final.text | default "")
+) }}
+{{ end }}

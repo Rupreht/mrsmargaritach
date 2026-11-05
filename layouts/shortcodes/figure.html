@@ -1,0 +1,13 @@
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" | default "" -}}
+{{- $caption := .Get "caption" -}}
+{{- with .Page.Resources.GetMatch $src }}
+<figure class="figure">
+  <img src="{{ .RelPermalink }}" alt="{{ $alt }}" width="{{ .Width }}" height="{{ .Height }}" loading="lazy" decoding="async">
+  {{- with $caption }}<figcaption class="figure__caption">{{ . }}</figcaption>{{ end }}
+</figure>
+{{- else }}
+<figure class="figure figure--empty">
+  <span class="figure__placeholder">{{ $alt }}</span>
+</figure>
+{{- end }}

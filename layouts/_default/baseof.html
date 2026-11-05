@@ -1,0 +1,21 @@
+{{- /* Базовый шаблон: head, шапка, контент, подвал, sticky-CTA, cookie-баннер, JS. */ -}}
+<!DOCTYPE html>
+<html lang="{{ site.Language.Locale | default "ru" }}">
+{{ partial "head.html" . }}
+<body class="{{ if .IsHome }}page-home{{ else }}page-{{ .Section | default "page" }}{{ end }}"
+      data-metrika-id="{{ site.Params.metrikaId }}">
+  <a class="skip-link" href="#main">Перейти к содержанию</a>
+  {{ partial "header.html" . }}
+  <main id="main">
+    {{ block "main" . }}{{ end }}
+  </main>
+  {{ partial "footer.html" . }}
+  {{ partial "sticky-cta.html" . }}
+  {{ partial "cookie-banner.html" . }}
+  {{- with resources.Get "js/main.js" }}
+    {{- $opts := dict "target" "es2020" "format" "esm" "minify" hugo.IsProduction }}
+    {{- $js := . | js.Build $opts | fingerprint "sha512" }}
+  <script type="module" src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" crossorigin="anonymous"></script>
+  {{- end }}
+</body>
+</html>

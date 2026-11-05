@@ -1,0 +1,14 @@
+{{ define "main" }}
+<section class="section">
+  <div class="container container--narrow page-404">
+    <p class="page-404__code" aria-hidden="true">404</p>
+    <h1 class="page-header__title">Страница не найдена</h1>
+    <p class="page-header__intro">Возможно, ссылка устарела. Загляните в каталог или напишите мне — подскажу, что есть в наличии.</p>
+    <p class="page-404__actions">
+      <a class="btn btn--primary" href="{{ "/catalog/" | relURL }}">Каталог</a>
+      <a class="btn btn--ghost" href="{{ "/" | relURL }}">На главную</a>
+    </p>
+    {{ partial "contact-buttons.html" (dict) }}
+  </div>
+</section>
+{{ end }}

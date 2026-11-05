@@ -2,3 +2,12 @@
 *.swp
 .idea/
 .vscode/
+.hugo_build.lock
+
+# Сборка Hugo
+public/
+resources/
+
+# Локальные секреты и логи
+.env
+*.log

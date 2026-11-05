@@ -1,0 +1,19 @@
+{{- /* Кнопки каналов связи. Параметры: dict "prefill" "…" "model" "slug". */ -}}
+{{- $prefill := .prefill | default "" -}}
+{{- $model := .model | default "" -}}
+{{- $channels := where (where hugo.Data.contacts "is_primary" true) "url" "!=" "" -}}
+{{- if $channels }}
+<div class="channels">
+  {{- range $channels }}
+    {{- $url := .url -}}
+    {{- $text := $prefill | default .prefill -}}
+    {{- if and $text (in (slice "whatsapp" "vk" "vk_group") .channel) -}}
+      {{- $sep := cond (strings.Contains $url "?") "&" "?" -}}
+      {{- $url = printf "%s%stext=%s" $url $sep (urlquery $text) -}}
+    {{- end }}
+  <a class="btn btn--primary" href="{{ $url | safeURL }}" data-channel="{{ .channel }}"{{ with $model }} data-model="{{ . }}"{{ end }}{{ if not (hasPrefix $url "tel:") }} rel="noopener"{{ end }}>{{ .label }}</a>
+  {{- end }}
+</div>
+{{- else }}
+<p class="channels__empty">Каналы связи появятся на сайте в ближайшее время. Позвоните: <a href="tel:{{ site.Params.phoneRaw }}">{{ site.Params.phone }}</a>.</p>
+{{- end }}

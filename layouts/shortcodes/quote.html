@@ -1,0 +1,6 @@
+<figure class="quote">
+  <blockquote class="quote__text">{{ .Inner | markdownify }}</blockquote>
+  {{- with .Get "author" }}
+  <figcaption class="quote__author">{{ . }}</figcaption>
+  {{- end }}
+</figure>

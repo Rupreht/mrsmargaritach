@@ -1,0 +1,8 @@
+{{- /* Мобильная sticky-панель (FR-8). Показывается после первого экрана через JS. */ -}}
+{{- $channel := index (where (where hugo.Data.contacts "is_primary" true) "url" "!=" "") 0 -}}
+{{- with $channel }}
+<div class="sticky-cta" data-sticky-cta hidden>
+  <a class="btn btn--primary sticky-cta__main" href="{{ .url | safeURL }}" data-channel="{{ .channel }}" rel="noopener">{{ .label }}</a>
+  <a class="sticky-cta__more" href="{{ "/#contacts" | relURL }}">Все способы</a>
+</div>
+{{- end }}

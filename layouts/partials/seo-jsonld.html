@@ -1,0 +1,68 @@
+{{- /* JSON-LD: Organization, BreadcrumbList, Product, FAQPage (FR-13). */ -}}
+{{- $graph := slice -}}
+
+{{- $org := dict
+  "@type" "Organization"
+  "name" site.Params.brand
+  "url" site.Home.Permalink
+  "telephone" site.Params.phone
+  "address" (dict "@type" "PostalAddress" "addressLocality" site.Params.city "addressCountry" "RU")
+-}}
+{{- with site.Params.email }}{{ $org = merge $org (dict "email" .) }}{{ end -}}
+{{- with site.Params.ogImage }}{{ $org = merge $org (dict "logo" (. | absURL)) }}{{ end -}}
+{{- $graph = $graph | append $org -}}
+
+{{- if not .IsHome -}}
+  {{- $crumbs := slice -}}
+  {{- range .Ancestors.Reverse -}}
+    {{- if not .IsHome }}{{ $crumbs = $crumbs | append . }}{{ end -}}
+  {{- end -}}
+  {{- $crumbs = $crumbs | append . -}}
+  {{- $items := slice -}}
+  {{- $position := 1 -}}
+  {{- $items = $items | append (dict "@type" "ListItem" "position" 1 "name" "Главная" "item" site.Home.Permalink) -}}
+  {{- range $crumbs -}}
+    {{- $position = add $position 1 -}}
+    {{- $items = $items | append (dict "@type" "ListItem" "position" $position "name" .Title "item" .Permalink) -}}
+  {{- end -}}
+  {{- $graph = $graph | append (dict "@type" "BreadcrumbList" "itemListElement" $items) -}}
+{{- end -}}
+
+{{- if and (eq .Section "catalog") .IsPage -}}
+  {{- $availability := "https://schema.org/InStock" -}}
+  {{- if eq .Params.status "под заказ" }}{{ $availability = "https://schema.org/PreOrder" }}{{ end -}}
+  {{- if eq .Params.status "снята с продажи" }}{{ $availability = "https://schema.org/Discontinued" }}{{ end -}}
+  {{- $product := dict
+    "@type" "Product"
+    "name" .Title
+    "description" (.Description | default .Summary | plainify)
+    "brand" (dict "@type" "Brand" "name" site.Params.brand)
+    "offers" (dict
+      "@type" "Offer"
+      "price" .Params.price
+      "priceCurrency" site.Params.priceCurrency
+      "availability" $availability
+      "url" .Permalink
+    )
+  -}}
+  {{- with .Params.fabric }}{{ $product = merge $product (dict "material" .) }}{{ end -}}
+  {{- with .Params.color_name }}{{ $product = merge $product (dict "color" .) }}{{ end -}}
+  {{- $cover := "" -}}
+  {{- with .Params.images }}{{ $cover = (index . 0).src }}{{ end -}}
+  {{- with $cover -}}
+    {{- with $.Resources.GetMatch . -}}
+      {{- $product = merge $product (dict "image" (.Permalink | absURL)) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $graph = $graph | append $product -}}
+{{- end -}}
+
+{{- with .Params.faq -}}
+  {{- $questions := slice -}}
+  {{- range . -}}
+    {{- $questions = $questions | append (dict "@type" "Question" "name" .q "acceptedAnswer" (dict "@type" "Answer" "text" .a)) -}}
+  {{- end -}}
+  {{- $graph = $graph | append (dict "@type" "FAQPage" "mainEntity" $questions) -}}
+{{- end -}}
+
+<script type="application/ld+json">{{ dict "@context" "https://schema.org" "@graph" $graph | jsonify | safeJS }}</script>

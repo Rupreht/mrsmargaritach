@@ -1,0 +1,46 @@
+name: deploy
+
+on:
+  # отключен, пока некуда деплоить
+  # push:
+  #   branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  # GitHub НЕ будет отменять текущий запущенный деплой.
+  # Новая сборка просто встанет в очередь (в статус pending)
+  # и будет ждать завершения предыдущей
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@2752ce1d29631191ea3f27c23495fa06139a5b78 # v3.2.1
+        with:
+          hugo-version: "0.169.0"
+          extended: true
+
+      - name: Build
+        run: hugo --minify --gc --environment production --baseURL "${{ vars.SITE_BASE_URL }}"
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@e83874834305fe9a4a2997156cb26c5de65a8555 # v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Upload release
+        run: |
+          RELEASE=$(date -u +%Y%m%d%H%M%S)
+          rsync -az --delete public/ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/mrsmargaritach/releases/$RELEASE/"
+          echo "RELEASE=$RELEASE" >> "$GITHUB_ENV"
+
+      - name: Switch symlink
+        run: |
+          ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "ln -sfn /var/www/mrsmargaritach/releases/${{ env.RELEASE }} /var/www/mrsmargaritach/current && nginx -s reload"

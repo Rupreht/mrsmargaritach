@@ -1,0 +1,143 @@
+{{ define "main" }}
+{{ partial "breadcrumbs.html" . }}
+
+{{- /* ───────────────────────────────────────────────────────────
+       CATALOG ROOT: список коллекций + отдельные модели
+       Определяем по родительской секции: корень каталога —
+       это раздел catalog, родитель которого — homepage.
+       ─────────────────────────────────────────────────────────── */ -}}
+{{- if and (eq .Section "catalog") (eq .Parent site.Home) }}
+
+<header class="page-header">
+  <div class="container">
+    <h1 class="page-header__title">{{ .Title }}</h1>
+    {{- with .Params.intro }}<p class="page-header__intro">{{ . }}</p>{{ end }}
+  </div>
+</header>
+
+{{- with .Content }}
+<section class="section section--tight">
+  <div class="container container--narrow prose">{{ . }}</div>
+</section>
+{{- end }}
+
+{{- $standalone := .RegularPages }}
+{{- $collections := .Sections }}
+
+{{- /* Отдельные модели (не входящие в коллекции) */ -}}
+{{- if $standalone }}
+<section class="section">
+  <div class="container">
+    <div class="card-grid" data-model-grid>
+      {{- range $standalone }}
+      <div class="card-grid__item"
+           data-model
+           data-sizes="{{ delimit (.Params.sizes | default (slice)) " " }}"
+           data-color="{{ .Params.color_name | default "" }}">
+        {{ partial "model-card.html" . }}
+      </div>
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}
+
+{{- /* Коллекции */ -}}
+{{- range $collections }}
+<section class="section">
+  <div class="container">
+    <div class="section__head">
+      <h2 class="section__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+      <a class="section__link" href="{{ .RelPermalink }}">Все модели коллекции</a>
+    </div>
+    {{- with .Description }}<p class="section__subtitle">{{ . }}</p>{{ end }}
+    <div class="card-grid" data-model-grid>
+      {{- range first 3 .RegularPages }}
+      <div class="card-grid__item"
+           data-model
+           data-sizes="{{ delimit (.Params.sizes | default (slice)) " " }}"
+           data-color="{{ .Params.color_name | default "" }}">
+        {{ partial "model-card.html" . }}
+      </div>
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}
+
+{{- if not (or $standalone $collections) }}
+<p class="section__note">Модели скоро появятся. Напишите мне — расскажу, что есть в наличии.</p>
+{{- end }}
+
+{{ partial "cta.html" (dict "id" "contacts" "title" "Помочь с выбором?" "text" "Напишите — подскажу размер, ткань и наличие.") }}
+
+{{- /* ───────────────────────────────────────────────────────────────────────────
+       COLLECTION PAGE: МОДЕЛИ С ФИЛЬТРАМИ
+       Страница коллекции — дочерняя секция внутри каталога.
+       Показывает модели через RegularPages.
+       Фильтры по размеру и цвету — без перезагрузки (FR-5).
+       ─────────────────────────────────────────────────────────────────────────── */ -}}
+{{- else if eq .Section "catalog" }}
+
+<header class="page-header">
+  <div class="container">
+    <h1 class="page-header__title">{{ .Title }}</h1>
+    {{- with .Params.intro }}<p class="page-header__intro">{{ . }}</p>{{ end }}
+  </div>
+</header>
+
+{{- with .Content }}
+<section class="section section--tight">
+  <div class="container container--narrow prose">{{ . }}</div>
+</section>
+{{- end }}
+
+<section class="section">
+  <div class="container">
+    {{- $models := .RegularPages }}
+    {{- if $models }}
+    <form class="filters" data-filters>
+      <label class="filters__field">
+        <span class="filters__label">Размер</span>
+        <select name="size" data-filter-size>
+          <option value="">Все</option>
+          {{- range hugo.Data.sizes }}
+          <option value="{{ .ru }}">{{ .ru }}</option>
+          {{- end }}
+        </select>
+      </label>
+      <label class="filters__field">
+        <span class="filters__label">Цвет</span>
+        <select name="color" data-filter-color>
+          <option value="">Все</option>
+          {{- range $models }}
+            {{- with .Params.color_name }}
+          <option value="{{ . }}">{{ . }}</option>
+            {{- end }}
+          {{- end }}
+        </select>
+      </label>
+      <p class="filters__count" data-filter-count aria-live="polite"></p>
+    </form>
+
+    <div class="card-grid" data-model-grid>
+      {{- range $models }}
+      <div class="card-grid__item"
+           data-model
+           data-sizes="{{ delimit (.Params.sizes | default (slice)) " " }}"
+           data-color="{{ .Params.color_name | default "" }}">
+        {{ partial "model-card.html" . }}
+      </div>
+      {{- end }}
+    </div>
+    <p class="filters__empty" data-filter-empty hidden>По этому фильтру пока ничего нет. Напишите мне — сошью под заказ.</p>
+    {{- else }}
+    <p class="section__note">Модели скоро появятся. Напишите мне — расскажу, что есть в наличии.</p>
+    {{- end }}
+  </div>
+</section>
+
+{{ partial "cta.html" (dict "id" "order" "title" "Написать про эту модель" "text" "Напишите — подскажу размер и наличие.") }}
+
+{{- end }}
+{{ end }}

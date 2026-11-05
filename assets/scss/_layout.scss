@@ -1,0 +1,137 @@
+// Сетка, секции, служебные контейнеры.
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.container--narrow {
+  max-width: var(--container-narrow);
+}
+
+.section {
+  padding: var(--space-7) 0;
+}
+
+.section--tight {
+  padding: var(--space-5) 0;
+}
+
+.section--cta {
+  background: var(--c-bg-alt);
+}
+
+.section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.section__title {
+  margin-bottom: var(--space-4);
+}
+
+.section__head .section__title {
+  margin-bottom: 0;
+}
+
+.section__link {
+  font-size: 0.9375rem;
+  color: var(--c-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.section__link:hover {
+  color: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.section__note {
+  color: var(--c-muted);
+  font-size: 0.9375rem;
+}
+
+.page-header {
+  padding: var(--space-7) 0 var(--space-5);
+}
+
+.page-header__title {
+  margin-bottom: var(--space-3);
+}
+
+.page-header__intro {
+  color: var(--c-muted);
+  max-width: 46ch;
+}
+
+.prose {
+  font-size: 1.0625rem;
+}
+
+.prose h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-top: var(--space-7);
+}
+
+.prose h3 {
+  margin-top: var(--space-6);
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 var(--space-5);
+  font-size: 0.9375rem;
+}
+
+.prose th,
+.prose td {
+  border-bottom: 1px solid var(--c-border);
+  padding: var(--space-3);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  font-weight: 600;
+  background: var(--c-bg-alt);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+.card-grid__item[hidden] {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding: var(--space-8) 0;
+  }
+
+  .container {
+    padding: 0 var(--space-6);
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .section {
+    padding: var(--space-9) 0;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

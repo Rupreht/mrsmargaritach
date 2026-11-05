@@ -1,0 +1,18 @@
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="{{ site.Home.RelPermalink }}">
+      <span class="brand__name">{{ site.Params.brand }}</span>
+      <span class="brand__tagline">{{ site.Params.tagline }}</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Основная навигация">
+      {{- $current := . -}}
+      {{- range site.Menus.main }}
+        {{- $active := or ($current.IsMenuCurrent "main" .) ($current.HasMenuCurrent "main" .) }}
+        <a class="site-nav__link" href="{{ .URL }}"{{ if $active }} aria-current="page"{{ end }}>{{ .Name }}</a>
+      {{- end }}
+    </nav>
+
+    <a class="btn btn--primary btn--s site-header__cta" href="{{ "/#contacts" | relURL }}">Написать мне</a>
+  </div>
+</header>
