@@ -1,0 +1,12 @@
+{{- /* CTA-блок. Параметры: dict "id" "contacts" "title" "…" "text" "…" "prefill" "…" "model" "slug". */ -}}
+{{- $id := .id | default "contacts" -}}
+{{- $title := .title | default "Написать мне" -}}
+<section class="section section--cta" id="{{ $id }}">
+  <div class="container container--narrow cta">
+    <h2 class="section__title">{{ $title }}</h2>
+    {{- with .text }}
+    <p class="cta__text">{{ . }}</p>
+    {{- end }}
+    {{ partial "contact-buttons.html" (dict "prefill" (.prefill | default "") "model" (.model | default "")) }}
+  </div>
+</section>

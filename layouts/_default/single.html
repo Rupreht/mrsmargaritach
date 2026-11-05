@@ -1,0 +1,114 @@
+{{ define "main" }}
+{{ partial "breadcrumbs.html" . }}
+
+{{- if eq .Section "catalog" }}
+{{- $cover := "" -}}
+{{- $alt := .Title -}}
+{{- with .Params.images -}}
+  {{- $cover = (index . 0).src -}}
+  {{- $alt = (index . 0).alt | default $.Title -}}
+{{- end -}}
+{{- $coverImg := "" -}}
+{{- with $cover }}{{ $coverImg = $.Resources.GetMatch . }}{{ end -}}
+{{- $slug := .Params.slug | default .File.BaseFileName -}}
+
+<article class="model">
+  <div class="container model__grid">
+    <div class="model__media">
+      {{- with $coverImg }}
+      <img class="model__cover" src="{{ .RelPermalink }}" alt="{{ $alt }}" width="{{ .Width }}" height="{{ .Height }}" fetchpriority="high" decoding="async">
+      {{- else }}
+      <div class="model__placeholder" style="background-color: {{ .Params.color_hex | default "#DED3C4" }}" aria-hidden="true"></div>
+      <p class="model__placeholder-note">Фото модели появятся после съёмки.</p>
+      {{- end }}
+      {{- range after 1 (.Params.images | default (slice)) }}
+        {{- $src := .src -}}
+        {{- with $.Resources.GetMatch $src }}
+      <img class="model__thumb" src="{{ .RelPermalink }}" alt="{{ $.Params.color_name | default $.Title }}" width="{{ .Width }}" height="{{ .Height }}" loading="lazy" decoding="async">
+        {{- end }}
+      {{- end }}
+    </div>
+
+    <div class="model__info">
+      {{- with .Params.badge }}<p class="badge">{{ . }}</p>{{ end }}
+      <h1 class="model__title">{{ .Title }}</h1>
+      <p class="model__price">
+        {{- with .Params.price }}{{ lang.FormatNumber 0 . }} ₽{{ else }}Цена по запросу{{ end -}}
+      </p>
+      {{- with .Params.description }}<p class="model__lead">{{ . }}</p>{{ end }}
+
+      <dl class="specs">
+        {{- with .Params.color_name }}
+        <div class="specs__row"><dt>Цвет</dt><dd>{{ . }}</dd></div>
+        {{- end }}
+        {{- with .Params.fabric }}
+        <div class="specs__row"><dt>Состав</dt><dd>{{ . }}</dd></div>
+        {{- end }}
+        {{- with .Params.density }}
+        <div class="specs__row"><dt>Плотность</dt><dd>{{ . }}</dd></div>
+        {{- end }}
+        {{- with .Params.fit }}
+        <div class="specs__row"><dt>Посадка</dt><dd>{{ . }}</dd></div>
+        {{- end }}
+        {{- with .Params.care }}
+        <div class="specs__row"><dt>Уход</dt><dd>{{ . }}</dd></div>
+        {{- end }}
+        {{- with .Params.status }}
+        <div class="specs__row"><dt>Наличие</dt><dd>{{ . }}</dd></div>
+        {{- end }}
+      </dl>
+
+      {{- with .Params.sizes }}
+      <p class="model__sizes">Размеры: {{ delimit . ", " }}</p>
+      {{- end }}
+
+      <a class="btn btn--primary" href="#order">Написать про эту модель</a>
+    </div>
+  </div>
+</article>
+
+<section class="section section--tight">
+  <div class="container container--narrow prose">
+    {{ .Content }}
+  </div>
+</section>
+
+<section class="section" id="sizes">
+  <div class="container container--narrow">
+    <h2 class="section__title">Размерная сетка</h2>
+    {{ partial "size-table.html" (dict "caption" "Обхваты в сантиметрах") }}
+    <p class="section__note">Если вы между размерами — берите меньший: крой свободный.</p>
+  </div>
+</section>
+
+{{ partial "cta.html" (dict
+  "id" "order"
+  "title" (.Params.cta.label | default "Написать про эту модель")
+  "text" "Напишите — уточним размер, наличие и срок пошива."
+  "prefill" (.Params.cta.prefill | default "")
+  "model" $slug
+) }}
+
+{{- else }}
+<article class="page">
+  <header class="page-header">
+    <div class="container container--narrow">
+      <h1 class="page-header__title">{{ .Title }}</h1>
+      {{- with .Description }}<p class="page-header__intro">{{ . }}</p>{{ end }}
+    </div>
+  </header>
+
+  {{- with .Params.faq }}
+  <div class="container container--narrow">
+    {{ partial "faq.html" (dict "items" . "id" "faq-page") }}
+  </div>
+  {{- end }}
+
+  <div class="container container--narrow prose">
+    {{ .Content }}
+  </div>
+</article>
+
+{{ partial "cta.html" (dict "id" "contacts" "title" "Написать мне" "text" "Выберите удобный канал — отвечу лично.") }}
+{{- end }}
+{{ end }}

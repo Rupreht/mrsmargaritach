@@ -1,0 +1,13 @@
+{{- if not .IsHome }}
+<nav class="breadcrumbs container" aria-label="Хлебные крошки">
+  <ol class="breadcrumbs__list">
+    <li><a href="{{ site.Home.RelPermalink }}">Главная</a></li>
+    {{- range .Ancestors.Reverse }}
+      {{- if not .IsHome }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    {{- end }}
+    <li aria-current="page">{{ .Title }}</li>
+  </ol>
+</nav>
+{{- end }}

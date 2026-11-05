@@ -1,0 +1,98 @@
+# Размерная сетка (FR-4, FR-6).
+#
+# ВНИМАНИЕ: значения ниже — ЧЕРНОВЫЕ. Их нельзя публиковать, пока владелица
+# не подтвердит обмеры реальных лекал: неверная сетка — главная причина
+# возвратов (docs/implementation_plan.md, P0-3).
+#
+# bust / waist / hips — вилка обхватов в см (min–max), потому что крой свободный.
+# length — длина по спинке, sleeve — длина рукава, см.
+
+- ru: "54"
+  intl: "XL"
+  bust: [104, 108]
+  waist: [86, 90]
+  hips: [112, 116]
+  length: 72
+  sleeve: 60
+  notes: "свободная посадка"
+
+- ru: "56"
+  intl: "XXL"
+  bust: [108, 112]
+  waist: [90, 94]
+  hips: [116, 120]
+  length: 73
+  sleeve: 60
+  notes: "свободная посадка"
+
+- ru: "58"
+  intl: "3XL"
+  bust: [112, 116]
+  waist: [94, 98]
+  hips: [120, 124]
+  length: 74
+  sleeve: 60
+  notes: ""
+
+- ru: "60"
+  intl: "3XL"
+  bust: [116, 120]
+  waist: [98, 102]
+  hips: [124, 128]
+  length: 74
+  sleeve: 61
+  notes: ""
+
+- ru: "62"
+  intl: "4XL"
+  bust: [120, 124]
+  waist: [102, 106]
+  hips: [128, 132]
+  length: 75
+  sleeve: 61
+  notes: ""
+
+- ru: "64"
+  intl: "4XL"
+  bust: [124, 128]
+  waist: [106, 110]
+  hips: [132, 136]
+  length: 75
+  sleeve: 61
+  notes: ""
+
+- ru: "66"
+  intl: "5XL"
+  bust: [128, 132]
+  waist: [110, 114]
+  hips: [136, 140]
+  length: 76
+  sleeve: 62
+  notes: ""
+
+- ru: "68"
+  intl: "5XL"
+  bust: [132, 136]
+  waist: [114, 118]
+  hips: [140, 144]
+  length: 76
+  sleeve: 62
+  notes: ""
+
+- ru: "70"
+  intl: "6XL"
+  bust: [136, 140]
+  waist: [118, 122]
+  hips: [144, 148]
+  length: 77
+  sleeve: 62
+  notes: ""
+
+- ru: "72"
+  intl: "7XL"
+  bust: [140, 144]
+  waist: [122, 126]
+  hips: [148, 152]
+  length: 77
+  sleeve: 63
+  notes: ""

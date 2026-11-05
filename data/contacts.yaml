@@ -1,0 +1,61 @@
+# Каналы связи. Используются в шапке, подвале, CTA-блоках и sticky-панели.
+# Правила ссылок — docs/implementation_plan.md, п. 2.5.3:
+#   WhatsApp — wa.me, ВК — vk.me, Telegram — t.me/<username> (текст не поддерживается),
+#   MAX — ссылка-приглашение от владелицы (не конструировать самостоятельно).
+# Пустой url = канал не выводится на сайте. TODO-каналы нужно заполнить до запуска.
+
+- channel: vk
+  label: "ВКонтакте"
+  url: "https://vk.me/id15049922"
+  prefill: "Здравствуйте, Маргарита! Пишу с сайта."
+  is_primary: true
+  todo: false
+
+- channel: telegram
+  label: "Telegram"
+  url: "" # TODO: https://t.me/<username>
+  prefill: "Здравствуйте, Маргарита! Пишу с сайта."
+  is_primary: true
+  todo: true
+
+- channel: whatsapp
+  label: "WhatsApp"
+  url: "https://wa.me/79997777777"
+  prefill: "Здравствуйте, Маргарита! Пишу с сайта."
+  is_primary: true
+  todo: false
+
+- channel: max
+  label: "MAX"
+  url: "" # TODO: ссылка-приглашение от владелицы
+  prefill: "Здравствуйте, Маргарита! Пишу с сайта."
+  is_primary: true
+  todo: true
+
+- channel: vk_group
+  label: "Группа ВК"
+  url: "https://vk.ru/club240723645"
+  prefill: ""
+  is_primary: false
+  todo: false
+
+- channel: wildberries
+  label: "WB"
+  url: "https://www.wb.ru/seller/1058384"
+  prefill: ""
+  is_primary: false
+  todo: true
+
+- channel: phone
+  label: "+7 (999) 777-77-77"
+  url: "tel:+79997777777"
+  prefill: ""
+  is_primary: false
+  todo: false
+
+- channel: email
+  label: "" # TODO: e-mail владелицы
+  url: ""
+  prefill: ""
+  is_primary: false
+  todo: true

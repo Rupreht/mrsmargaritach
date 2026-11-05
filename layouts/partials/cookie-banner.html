@@ -1,0 +1,13 @@
+{{- /* Cookie-баннер с предварительным согласием (FR-10, п. 2.9).
+       Показывается только при отсутствии сохранённого решения; Метрика
+       загружается из assets/js/consent.js и только после «Принять». */ -}}
+<div class="cookie-banner" data-consent-banner data-metrika-id="{{ site.Params.metrikaId }}" hidden>
+  <p class="cookie-banner__text">
+    Мы используем cookie, чтобы понимать, какие модели интересны. Аналитика включается только с вашего согласия.
+    <a href="{{ "/privacy/" | relURL }}">Политика конфиденциальности</a>.
+  </p>
+  <div class="cookie-banner__actions">
+    <button class="btn btn--primary btn--s" type="button" data-consent="accept">Принять</button>
+    <button class="btn btn--ghost btn--s" type="button" data-consent="necessary">Только необходимые</button>
+  </div>
+</div>

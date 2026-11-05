@@ -1,0 +1,6 @@
+{{ partial "cta.html" (dict
+  "id" (.Get "id" | default "contacts")
+  "title" (.Get "title" | default "Написать мне")
+  "text" (.Get "text" | default "")
+  "prefill" (.Get "prefill" | default "")
+) }}

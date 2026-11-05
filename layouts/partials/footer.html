@@ -1,0 +1,50 @@
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__col">
+      <p class="site-footer__brand">{{ site.Params.brand }}</p>
+      <p class="site-footer__tagline">{{ site.Params.tagline }}</p>
+      <p class="site-footer__signature">{{ site.Params.signature }}</p>
+    </div>
+
+    <div class="site-footer__col">
+      <h2 class="site-footer__title">Связаться</h2>
+      <ul class="site-footer__list">
+        {{- range hugo.Data.contacts }}
+          {{- if .url }}
+        <li><a href="{{ .url | safeURL }}"{{ if not (hasPrefix .url "tel:") }} rel="noopener"{{ end }} data-channel="{{ .channel }}">{{ .label }}</a></li>
+          {{- end }}
+        {{- end }}
+      </ul>
+    </div>
+
+    <div class="site-footer__col">
+      <h2 class="site-footer__title">Документы</h2>
+      <ul class="site-footer__list">
+        <li><a href="{{ "/delivery/" | relURL }}">Доставка и возврат</a></li>
+        <li><a href="{{ "/offer/" | relURL }}">Публичная оферта</a></li>
+        <li><a href="{{ "/privacy/" | relURL }}">Политика конфиденциальности</a></li>
+        <li><button class="link-button" type="button" data-consent-settings>Настройки cookie</button></li>
+      </ul>
+    </div>
+
+    <div class="site-footer__col">
+      <h2 class="site-footer__title">Реквизиты</h2>
+      <ul class="site-footer__list site-footer__list--plain">
+        <li>{{ site.Params.legalName }}</li>
+        {{- with site.Params.ogrnip }}
+        <li>ОГРНИП {{ . }}</li>
+        {{- end }}
+        <li>ИНН {{ site.Params.inn }}</li>
+        <li><a href="tel:{{ site.Params.phoneRaw }}">{{ site.Params.phone }}</a></li>
+        {{- with site.Params.email }}
+        <li><a href="mailto:{{ . }}">{{ . }}</a></li>
+        {{- end }}
+        <li>{{ site.Params.pickup }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container site-footer__legal">
+    <p>© {{ now.Year }} {{ site.Params.brand }}. Условия продажи — в <a href="{{ "/offer/" | relURL }}">публичной оферте</a>.</p>
+  </div>
+</footer>

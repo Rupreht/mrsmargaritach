@@ -1,0 +1,13 @@
+{{- /* Аккордеон FAQ (FR-9). Параметры: dict "items" (список q/a) "id" "…". */ -}}
+{{- $items := .items | default (slice) -}}
+{{- $id := .id | default "faq" -}}
+{{- with $items }}
+<div class="accordion" id="{{ $id }}">
+  {{- range . }}
+  <details class="accordion__item">
+    <summary class="accordion__summary">{{ .q }}</summary>
+    <div class="accordion__body"><p>{{ .a | markdownify }}</p></div>
+  </details>
+  {{- end }}
+</div>
+{{- end }}

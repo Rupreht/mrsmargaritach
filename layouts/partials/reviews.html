@@ -1,0 +1,24 @@
+{{- /* Отзывы: публикуются только при consent: true (п. 3.10). */ -}}
+{{- $reviews := where hugo.Data.reviews "consent" true -}}
+{{- with $reviews }}
+<section class="section section--reviews" id="reviews">
+  <div class="container">
+    <h2 class="section__title">Отзывы</h2>
+    <ul class="reviews">
+      {{- range . }}
+      <li class="reviews__item">
+        <blockquote class="quote">
+          <p>{{ .text }}</p>
+          <footer class="quote__author">
+            {{ .name }}{{ with .city }}, {{ . }}{{ end }}{{ with .size }} · размер {{ . }}{{ end }}
+          </footer>
+        </blockquote>
+      </li>
+      {{- end }}
+    </ul>
+    <p class="section__note">
+      Ещё отзывы — <a href="https://vk.ru/club240723645" rel="noopener">в группе ВКонтакте</a>.
+    </p>
+  </div>
+</section>
+{{- end }}

@@ -1,0 +1,31 @@
+{{- /* Размерная сетка из data/sizes.yaml (FR-4). Параметры: dict "caption" "…". */ -}}
+{{- $caption := .caption | default "Размерная сетка" -}}
+<div class="size-table__wrap">
+  <table class="size-table">
+    <caption class="size-table__caption">{{ $caption }}</caption>
+    <thead>
+      <tr>
+        <th scope="col">RU</th>
+        <th scope="col">INT</th>
+        <th scope="col">Грудь, см</th>
+        <th scope="col">Талия, см</th>
+        <th scope="col">Бёдра, см</th>
+        <th scope="col">Длина, см</th>
+        <th scope="col">Рукав, см</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{- range hugo.Data.sizes }}
+      <tr>
+        <th scope="row">{{ .ru }}</th>
+        <td>{{ .intl }}</td>
+        <td>{{ delimit .bust "–" }}</td>
+        <td>{{ delimit .waist "–" }}</td>
+        <td>{{ delimit .hips "–" }}</td>
+        <td>{{ .length }}</td>
+        <td>{{ .sleeve }}</td>
+      </tr>
+      {{- end }}
+    </tbody>
+  </table>
+</div>

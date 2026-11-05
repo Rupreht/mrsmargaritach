@@ -1,0 +1,48 @@
+{{- $title := cond .IsHome (printf "%s — %s" site.Params.brand site.Params.tagline) (printf "%s — %s" .Title
+site.Params.brand) -}}
+{{- with .Params.seo }}{{ with .title }}{{ $title = . }}{{ end }}{{ end -}}
+{{- $description := .Description | default site.Params.description -}}
+{{- with .Params.seo }}{{ with .description }}{{ $description = . }}{{ end }}{{ end -}}
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FAF7F0">
+  <title>{{ $title }}</title>
+  <meta name="description" content="{{ $description }}">
+  <link rel="canonical" href="{{ .Permalink }}">
+  {{- if site.Params.noindex }}
+  <meta name="robots" content="noindex, nofollow">
+  {{- end }}
+
+  <meta property="og:site_name" content="{{ site.Params.brand }}">
+  <meta property="og:title" content="{{ $title }}">
+  <meta property="og:description" content="{{ $description }}">
+  <meta property="og:type" content="{{ if and (eq .Section " catalog") .IsPage }}product{{ else }}website{{ end }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:locale" content="ru_RU">
+  {{- $ogImage := "" -}}
+  {{- with site.Params.ogImage }}{{ $ogImage = . | absURL }}{{ end -}}
+  {{- if and (not $ogImage) (eq .Section "catalog") .IsPage -}}
+  {{- with .Params.images -}}
+  {{- $src := (index . 0).src -}}
+  {{- with $.Resources.GetMatch $src }}{{ $ogImage = .Permalink }}{{ end -}}
+  {{- end -}}
+  {{- end -}}
+  {{- with $ogImage }}
+  <meta property="og:image" content="{{ . }}">
+  {{- end }}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ $title }}">
+  <meta name="twitter:description" content="{{ $description }}">
+
+  {{- /* Шрифты самохостятся; пока используется системный стек (см. docs/implementation_plan.md, п. 2.6.2). */}}
+  {{- with resources.Get "scss/main.scss" }}
+  {{- $opts := dict "dartsass" "libsass" "outputStyle" "compressed" "targetPath" "css/main.css" }}
+  {{- $css := . | css.Sass $opts | fingerprint "sha512" }}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
+  {{- end }}
+  <link rel="icon" href="{{ " favicon.svg" | relURL }}" type="image/svg+xml">
+
+  {{ partial "seo-jsonld.html" . }}
+</head>

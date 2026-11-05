@@ -1,0 +1,30 @@
+// Утилиты и точечные правки.
+.text-center {
+  text-align: center;
+}
+
+.mt-0 {
+  margin-top: 0;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.divider {
+  height: 1px;
+  background: var(--c-border);
+  border: 0;
+  margin: var(--space-6) 0;
+}
+
+// Скрываем декоративные плейсхолдеры при печати
+@media print {
+  .site-header,
+  .site-footer,
+  .sticky-cta,
+  .cookie-banner,
+  .channels {
+    display: none;
+  }
+}

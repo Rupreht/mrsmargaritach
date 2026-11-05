@@ -1,0 +1,37 @@
+{{- /* Карточка модели (FR-2, FR-3). Контекст — страница модели. */ -}}
+{{- $cover := "" -}}
+{{- $alt := .Title -}}
+{{- with .Params.images -}}
+  {{- $first := index . 0 -}}
+  {{- $cover = $first.src -}}
+  {{- $alt = $first.alt | default $.Title -}}
+{{- end -}}
+{{- $img := "" -}}
+{{- with $cover }}{{ $img = $.Resources.GetMatch . }}{{ end -}}
+{{- $sizes := .Params.sizes | default (slice) -}}
+<article class="card-model">
+  <a class="card-model__media" href="{{ .RelPermalink }}">
+    {{- with $img }}
+    <img src="{{ .RelPermalink }}" alt="{{ $alt }}" width="{{ .Width }}" height="{{ .Height }}" loading="lazy" decoding="async">
+    {{- else }}
+    <span class="card-model__swatch" style="background-color: {{ $.Params.color_hex | default "#DED3C4" }}" aria-hidden="true"></span>
+    <span class="visually-hidden">{{ $alt }}</span>
+    {{- end }}
+    {{- with .Params.badge }}
+    <span class="badge">{{ . }}</span>
+    {{- end }}
+  </a>
+  <div class="card-model__body">
+    <h3 class="card-model__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    <p class="card-model__price">
+      {{- with .Params.price }}{{ lang.FormatNumber 0 . }} ₽{{ else }}Цена по запросу{{ end -}}
+    </p>
+    {{- with .Params.description }}
+    <p class="card-model__text">{{ . }}</p>
+    {{- end }}
+    {{- if $sizes }}
+    <p class="card-model__sizes">Размеры {{ index $sizes 0 }}–{{ index $sizes (sub (len $sizes) 1) }}</p>
+    {{- end }}
+    <a class="btn btn--secondary btn--s card-model__cta" href="{{ .RelPermalink }}#order" data-goal="model_cta" data-model="{{ .Params.slug | default .File.BaseFileName }}">Написать про эту модель</a>
+  </div>
+</article>
