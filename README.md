@@ -74,8 +74,8 @@ deploy/nginx.conf              конфиг хостинга
 
 ## Как добавить модель
 
-1. Создать коллекцию (если новая): `hugo new content catalog/<collection-slug>/_index.md` (подставит поля коллекции из `archetypes/collection.md`).
-2. Создать карточку из архетипа: `hugo new content catalog/<collection-slug>/<model-slug>/index.md` (подставит все поля модели) или скопировать одну из существующих моделей в коллекции.
+1. Создать коллекцию (если новая): `hugo new content --kind collection catalog/<collection-slug>/_index.md` (подставит поля коллекции из `archetypes/collection.md`).
+2. Создать карточку из архетипа: `hugo new content --kind model catalog/<collection-slug>/<model-slug>/index.md` (подставит все поля модели) или скопировать одну из существующих моделей в коллекции.
 3. Положить изображения рядом (`cover.webp` первым кадром, затем `01.webp`, `02.webp`).
 4. Заполнить `title`, `article`, `color_name`, `color_hex`, `price`, `sizes`, `fabric`, `care`, `details`, `images[].alt`.
 5. Запустить `hugo server` — модель появится на главной и в каталоге без правки шаблонов.
