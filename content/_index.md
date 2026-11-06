@@ -7,8 +7,8 @@ hero:
   subtitle: "Размеры 54–72. Свободный крой, качественные ткани и аккуратный пошив."
   cta_label: "Написать мне"
   cta_anchor: "contacts"
-  image: ""                     # TODO: photo/hero.webp — портрет владелицы (M3)
-  image_alt: "Маргарита Чистова в льняной рубашке на фоне леса"
+  image: "photo/hero.webp"
+  image_alt: "Маргарита Чистова и рубашки"
 manifest:
   title: "Знакомо?"
   questions:

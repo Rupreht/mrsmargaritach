@@ -65,6 +65,7 @@ layouts/
 assets/
   scss/                        токены, база, сетка, компоненты, утилиты
   js/                          main, consent (Метрика после согласия), filters
+  photo/                       фото для страниц вне бандлов: photo/hero.webp на главной
 archetypes/                    шаблоны новых страниц: default, catalog, collection
 static/favicon.svg
 deploy/nginx.conf              конфиг хостинга

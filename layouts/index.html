@@ -2,7 +2,11 @@
 {{- $p := .Params -}}
 {{- $hero := $p.hero | default dict -}}
 {{- $heroImg := "" -}}
-{{- with $hero.image }}{{ $heroImg = $.Resources.GetMatch . }}{{ end -}}
+{{- with $hero.image -}}
+  {{- /* Сначала ресурс страницы (page bundle), затем глобальные assets/ (например, assets/photo/hero.webp). */ -}}
+  {{- $heroImg = $.Resources.GetMatch . -}}
+  {{- if not $heroImg }}{{ $heroImg = resources.Get . }}{{ end -}}
+{{- end -}}
 
 <section class="hero" id="hero">
   <div class="container hero__inner">
