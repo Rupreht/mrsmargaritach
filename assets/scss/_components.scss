@@ -198,9 +198,13 @@
 }
 
 .hero__image {
+  display: block;
   width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 62vh;
   border-radius: var(--radius-card);
   object-fit: cover;
+  object-position: top;
 }
 
 // Преимущества
