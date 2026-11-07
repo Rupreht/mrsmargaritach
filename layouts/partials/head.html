@@ -45,7 +45,7 @@ site.Params.brand) -}}
 
   {{- /* Шрифты самохостятся; пока используется системный стек (см. docs/implementation_plan.md, п. 2.6.2). */}}
   {{- with resources.Get "scss/main.scss" }}
-  {{- $opts := dict "dartsass" "libsass" "outputStyle" "compressed" "targetPath" "css/main.css" }}
+  {{- $opts := dict "transpiler" "dartsass" "outputStyle" "compressed" "targetPath" "css/main.css" }}
   {{- $css := . | css.Sass $opts | fingerprint "sha512" }}
   <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
   {{- end }}
