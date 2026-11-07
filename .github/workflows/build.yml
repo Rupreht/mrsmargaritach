@@ -96,3 +96,9 @@ jobs:
         with:
           name: site
           path: public
+  deploy:
+    name: "deploy"
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
