@@ -1,9 +1,10 @@
 {{- $title := cond .IsHome (printf "%s — %s" site.Params.brand site.Params.tagline) (printf "%s — %s" .Title
 site.Params.brand) -}}
 {{- with .Params.seo }}{{ with .title }}{{ $title = . }}{{ end }}{{ end -}}
+{{- $title = $title | replaceRE "[\r\n]+" " " | strings.TrimSpace | safeHTML -}}
 {{- $description := .Description | default site.Params.description -}}
 {{- with .Params.seo }}{{ with .description }}{{ $description = . }}{{ end }}{{ end -}}
-
+{{- $description = $description | replaceRE "[\r\n]+" " " | strings.TrimSpace | safeHTML -}}
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,7 +15,6 @@ site.Params.brand) -}}
   {{- if site.Params.noindex }}
   <meta name="robots" content="noindex, nofollow">
   {{- end }}
-
   <meta property="og:site_name" content="{{ site.Params.brand }}">
   <meta property="og:title" content="{{ $title }}">
   <meta property="og:description" content="{{ $description }}">

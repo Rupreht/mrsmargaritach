@@ -44,14 +44,11 @@
       {{- with .Params.description }}<p class="model__lead">{{ . }}</p>{{ end }}
 
       <dl class="specs">
+        {{- with .Params.status }}
+        <div class="specs__row"><dt>Наличие</dt><dd>{{ . }}</dd></div>
+        {{- end }}
         {{- with .Params.color_name }}
         <div class="specs__row"><dt>Цвет</dt><dd>{{ . }}</dd></div>
-        {{- end }}
-        {{- with .Params.fabric }}
-        <div class="specs__row"><dt>Состав</dt><dd>{{ . }}</dd></div>
-        {{- end }}
-        {{- with .Params.density }}
-        <div class="specs__row"><dt>Плотность</dt><dd>{{ . }}</dd></div>
         {{- end }}
         {{- with .Params.fit }}
         <div class="specs__row"><dt>Посадка</dt><dd>{{ . }}</dd></div>
@@ -59,14 +56,20 @@
         {{- with $silhouette }}
         <div class="specs__row"><dt>Силуэт</dt><dd>{{ . }}</dd></div>
         {{- end }}
-        {{- with .Params.care }}
-        <div class="specs__row"><dt>Уход</dt><dd>{{ . }}</dd></div>
+        {{- with $fabric }}
+        <div class="specs__row"><dt>Ткань</dt><dd>{{ .title }}</dd></div>
+        {{- end }}
+        {{- with $fabric }}
+        <div class="specs__row"><dt>Состав</dt><dd>{{ .composition }}</dd></div>
+        {{- end }}
+        {{- with $fabric }}
+        <div class="specs__row"><dt>Плотность</dt><dd>{{ .density }}</dd></div>
+        {{- end }}
+        {{- with $fabric }}
+        <div class="specs__row"><dt>Правила эксплуатации</dt><dd>{{ .om_rules }}</dd></div>
         {{- end }}
         {{- with site.Params.declarationNumber }}
         <div class="specs__row"><dt>Соответствие</dt><dd>{{ . }}{{ with site.Params.declarationDate }} от {{ . }}{{ end }}</dd></div>
-        {{- end }}
-        {{- with .Params.status }}
-        <div class="specs__row"><dt>Наличие</dt><dd>{{ . }}</dd></div>
         {{- end }}
       </dl>
 

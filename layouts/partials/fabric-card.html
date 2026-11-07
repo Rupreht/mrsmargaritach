@@ -25,5 +25,11 @@
       <dd>{{ . }}</dd>
     </div>
     {{- end }}
+    {{- with $fabric.operation }}
+    <div class="fabric-card__prop">
+      <dt>Преимущества в эксплуатации</dt>
+      <dd>{{ . }}</dd>
+    </div>
+    {{- end }}
   </dl>
 </article>
