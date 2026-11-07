@@ -14,7 +14,7 @@
 | --- | --- |
 | Генератор | Hugo extended ≥ 0.140 (проект собран на 0.169.0) |
 | Контент | Markdown + YAML в `content/` и `data/` |
-| Стили | SCSS через Hugo Pipes (`css.Sass`), один файл |
+| Стили | SCSS через Hugo Pipes (`css.Sass`), один файл, `brew install dart-sass` |
 | Скрипты | ванильный ES2020, один бандл (`js.Build`), без фреймворков |
 | Сборка/деплой | GitHub Actions, rsync + nginx |
 

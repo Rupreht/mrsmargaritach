@@ -3,14 +3,15 @@ version: "3"
 vars:
   LYCHEE_HTTP_ACCEPT: "200..299,498"
   LYCHEE_USER_AGENT: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-  SITE_BASE_URL: "https://shirt.e365.ru/"
 
 tasks:
   run:
     desc: "локальный сервер"
     cmd: hugo server
-    deps:
-      - build
+
+  run:production:
+    desc: "локальный сервер"
+    cmd: hugo server --minify --gc --environment production
 
   build:
     desc: "локальная сборка"
@@ -18,8 +19,10 @@ tasks:
     silent: true
 
   build:production:
+    env:
+      SITE_BASE_URL: '{{ .SITE_BASE_URL | default "http://localhost"}}'
     desc: "production: локальная сборка"
-    cmd: hugo --minify --gc --environment production --baseURL "{{.SITE_BASE_URL}}"
+    cmd: hugo --minify --gc --environment production --baseURL "$SITE_BASE_URL"
     silent: true
 
   clean:

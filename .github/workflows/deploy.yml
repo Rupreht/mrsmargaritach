@@ -1,8 +1,7 @@
 name: deploy
 
 on:
-  push:
-    branches: [main]
+  workflow_call:
   workflow_dispatch:
 
 concurrency:
@@ -13,8 +12,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  RELEASES_DIR: shirt.e365.ru/releases
-  CURRENT_LINK: shirt.e365.ru/www
+  RELEASES_DIR: "${{ vars.SITE_HOSTNAME }}/releases"
+  CURRENT_LINK: "${{ vars.SITE_HOSTNAME }}/www"
   KEEP_RELEASES: 5
 
 jobs:
@@ -23,6 +22,9 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: dart sass
+        uses: dw-labs-org/dart-sass-gha@d5c4c43545a79eaaa11cb4ec8363462702346184 # v1.0.1
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@2752ce1d29631191ea3f27c23495fa06139a5b78 # v3.2.1
@@ -62,7 +64,5 @@ jobs:
           "
 
       - name: Reload nginx
-        # Деплой-пользователю нужно право перезагрузить nginx без пароля
-        # (sudoers-правило на `nginx -s reload` или `systemctl reload nginx`).
         run: |
-          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "touch shirt.e365.ru/reload"
+          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "touch ${{ vars.SITE_HOSTNAME }}/reload"
