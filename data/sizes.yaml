@@ -1,98 +1,124 @@
 # Размерная сетка (FR-4, FR-6).
 #
-# ВНИМАНИЕ: значения ниже — ЧЕРНОВЫЕ. Их нельзя публиковать, пока владелица
-# не подтвердит обмеры реальных лекал: неверная сетка — главная причина
-# возвратов (docs/implementation_plan.md, P0-3).
+# Источник значений — `sizes.png` (сетка владелицы). В таблице указан
+# ПОЛУОБХВАТ в см, поэтому здесь те же числа: грудь / талия / бёдра —
+# полуобхват, а не полный обхват.
 #
-# bust / waist / hips — вилка обхватов в см (min–max), потому что крой свободный.
-# length — длина по спинке, sleeve — длина рукава, см.
+# bust / waist / hips — вилка полуобхвата: значение из `sizes.png` ±1 см
+# для размеров 50–60 и ±2 см для 62-го и больше, потому что крой свободный,
+# а лекало гуляет на эти сантиметры.
+#
+# length — длина по спинке, sleeve — длина рукава, см (рукава в `sizes.png` нет).
+# intl — международный аналог: одна ступень на каждый размер
+# (50 → XL, 52 → XXL, 54 → 3XL … 72 → 12XL).
+#
+# Строка 72 — расчётная: в `sizes.png` сетка заканчивается на 70-м,
+# для 72-го сохранён шаг сетки 2 см, чтобы не выпасть из диапазона 50–72.
+
+- ru: "50"
+  intl: "XL"
+  bust: [65, 67]
+  waist: [64, 66]
+  hips: [65, 67]
+  length: 77
+  sleeve: 60
+  notes: "свободная посадка"
+
+- ru: "52"
+  intl: "XXL"
+  bust: [67, 69]
+  waist: [66, 68]
+  hips: [67, 69]
+  length: 77
+  sleeve: 60
+  notes: "свободная посадка"
 
 - ru: "54"
-  intl: "XL"
-  bust: [104, 108]
-  waist: [86, 90]
-  hips: [112, 116]
-  length: 72
+  intl: "3XL"
+  bust: [69, 71]
+  waist: [68, 70]
+  hips: [69, 71]
+  length: 77
   sleeve: 60
   notes: "свободная посадка"
 
 - ru: "56"
-  intl: "XXL"
-  bust: [108, 112]
-  waist: [90, 94]
-  hips: [116, 120]
-  length: 73
+  intl: "4XL"
+  bust: [70, 72]
+  waist: [69, 71]
+  hips: [70, 72]
+  length: 77
   sleeve: 60
   notes: "свободная посадка"
 
 - ru: "58"
-  intl: "3XL"
-  bust: [112, 116]
-  waist: [94, 98]
-  hips: [120, 124]
-  length: 74
+  intl: "5XL"
+  bust: [72, 74]
+  waist: [71, 73]
+  hips: [72, 74]
+  length: 77
   sleeve: 60
-  notes: ""
+  notes: "свободная посадка"
 
 - ru: "60"
-  intl: "3XL"
-  bust: [116, 120]
-  waist: [98, 102]
-  hips: [124, 128]
-  length: 74
+  intl: "6XL"
+  bust: [74, 76]
+  waist: [73, 75]
+  hips: [74, 76]
+  length: 77
   sleeve: 61
-  notes: ""
+  notes: "свободная посадка"
 
 - ru: "62"
-  intl: "4XL"
-  bust: [120, 124]
-  waist: [102, 106]
-  hips: [128, 132]
-  length: 75
+  intl: "7XL"
+  bust: [75, 79]
+  waist: [74, 78]
+  hips: [75, 79]
+  length: 79
   sleeve: 61
-  notes: ""
+  notes: "свободная посадка"
 
 - ru: "64"
-  intl: "4XL"
-  bust: [124, 128]
-  waist: [106, 110]
-  hips: [132, 136]
-  length: 75
+  intl: "8XL"
+  bust: [77, 81]
+  waist: [76, 80]
+  hips: [77, 81]
+  length: 81
   sleeve: 61
-  notes: ""
+  notes: "свободная посадка"
 
 - ru: "66"
-  intl: "5XL"
-  bust: [128, 132]
-  waist: [110, 114]
-  hips: [136, 140]
-  length: 76
+  intl: "9XL"
+  bust: [79, 83]
+  waist: [78, 82]
+  hips: [79, 83]
+  length: 81
   sleeve: 62
-  notes: ""
+  notes: "свободная посадка"
 
 - ru: "68"
-  intl: "5XL"
-  bust: [132, 136]
-  waist: [114, 118]
-  hips: [140, 144]
-  length: 76
+  intl: "10XL"
+  bust: [81, 85]
+  waist: [80, 84]
+  hips: [81, 85]
+  length: 81
   sleeve: 62
-  notes: ""
+  notes: "свободная посадка"
 
 - ru: "70"
-  intl: "6XL"
-  bust: [136, 140]
-  waist: [118, 122]
-  hips: [144, 148]
-  length: 77
+  intl: "11XL"
+  bust: [83, 87]
+  waist: [82, 86]
+  hips: [83, 87]
+  length: 81
   sleeve: 62
-  notes: ""
+  notes: "свободная посадка"
 
 - ru: "72"
-  intl: "7XL"
-  bust: [140, 144]
-  waist: [122, 126]
-  hips: [148, 152]
-  length: 77
+  intl: "12XL"
+  bust: [85, 89]
+  waist: [84, 88]
+  hips: [85, 89]
+  length: 81
   sleeve: 63
-  notes: ""
+  notes: "свободная посадка"

@@ -430,27 +430,34 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9375rem;
-  min-width: 540px;
-}
+  min-width: 453px;
 
-.size-table__caption {
-  text-align: left;
-  color: var(--c-muted);
-  font-size: 0.875rem;
-  padding-bottom: var(--space-2);
-}
+  th,
+  td {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--c-border);
+    text-align: left;
+  }
 
-.size-table th,
-.size-table td {
-  padding: var(--space-2) var(--space-3);
-  border-bottom: 1px solid var(--c-border);
-  text-align: left;
-  white-space: nowrap;
-}
+  td {
+    white-space: nowrap;
+  }
 
-.size-table thead th {
-  font-weight: 600;
-  background: var(--c-bg-alt);
+  th[scope="colgroup"] {
+    text-align: center;
+  }
+
+  thead th {
+    font-weight: 600;
+    background: var(--c-bg-alt);
+  }
+
+  &__caption {
+    text-align: left;
+    color: var(--c-muted);
+    font-size: 0.875rem;
+    padding-bottom: var(--space-2);
+  }
 }
 
 // Шаги
