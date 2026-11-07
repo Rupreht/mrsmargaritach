@@ -95,6 +95,7 @@
 <section class="section">
   <div class="container">
     {{- $models := .RegularPages }}
+    {{- with .Params.length_note }}<p class="section__note">{{ . }}</p>{{ end }}
     {{- if $models }}
     <div class="filters" data-filters role="group" aria-label="Фильтр каталога">
       <label class="filters__field">

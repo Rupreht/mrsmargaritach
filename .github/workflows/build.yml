@@ -56,7 +56,7 @@ jobs:
           python3 - <<'PY'
           import sys, pathlib, re
           errors = []
-          for path in pathlib.Path("content/catalog").glob("*/index.md"):
+          for path in pathlib.Path("content/catalog").glob("*/*/index.md"):
               text = path.read_text(encoding="utf-8")
               for field in ("price:", "sizes:", "images:", "alt:"):
                   if field not in text:

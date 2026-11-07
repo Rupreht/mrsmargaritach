@@ -1,0 +1,29 @@
+{{- /* Карточка типа ткани (docs/implementation_plan.md, п. 2.3 блок 7 и 2.5.5).
+       Контекст: dict "fabric" — запись из data/fabrics.yaml,
+       "modifier" — необязательный CSS-модификатор. */ -}}
+{{- $fabric := .fabric -}}
+{{- $modifier := .modifier | default "" -}}
+<article class="fabric-card{{ with $modifier }} {{ . }}{{ end }}">
+  <h3 class="fabric-card__title">{{ $fabric.title }}</h3>
+  <p class="fabric-card__composition">{{ $fabric.composition }}</p>
+  <dl class="fabric-card__props">
+    {{- with $fabric.feel }}
+    <div class="fabric-card__prop">
+      <dt>Ощущения</dt>
+      <dd>{{ . }}</dd>
+    </div>
+    {{- end }}
+    {{- with $fabric.care }}
+    <div class="fabric-card__prop">
+      <dt>Уход</dt>
+      <dd>{{ . }}</dd>
+    </div>
+    {{- end }}
+    {{- with $fabric.purpose }}
+    <div class="fabric-card__prop">
+      <dt>Для чего</dt>
+      <dd>{{ . }}</dd>
+    </div>
+    {{- end }}
+  </dl>
+</article>

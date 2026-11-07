@@ -9,6 +9,8 @@
 {{- $img := "" -}}
 {{- with $cover }}{{ $img = $.Resources.GetMatch . }}{{ end -}}
 {{- $sizes := .Params.sizes | default (slice) -}}
+{{- $silhouette := "" -}}
+{{- with .CurrentSection }}{{ if .Params.model_type }}{{ $silhouette = .Title }}{{ end }}{{ end -}}
 <article class="card-model">
   <a class="card-model__media" href="{{ .RelPermalink }}">
     {{- with $img }}
@@ -22,6 +24,7 @@
     {{- end }}
   </a>
   <div class="card-model__body">
+    {{- with $silhouette }}<p class="card-model__silhouette">{{ . }}</p>{{ end }}
     <h3 class="card-model__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
     <p class="card-model__price">
       {{- with .Params.price }}{{ lang.FormatNumber 0 . }} ₽{{ else }}Цена по запросу{{ end -}}
