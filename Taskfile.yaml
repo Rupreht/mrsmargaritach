@@ -32,3 +32,10 @@ tasks:
       - build
     cmds:
       - lychee --root-dir public --accept {{.LYCHEE_HTTP_ACCEPT}} --user-agent {{.LYCHEE_USER_AGENT}} public
+
+  test:og:
+    desc: "Проверка OG-разметки (og:image, twitter:image) в собранном public/"
+    deps:
+      - build
+    cmds:
+      - python3 scripts/check_og.py public

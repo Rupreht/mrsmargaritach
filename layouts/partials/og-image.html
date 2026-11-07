@@ -1,0 +1,76 @@
+{{- /* OG-изображение страницы (FR-12). Возвращает dict: url, type, width, height, alt.
+       Кандидаты перебираются по порядку, побеждает первый найденный файл:
+         1. site.Params.ogImage — глобальный оверрайд (он же Organization.logo);
+         2. og_image во front matter страницы;
+         3. images[0] карточки модели;
+         4. site.Params.ogImageDefault — общий файл 1200×630 (static/og/og-cover.jpg);
+         5. hero.image страницы (главная);
+         6. hero.image главной — для остальных страниц.
+       Путь ищется среди ресурсов страницы, затем assets/, затем static/. */ -}}
+{{- $page := . -}}
+{{- $alt := $page.Title -}}
+{{- $candidates := slice -}}
+
+{{- with site.Params.ogImage -}}
+  {{- $candidates = $candidates | append (dict "src" . "alt" $page.Title) -}}
+{{- end -}}
+{{- with $page.Params.og_image -}}
+  {{- $candidates = $candidates | append (dict "src" . "alt" $page.Title) -}}
+{{- end -}}
+{{- with $page.Params.images -}}
+  {{- with index . 0 -}}
+    {{- $first := . -}}
+    {{- with .src -}}
+      {{- $candidates = $candidates | append (dict "src" . "alt" ($first.alt | default $page.Title)) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- with site.Params.ogImageDefault -}}
+  {{- $candidates = $candidates | append (dict "src" . "alt" $page.Title) -}}
+{{- end -}}
+{{- $hero := $page.Params.hero | default dict -}}
+{{- with $hero.image -}}
+  {{- $candidates = $candidates | append (dict "src" . "alt" ($hero.image_alt | default $page.Title)) -}}
+{{- end -}}
+{{- $homeHero := site.Home.Params.hero | default dict -}}
+{{- with $homeHero.image -}}
+  {{- $candidates = $candidates | append (dict "src" . "alt" ($homeHero.image_alt | default $page.Title)) -}}
+{{- end -}}
+
+{{- $url := "" -}}
+{{- $type := "" -}}
+{{- $width := 0 -}}
+{{- $height := 0 -}}
+{{- $mimeTypes := dict ".jpg" "image/jpeg" ".jpeg" "image/jpeg" ".png" "image/png" ".gif" "image/gif" ".webp" "image/webp" -}}
+{{- range $candidates -}}
+  {{- if not $url -}}
+    {{- $src := .src -}}
+    {{- if or (hasPrefix $src "http://") (hasPrefix $src "https://") -}}
+      {{- $url = $src -}}
+    {{- else -}}
+      {{- $res := $page.Resources.GetMatch $src -}}
+      {{- if not $res }}{{ $res = resources.Get $src }}{{ end -}}
+      {{- with $res -}}
+        {{- $url = .Permalink -}}
+        {{- $type = .MediaType.Type -}}
+        {{- $width = .Width -}}
+        {{- $height = .Height -}}
+      {{- end -}}
+      {{- if and (not $url) (fileExists (printf "static/%s" $src)) -}}
+        {{- $url = $src | absURL -}}
+        {{- $ext := lower (path.Ext $src) -}}
+        {{- $type = index $mimeTypes $ext | default "" -}}
+        {{- if $type -}}
+          {{- $cfg := imageConfig (printf "static/%s" $src) -}}
+          {{- $width = $cfg.Width -}}
+          {{- $height = $cfg.Height -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if $url -}}
+      {{- with .alt }}{{ $alt = . }}{{ end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- return (dict "url" $url "type" $type "width" $width "height" $height "alt" $alt) -}}

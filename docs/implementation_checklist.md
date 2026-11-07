@@ -1,6 +1,6 @@
 # Чек-лист выполнения плана
 
-> Версия 1.1 от 07.11.2026. Составлен по [`docs/implementation_plan.md`](implementation_plan.md) (v2.1 от 07.11.2026).
+> Версия 1.2 от 07.11.2026. Составлен по [`docs/implementation_plan.md`](implementation_plan.md) (v2.1 от 07.11.2026).
 > Проверка — по фактическому коду, данным и сборке `hugo --minify --gc --environment production` (Hugo 0.169.0 extended).
 
 **Легенда**
@@ -99,7 +99,7 @@
 | FR-9 | Аккордеон FAQ + `FAQPage` | ✅ | `<details>/<summary>`, JSON-LD |
 | FR-10 | Cookie-баннер с предварительным согласием | ✅ | `mm_consent_v1`, отказ, повторное согласие через футер |
 | FR-11 | 404 со ссылками на каталог и 4 мессенджера | 🟡 | каталог + «на главную» + 2 канала (VK, WhatsApp) |
-| FR-12 | Уникальные title/description, canonical, OG 1200×630 | 🟡 | `og:type` исправлен 07.11; OG-изображения 1200×630 нет |
+| FR-12 | Уникальные title/description, canonical, OG 1200×630 | 🟡 | `og:image` и `twitter:image` на всех страницах (07.11); файла 1200×630 нет — поддержка `static/og/og-cover.jpg` готова |
 | FR-13 | JSON-LD Organization/Product/BreadcrumbList/FAQPage | ✅ | `partials/seo-jsonld.html`; валидаторы не прогонялись |
 | FR-14 | Метрика + Вебвизор, 6 целей | 🟡 | добавлена `scroll_75` (07.11); `metrikaId` пуст, счётчик не проверен |
 | FR-15 | WCAG 2.1 AA | 🟡 | skip-link, focus-visible, 44 px, alt; аудита контраста не было |
@@ -151,7 +151,7 @@
 | --- | --- | --- |
 | Уникальные title/description | ✅ | из front matter + `seo.*` |
 | Canonical на всех страницах | ✅ | `partials/head.html` |
-| OG + Twitter Card | 🟡 | `og:type` исправлен; OG-изображение 1200×630 не формируется |
+| OG + Twitter Card | 🟡 | `og:image`, размеры, alt и `twitter:image` на всех страницах; OG-превью 1200×630 ждёт `static/og/og-cover.jpg` |
 | JSON-LD: Organization, Product, BreadcrumbList, FAQPage | ✅ | `partials/seo-jsonld.html` |
 | `sitemap.xml` | ✅ | 16 URL |
 | `robots.txt`: Allow, Disallow /404.html, Sitemap | ✅ | при `noindex` — `Disallow: /` |
@@ -255,7 +255,7 @@
 | B-7 | В nginx не было `error_page 404` — кастомная 404 не отдавалась | ✅ исправлено 07.11 | `deploy/nginx.conf` |
 | B-8 | На `/catalog/` нет фильтра, хотя п. 2.2 и FR-5 его требуют | ⛔ открыт | `layouts/_default/list.html` |
 | B-9 | Нет `srcset`/ресайза изображений и preload для LCP | ⛔ открыт | `layouts/partials/model-card.html`, `layouts/_default/single.html` |
-| B-10 | OG-изображение 1200×630 не формируется | ⛔ открыт | `layouts/partials/head.html` |
+| B-10 | OG-изображение 1200×630 не формируется | 🟡 механизм готов: `ogImageDefault` + `static/og/og-cover.jpg`; файла нет — используется hero 910×1044 | `layouts/partials/og-image.html`, `scripts/check_og.py` |
 | B-11 | `notes` из `data/sizes.yaml` не выводятся; длина 60-го расходится с описанием «Оливы» (74 vs 73 см) | ⛔ открыт | `layouts/partials/size-table.html` |
 | B-12 | Служебная строка «Нет коллекции — самостоятельный товар.» попадает в текст страницы | ⛔ открыт | `content/catalog/olive/index.md` |
 | B-13 | Нет кнопки «Скопировать текст» для Telegram (FR-7) | ⛔ открыт | `layouts/partials/contact-buttons.html` |

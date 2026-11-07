@@ -26,6 +26,7 @@ Node.js не требуется ни для сборки, ни для работ
 hugo version                 # нужен extended ≥ 0.140
 hugo server                  # http://localhost:1313
 hugo --minify --gc --environment production
+python3 scripts/check_og.py public   # проверка OG-разметки после сборки
 ```
 
 Собранный сайт появляется в `public/` (каталог в `.gitignore`).
@@ -75,6 +76,7 @@ static/favicon.svg
 deploy/nginx.conf              конфиг хостинга
 lighthouserc.json              конфиг Lighthouse CI (3 URL, пороги 2.11)
 .htmlvalidate.json             правила html-validate
+scripts/check_og.py            валидатор OG-разметки в собранном public/
 .github/workflows/             build.yml, deploy.yml, links.yml, rollback.yml
 .editorconfig                  отступы и кодировка для редакторов
 ```
@@ -89,6 +91,12 @@ lighthouserc.json              конфиг Lighthouse CI (3 URL, пороги 2
 
 Пока изображений нет, карточка показывает цветной плейсхолдер — вёрстка не ломается.
 
+## OG-превью для соцсетей
+
+`og:image` выводится на каждой странице: у карточки модели — `images[0].src`, у главной — `hero.image` из `content/_index.md`. Остальные страницы берут общий файл, если он есть: положите `static/og/og-cover.jpg` размером 1200×630 — он подхватится автоматически (параметр `ogImageDefault` в `hugo.toml`). Глобальный оверрайд — `params.ogImage` (он же `Organization.logo`), точечный — поле `og_image` во front matter страницы или модели.
+
+Проверка: `python3 scripts/check_og.py public` — запускается в CI после сборки и падает, если `og:image` нет, URL относительный, файл не найден или размеры не совпадают.
+
 ## Что заполнить до запуска
 
 | Параметр | Где | Статус |
@@ -100,6 +108,7 @@ lighthouserc.json              конфиг Lighthouse CI (3 URL, пороги 2
 | Telegram, MAX, Wildberries, e-mail | `data/contacts.yaml` | TODO |
 | Реальные обмеры 54–72 | `data/sizes.yaml` | черновик, подтвердить у владелицы |
 | Фото съёмки | `content/**/`, `static/images/` | TODO (M3) |
+| OG-превью 1200×630 | `static/og/og-cover.jpg` | TODO: пока используется `photo/hero.webp` |
 | Юридические тексты | `content/offer`, `content/privacy`, `content/delivery` | черновики, проверить у юриста |
 
 ## Changelog
@@ -117,5 +126,5 @@ lighthouserc.json              конфиг Lighthouse CI (3 URL, пороги 2
 
 - В `hugo.toml` используется транспилер `libsass` (работает в Hugo extended без внешних бинарников). В Hugo 0.153+ он помечен deprecated: перед обновлением Hugo нужно поставить Dart Sass и переключить `transpiler` на `dartsass`.
 - Шрифты пока системные: самохостинг woff2 (Cormorant Garamond + Inter) — задача этапа M4.
-- CI: `build.yml` собирает сайт, проверяет YAML и front matter, обязательные поля моделей и ссылки (`lychee`); `html-validate` и Lighthouse CI подключены, но пока с `continue-on-error` — до первого зелёного прогона.
+- CI: `build.yml` собирает сайт, проверяет YAML и front matter, обязательные поля моделей, OG-разметку (`scripts/check_og.py`) и ссылки (`lychee`); `html-validate` и Lighthouse CI подключены, но пока с `continue-on-error` — до первого зелёного прогона.
 - Деплой (`deploy.yml`) отключён до появления хостинга. После настройки: включить `push` в `main`, задать секреты `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SSH_KNOWN_HOSTS` и переменную `SITE_BASE_URL`. Откат — `rollback.yml` (переключение симлинка на предыдущий релиз).

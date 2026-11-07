@@ -67,6 +67,9 @@ jobs:
           print("Обязательные поля на месте")
           PY
 
+      - name: Open Graph
+        run: python3 scripts/check_og.py public
+
       - name: HTML-validate
         # TODO: убрать continue-on-error после первого зелёного прогона (п. 2.10).
         continue-on-error: true
