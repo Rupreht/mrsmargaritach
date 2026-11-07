@@ -5,20 +5,21 @@
     <caption class="size-table__caption">{{ $caption }}</caption>
     <thead>
       <tr>
-        <th scope="col">RU</th>
-        <th scope="col">INT</th>
-        <th scope="col">Грудь, см</th>
-        <th scope="col">Талия, см</th>
-        <th scope="col">Бёдра, см</th>
-        <th scope="col">Длина, см</th>
-        <th scope="col">Рукав, см</th>
+        <th scope="col" rowspan="2">RU</th>
+        <th scope="colgroup" colspan="3">Полуобхват</th>
+        <th scope="col" rowspan="2">Длина спины</th>
+        <th scope="col" rowspan="2">Рукав</th>
+      </tr>
+      <tr>
+        <th scope="col">Грудь</th>
+        <th scope="col">Талия</th>
+        <th scope="col">Бёдра</th>
       </tr>
     </thead>
     <tbody>
       {{- range hugo.Data.sizes }}
       <tr>
         <th scope="row">{{ .ru }}</th>
-        <td>{{ .intl }}</td>
         <td>{{ delimit .bust "–" }}</td>
         <td>{{ delimit .waist "–" }}</td>
         <td>{{ delimit .hips "–" }}</td>
