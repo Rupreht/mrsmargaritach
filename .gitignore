@@ -11,3 +11,6 @@ resources/
 # Локальные секреты и логи
 .env
 *.log
+
+# Отчёты Lighthouse CI
+.lighthouseci/

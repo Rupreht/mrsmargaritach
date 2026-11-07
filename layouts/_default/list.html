@@ -96,7 +96,7 @@
   <div class="container">
     {{- $models := .RegularPages }}
     {{- if $models }}
-    <form class="filters" data-filters>
+    <div class="filters" data-filters role="group" aria-label="Фильтр каталога">
       <label class="filters__field">
         <span class="filters__label">Размер</span>
         <select name="size" data-filter-size>
@@ -118,7 +118,7 @@
         </select>
       </label>
       <p class="filters__count" data-filter-count aria-live="polite"></p>
-    </form>
+    </div>
 
     <div class="card-grid" data-model-grid>
       {{- range $models }}

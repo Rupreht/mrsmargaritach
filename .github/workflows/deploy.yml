@@ -1,7 +1,7 @@
 name: deploy
 
 on:
-  # отключен, пока некуда деплоить
+  # Отключён, пока некуда деплоить. Включить push после настройки хостинга (M0/M1).
   # push:
   #   branches: [main]
   workflow_dispatch:
@@ -12,6 +12,11 @@ concurrency:
   # Новая сборка просто встанет в очередь (в статус pending)
   # и будет ждать завершения предыдущей
   cancel-in-progress: false
+
+env:
+  RELEASES_DIR: shirt.e365.ru/releases
+  CURRENT_LINK: shirt.e365.ru/www
+  KEEP_RELEASES: 5
 
 jobs:
   deploy:
@@ -29,18 +34,36 @@ jobs:
       - name: Build
         run: hugo --minify --gc --environment production --baseURL "${{ vars.SITE_BASE_URL }}"
 
+      - name: Setup known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 700 ~/.ssh
+          chmod 600 ~/.ssh/known_hosts
+
       - name: Setup SSH
         uses: webfactory/ssh-agent@e83874834305fe9a4a2997156cb26c5de65a8555 # v0.10.0
         with:
-          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+          ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: Upload release
         run: |
           RELEASE=$(date -u +%Y%m%d%H%M%S)
-          rsync -az --delete public/ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/mrsmargaritach/releases/$RELEASE/"
           echo "RELEASE=$RELEASE" >> "$GITHUB_ENV"
+          echo "PRUNE_FROM=$(( ${{ env.KEEP_RELEASES }} + 1 ))" >> "$GITHUB_ENV"
+          rsync -az --delete public/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ env.RELEASES_DIR }}/$RELEASE/"
 
-      - name: Switch symlink
+      - name: Switch symlink and prune old releases
         run: |
-          ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
-            "ln -sfn /var/www/mrsmargaritach/releases/${{ env.RELEASE }} /var/www/mrsmargaritach/current && nginx -s reload"
+          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "
+            set -e
+            ln -sfn 'releases/${{ env.RELEASE }}' '${{ env.CURRENT_LINK }}'
+            ls -1dt '${{ env.RELEASES_DIR }}'/*/ | tail -n +${{ env.PRUNE_FROM }} | xargs -r rm -rf
+            readlink '${{ env.CURRENT_LINK }}'
+          "
+
+      - name: Reload nginx
+        # Деплой-пользователю нужно право перезагрузить nginx без пароля
+        # (sudoers-правило на `nginx -s reload` или `systemctl reload nginx`).
+        run: |
+          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "touch shirt.e365.ru/reload"

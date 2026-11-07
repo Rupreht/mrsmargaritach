@@ -29,22 +29,47 @@ function initStickyCta() {
   const bar = document.querySelector("[data-sticky-cta]");
   if (!bar) return;
 
+  const setVisible = (visible) => {
+    bar.hidden = !visible;
+    document.body.classList.toggle("has-sticky-cta", visible);
+  };
+
   const trigger = document.querySelector(".hero") || document.querySelector("main");
   if (!trigger || !("IntersectionObserver" in window)) {
-    bar.hidden = false;
+    setVisible(true);
     return;
   }
 
   const observer = new IntersectionObserver(
     (entries) => {
-      entries.forEach((entry) => {
-        bar.hidden = entry.isIntersecting;
-      });
+      entries.forEach((entry) => setVisible(!entry.isIntersecting));
     },
     { rootMargin: "-40% 0px 0px 0px" }
   );
 
   observer.observe(trigger);
+}
+
+/* Глубина прокрутки 75% на главной и карточке модели (FR-14, п. 2.9). */
+function initScrollDepth() {
+  const page = document.body.classList;
+  if (!page.contains("page-home") && !page.contains("page-catalog")) return;
+
+  let fired = false;
+  const onScroll = () => {
+    if (fired) return;
+    const doc = document.documentElement;
+    const scrollable = doc.scrollHeight - window.innerHeight;
+    if (scrollable <= 0) return;
+    if ((window.scrollY || doc.scrollTop) / scrollable < 0.75) return;
+
+    fired = true;
+    window.removeEventListener("scroll", onScroll);
+    trackGoal("scroll_75", { page: page.contains("page-home") ? "home" : "model" });
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
 }
 
 function initConsentSettings() {
@@ -58,6 +83,7 @@ function start() {
   initFilters();
   initTracking();
   initStickyCta();
+  initScrollDepth();
   initConsentSettings();
 }
 

@@ -28,6 +28,12 @@ svg {
   display: block;
 }
 
+// Атрибут hidden должен побеждать правила вида `display: flex` у компонентов
+// (sticky-CTA, баннер cookie, скрытые карточки фильтра).
+[hidden] {
+  display: none !important;
+}
+
 h1,
 h2,
 h3,
