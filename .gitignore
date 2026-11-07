@@ -14,3 +14,7 @@ resources/
 
 # Отчёты Lighthouse CI
 .lighthouseci/
+
+# Python
+__pycache__/
+*.pyc

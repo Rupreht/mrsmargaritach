@@ -38,8 +38,12 @@ disableKinds = ["taxonomy", "term", "rss"]
   # Аналитика: счётчик грузится только после согласия на cookie (п. 2.9).
   metrikaId = ""         # TODO: номер счётчика Яндекс.Метрики
 
-  # Изображение для OG-превью по умолчанию (положить в static/images/).
+  # Глобальный оверрайд OG-превью (он же Organization.logo). Путь в static/ или assets/.
+  # Пусто — превью берётся со страницы: og_image → images[0] → ogImageDefault → hero.image.
   ogImage = ""
+  # Общее OG-превью 1200×630 для страниц без своих фото: static/og/og-cover.jpg.
+  # Файла пока нет — используется hero главной; положите файл, и он подхватится сам.
+  ogImageDefault = "og/og-cover.jpg"
 
 [markup]
   [markup.goldmark.renderer]

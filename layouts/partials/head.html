@@ -21,20 +21,27 @@ site.Params.brand) -}}
   <meta property="og:type" content="{{ if and (eq .Section "catalog") .IsPage }}product{{ else }}website{{ end }}">
   <meta property="og:url" content="{{ .Permalink }}">
   <meta property="og:locale" content="ru_RU">
-  {{- $ogImage := "" -}}
-  {{- with site.Params.ogImage }}{{ $ogImage = . | absURL }}{{ end -}}
-  {{- if and (not $ogImage) (eq .Section "catalog") .IsPage -}}
-  {{- with .Params.images -}}
-  {{- $src := (index . 0).src -}}
-  {{- with $.Resources.GetMatch $src }}{{ $ogImage = .Permalink }}{{ end -}}
-  {{- end -}}
-  {{- end -}}
-  {{- with $ogImage }}
+  {{- $og := partial "og-image.html" . -}}
+  {{- with $og.url }}
   <meta property="og:image" content="{{ . }}">
+  {{- with $og.type }}
+  <meta property="og:image:type" content="{{ . }}">
+  {{- end }}
+  {{- with $og.width }}
+  <meta property="og:image:width" content="{{ . }}">
+  {{- end }}
+  {{- with $og.height }}
+  <meta property="og:image:height" content="{{ . }}">
+  {{- end }}
+  <meta property="og:image:alt" content="{{ $og.alt }}">
   {{- end }}
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ $title }}">
   <meta name="twitter:description" content="{{ $description }}">
+  {{- with $og.url }}
+  <meta name="twitter:image" content="{{ . }}">
+  <meta name="twitter:image:alt" content="{{ $og.alt }}">
+  {{- end }}
 
   {{- /* Шрифты самохостятся; пока используется системный стек (см. docs/implementation_plan.md, п. 2.6.2). */}}
   {{- with resources.Get "scss/main.scss" }}

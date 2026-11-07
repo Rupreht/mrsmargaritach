@@ -35,6 +35,11 @@
 - Подпись силуэта на карточке модели и в характеристиках карточки; превью двух коллекций в блоке «Модели» на главной.
 - Декларация соответствия ТР ТС 017/2011 (ЕАЭС N RU Д-RU.РА10.В.84620/23 от 28.12.2023) в футере и на карточке модели через параметры `declarationNumber` и `declarationDate` в `hugo.toml`.
 - Поля `fabric_id` и `length_cm` в архетипе модели; поля `model_type`, `silhouette`, `length_note` в архетипе коллекции.
+- Партиал `layouts/partials/og-image.html` — единый резолвер OG-изображения: `params.ogImage` → `og_image` страницы → `images[0]` → `ogImageDefault` → `hero.image`. Ищет файл среди ресурсов страницы, `assets/` и `static/`, отдаёт абсолютный URL, MIME-тип, размеры и alt.
+- Валидатор `scripts/check_og.py` (Python 3, без зависимостей): обязательные OG-теги, абсолютность URL, наличие `og:image` в сборке, MIME/расширение, размеры и пропорции, соответствие заявленных размеров фактическим, `twitter:image`.
+- Задача `task test:og` и шаг `Open Graph` в `.github/workflows/build.yml`.
+- Параметр `ogImageDefault` в `hugo.toml`: готовое OG-превью 1200×630 (`static/og/og-cover.jpg`) подхватывается автоматически, как только файл появится.
+- Поле `og_image` в архетипах `default.md` и `model.md` — точечный оверрайд OG-превью.
 
 ### Changed
 
@@ -65,6 +70,7 @@
 - Sticky-панель: атрибут `hidden` перебивался правилом `display: flex`, поэтому панель была видна всегда. Добавлено глобальное `[hidden] { display: none !important }`, JS ставит класс `has-sticky-cta`, который резервирует 76 px снизу — панель больше не перекрывает футер.
 - `deploy/nginx.conf`: добавлен `error_page 404 /404.html` — без него кастомная страница 404 не отдавалась.
 - Хлебные крошки: глобальное правило `li + li { margin-top: var(--space-2) }` из `_base.scss` сдвигало каждый следующий пункт вниз, поэтому «Главная», «Каталог» и «Рубашка «Олива»» стояли не в одну линию. В `.breadcrumbs__list` добавлены `align-items: baseline` и сброс `margin-top` у пунктов (как в `.site-footer__list`).
+- `og:image` отсутствовал на главной и текстовых страницах: `head.html` смотрел только на пустой `params.ogImage` и на `images[0]` карточек каталога. Теперь `og:image` формируется партиалом `og-image.html` из `hero.image` главной (`content/_index.md`), обложек моделей и `ogImageDefault`; добавлены `og:image:type`, `width`, `height`, `alt`, а также `twitter:image` и `twitter:image:alt`.
 
 ### Docs
 
@@ -76,6 +82,8 @@
 - `docs/implementation_plan.md` обновлён до версии 2.1: типы ткани, две коллекции-силуэта, декларация, правило типографики, критерии приёмки 13–14.
 - `docs/implementation_checklist.md` обновлён до версии 1.1: новые URL, `data/fabrics.yaml`, статус L-11.
 - `docs/tz.md` — в требования к галерее добавлены две коллекции-силуэта.
+- `README.md`: раздел «OG-превью для соцсетей», команда `python3 scripts/check_og.py public`, `scripts/` в структуре проекта и строка про OG-превью 1200×630 в списке задач до запуска.
+- `docs/implementation_checklist.md`: обновлены FR-12, «OG + Twitter Card» и B-10 — `og:image` выводится на всех страницах, механизм поддержки файла 1200×630 готов.
 
 ### Security
 
