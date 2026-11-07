@@ -22,8 +22,8 @@ disableKinds = ["taxonomy", "term", "rss"]
   # Реквизиты (docs/implementation_plan.md, п. 3.2). Пустые значения скрываются в шаблоне.
   legalName = "ИП Чистова М. В."
   inn = "665812055864"
-  ogrnip = ""            # TODO: получить ОГРНИП у владелицы (L-01)
-  email = ""             # TODO: e-mail для оферты и чеков (L-01)
+  ogrnip = "317665800159760"
+  email = "mrsmargaritach@gmail.com"
   phone = "+7 (999) 777-77-77"
   phoneRaw = "+79997777777"
   city = "Екатеринбург"

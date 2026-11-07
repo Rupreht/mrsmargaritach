@@ -22,6 +22,19 @@
   background: var(--c-bg-alt);
 }
 
+// CTA-шорткод внутри `.prose`: даём «воздух», чтобы блок не прилипал
+// к предыдущему тексту и соседним секциям.
+.prose .section--cta {
+  margin-top: var(--space-7);
+  border-radius: var(--radius-card);
+}
+
+// Внутри CTA заголовок не должен наследовать отступ `.prose h2`:
+// иначе сверху блока появляется лишняя пустота.
+.prose .section--cta .section__title {
+  margin-top: 0;
+}
+
 .section__head {
   display: flex;
   flex-wrap: wrap;

@@ -615,6 +615,12 @@
   color: var(--c-muted);
 }
 
+// Место под фиксированную панель, чтобы она не перекрывала подвал (FR-8).
+// Класс ставит JS, когда панель видна; на десктопе отменяется медиазапросом.
+.has-sticky-cta {
+  padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+}
+
 // Cookie-баннер
 .cookie-banner {
   position: fixed;
@@ -648,12 +654,19 @@
 .breadcrumbs__list {
   display: flex;
   flex-wrap: wrap;
+  align-items: baseline;
   gap: var(--space-2);
   list-style: none;
   margin: 0;
   padding: 0;
   font-size: 0.8125rem;
   color: var(--c-muted);
+}
+
+// Глобальное `li + li { margin-top }` из _base.scss сдвигало пункты крошек
+// вниз: «Главная», «Каталог» и название модели не стояли в одну линию.
+.breadcrumbs__list li {
+  margin-top: 0;
 }
 
 .breadcrumbs__list li + li::before {
@@ -782,6 +795,10 @@
   flex-wrap: wrap;
   align-items: flex-end;
   gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--c-border);
+}
 
 // Заметка (shortcode note)
 .note {
@@ -965,6 +982,11 @@
     display: none;
   }
 
+  // На десктопе панель скрыта — место под неё не нужно.
+  .has-sticky-cta {
+    padding-bottom: 0;
+  }
+
   .cookie-banner {
     left: auto;
     right: var(--space-5);
@@ -994,14 +1016,9 @@
   }
 }
 
-// Sticky-панель не перекрывает подвал
+// Sticky-панель не перекрывает подвал (FR-8): JS добавляет класс, пока панель видна.
 .page-home .sticky-cta {
   padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
-}
-
-  margin-bottom: var(--space-5);
-  padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--c-border);
 }
 
 .filters__field {

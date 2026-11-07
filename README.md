@@ -5,6 +5,7 @@
 - Концепция, аудитория и тексты: [`docs/tz.md`](docs/tz.md)
 - План разработки, требования, юридический блок: [`docs/implementation_plan.md`](docs/implementation_plan.md)
 - Ключевые фразы: [`docs/SEO.md`](docs/SEO.md)
+- Чек-лист выполнения плана: [`docs/implementation_checklist.md`](docs/implementation_checklist.md)
 - История изменений: [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Стек
@@ -66,10 +67,12 @@ assets/
   scss/                        токены, база, сетка, компоненты, утилиты
   js/                          main, consent (Метрика после согласия), filters
   photo/                       фото для страниц вне бандлов: photo/hero.webp на главной
-archetypes/                    шаблоны новых страниц: default, catalog, collection
+archetypes/                    шаблоны новых страниц: default, model, collection
 static/favicon.svg
 deploy/nginx.conf              конфиг хостинга
-.github/workflows/             build.yml, deploy.yml
+lighthouserc.json              конфиг Lighthouse CI (3 URL, пороги 2.11)
+.htmlvalidate.json             правила html-validate
+.github/workflows/             build.yml, deploy.yml, links.yml, rollback.yml
 .editorconfig                  отступы и кодировка для редакторов
 ```
 
@@ -111,4 +114,5 @@ deploy/nginx.conf              конфиг хостинга
 
 - В `hugo.toml` используется транспилер `libsass` (работает в Hugo extended без внешних бинарников). В Hugo 0.153+ он помечен deprecated: перед обновлением Hugo нужно поставить Dart Sass и переключить `transpiler` на `dartsass`.
 - Шрифты пока системные: самохостинг woff2 (Cormorant Garamond + Inter) — задача этапа M4.
-- Lighthouse, lychee и html-validate в CI пока не подключены (см. `docs/implementation_plan.md`, п. 2.10).
+- CI: `build.yml` собирает сайт, проверяет YAML и front matter, обязательные поля моделей и ссылки (`lychee`); `html-validate` и Lighthouse CI подключены, но пока с `continue-on-error` — до первого зелёного прогона.
+- Деплой (`deploy.yml`) отключён до появления хостинга. После настройки: включить `push` в `main`, задать секреты `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SSH_KNOWN_HOSTS` и переменную `SITE_BASE_URL`. Откат — `rollback.yml` (переключение симлинка на предыдущий релиз).

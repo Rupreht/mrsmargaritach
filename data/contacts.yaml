@@ -13,7 +13,7 @@
 
 - channel: telegram
   label: "Telegram"
-  url: "" # TODO: https://t.me/<username>
+  url: ""  # TODO: https://t.me/<username>
   prefill: "Здравствуйте, Маргарита! Пишу с сайта."
   is_primary: true
   todo: true
@@ -27,7 +27,7 @@
 
 - channel: max
   label: "MAX"
-  url: "" # TODO: ссылка-приглашение от владелицы
+  url: ""  # TODO: ссылка-приглашение от владелицы
   prefill: "Здравствуйте, Маргарита! Пишу с сайта."
   is_primary: true
   todo: true
@@ -54,7 +54,7 @@
   todo: false
 
 - channel: email
-  label: "" # TODO: e-mail владелицы
+  label: ""  # TODO: e-mail владелицы
   url: ""
   prefill: ""
   is_primary: false

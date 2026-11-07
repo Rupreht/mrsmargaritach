@@ -3,6 +3,7 @@ version: "3"
 vars:
   LYCHEE_HTTP_ACCEPT: "200..299,498"
   LYCHEE_USER_AGENT: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  SITE_BASE_URL: "https://shirt.e365.ru/"
 
 tasks:
   run:
@@ -16,11 +17,18 @@ tasks:
     cmd: hugo --minify --gc
     silent: true
 
+  build:production:
+    desc: "production: локальная сборка"
+    cmd: hugo --minify --gc --environment production --baseURL "{{.SITE_BASE_URL}}"
+    silent: true
+
   clean:
     desc: "Очистка ./public/"
     cmd: rm -rf ./public
 
   test:html:
     desc: "Проверка внутренних ссылок (lychee), падение при 404"
+    deps:
+      - build
     cmds:
       - lychee --root-dir public --accept {{.LYCHEE_HTTP_ACCEPT}} --user-agent {{.LYCHEE_USER_AGENT}} public
