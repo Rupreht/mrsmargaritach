@@ -30,6 +30,11 @@ disableKinds = ["taxonomy", "term", "rss"]
   pickup = "Екатеринбург, Сахарова 29/4"
   priceCurrency = "RUB"
 
+  # Декларация соответствия ТР ТС 017/2011 (docs/implementation_plan.md, п. 3.2 и 3.8).
+  # Выводится в футере и на карточке модели; пустые значения скрываются.
+  declarationNumber = "ЕАЭС N RU Д-RU.РА10.В.84620/23"
+  declarationDate = "28.12.2023"
+
   # Аналитика: счётчик грузится только после согласия на cookie (п. 2.9).
   metrikaId = ""         # TODO: номер счётчика Яндекс.Метрики
 

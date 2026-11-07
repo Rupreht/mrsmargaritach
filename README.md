@@ -37,13 +37,15 @@ hugo.toml                      конфигурация, меню, реквиз�
 content/
   _index.md                    главная: тексты блоков
   about/index.md               о бренде
-  catalog/_index.md            каталог (список коллекций)
-  catalog/autumn-casual/       коллекция «Осенний кэжуал»
+  catalog/_index.md            каталог (две коллекции-силуэта)
+  catalog/classic/             коллекция «Классическая рубашка»
     _index.md                  страница коллекции
+    olive/index.md             карточка модели «Олива»
     chestnut/index.md          карточка модели «Каштан»
+  catalog/long/                коллекция «Удлинённая рубашка»
+    _index.md                  страница коллекции
     nutmeg/index.md            карточка модели «Мускатный орех»
     forest-moss/index.md       карточка модели «Лесной мох»
-  catalog/olive/index.md       карточка модели (вне коллекции)
   delivery/index.md            доставка и возврат
   faq/index.md                 вопросы и ответы (front matter `faq`)
   offer/index.md               публичная оферта (черновик)
@@ -51,6 +53,7 @@ content/
 data/
   contacts.yaml                каналы связи и ссылки
   sizes.yaml                   размерная сетка
+  fabrics.yaml                 три типа ткани для блока «Ткани и качество»
   benefits.yaml                преимущества на главной
   steps.yaml                   «как это работает»
   reviews.yaml                 отзывы (только consent: true)
@@ -81,7 +84,7 @@ lighthouserc.json              конфиг Lighthouse CI (3 URL, пороги 2
 1. Создать коллекцию (если новая): `hugo new content --kind collection catalog/<collection-slug>/_index.md` (подставит поля коллекции из `archetypes/collection.md`).
 2. Создать карточку из архетипа: `hugo new content --kind model catalog/<collection-slug>/<model-slug>/index.md` (подставит все поля модели) или скопировать одну из существующих моделей в коллекции.
 3. Положить изображения рядом (`cover.webp` первым кадром, затем `01.webp`, `02.webp`).
-4. Заполнить `title`, `article`, `color_name`, `color_hex`, `price`, `sizes`, `fabric`, `care`, `details`, `images[].alt`.
+4. Заполнить `title`, `article`, `color_name`, `color_hex`, `price`, `sizes`, `fabric`, `fabric_id` (для трёх базовых тканей из `data/fabrics.yaml`), `length_cm`, `care`, `details`, `images[].alt`. Проценты в составе — слитно: `97% хлопок, 3% эластан`.
 5. Запустить `hugo server` — модель появится на главной и в каталоге без правки шаблонов.
 
 Пока изображений нет, карточка показывает цветной плейсхолдер — вёрстка не ломается.

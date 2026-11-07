@@ -40,6 +40,9 @@
         <li><a href="mailto:{{ . }}">{{ . }}</a></li>
         {{- end }}
         <li>{{ site.Params.pickup }}</li>
+        {{- with site.Params.declarationNumber }}
+        <li class="site-footer__declaration">Декларация соответствия {{ . }}{{ with site.Params.declarationDate }} от {{ . }}{{ end }}</li>
+        {{- end }}
       </ul>
     </div>
   </div>

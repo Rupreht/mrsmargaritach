@@ -2,7 +2,7 @@
   "ci": {
     "collect": {
       "staticDistDir": "./public",
-      "url": ["/", "/catalog/", "/catalog/autumn-casual/chestnut/"],
+      "url": ["/", "/catalog/", "/catalog/classic/chestnut/"],
       "numberOfRuns": 1,
       "settings": {
         "preset": "desktop",

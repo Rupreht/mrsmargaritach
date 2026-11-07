@@ -91,6 +91,20 @@
       <h2 class="section__title">Модели</h2>
       <a class="section__link" href="{{ "/catalog/" | relURL }}">Весь каталог</a>
     </div>
+    {{- with site.GetPage "/catalog" }}
+      {{- with .Sections }}
+    <ul class="collection-teasers">
+      {{- range . }}
+      <li class="collection-teasers__item">
+        <a class="collection-teasers__link" href="{{ .RelPermalink }}">
+          <span class="collection-teasers__title">{{ .Title }}</span>
+          {{- with .Description }}<span class="collection-teasers__text">{{ . }}</span>{{ end }}
+        </a>
+      </li>
+      {{- end }}
+    </ul>
+      {{- end }}
+    {{- end }}
     <div class="card-grid">
       {{- range first 6 . }}{{ partial "model-card.html" . }}{{ end }}
     </div>
@@ -106,14 +120,9 @@
       <p class="quality__text">{{ .text }}</p>
       <a class="btn btn--ghost" href="{{ "/#contacts" | relURL }}">Спросить про ткань</a>
     </div>
-    <dl class="quality__facts">
-      {{- range .facts }}
-      <div class="quality__fact">
-        <dt>{{ .label }}</dt>
-        <dd>{{ .value }}</dd>
-      </div>
-      {{- end }}
-    </dl>
+    <div class="fabric-grid">
+      {{- range sort hugo.Data.fabrics "order" }}{{ partial "fabric-card.html" (dict "fabric" .) }}{{ end }}
+    </div>
   </div>
 </section>
 {{- end }}

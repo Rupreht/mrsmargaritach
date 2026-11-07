@@ -11,6 +11,12 @@
 {{- $coverImg := "" -}}
 {{- with $cover }}{{ $coverImg = $.Resources.GetMatch . }}{{ end -}}
 {{- $slug := .Params.slug | default .File.BaseFileName -}}
+{{- $silhouette := "" -}}
+{{- with .CurrentSection }}{{ if .Params.model_type }}{{ $silhouette = .Title }}{{ end }}{{ end -}}
+{{- $fabric := "" -}}
+{{- with .Params.fabric_id -}}
+  {{- with where hugo.Data.fabrics "id" . }}{{ $fabric = index . 0 }}{{ end -}}
+{{- end -}}
 
 <article class="model">
   <div class="container model__grid">
@@ -50,8 +56,14 @@
         {{- with .Params.fit }}
         <div class="specs__row"><dt>Посадка</dt><dd>{{ . }}</dd></div>
         {{- end }}
+        {{- with $silhouette }}
+        <div class="specs__row"><dt>Силуэт</dt><dd>{{ . }}</dd></div>
+        {{- end }}
         {{- with .Params.care }}
         <div class="specs__row"><dt>Уход</dt><dd>{{ . }}</dd></div>
+        {{- end }}
+        {{- with site.Params.declarationNumber }}
+        <div class="specs__row"><dt>Соответствие</dt><dd>{{ . }}{{ with site.Params.declarationDate }} от {{ . }}{{ end }}</dd></div>
         {{- end }}
         {{- with .Params.status }}
         <div class="specs__row"><dt>Наличие</dt><dd>{{ . }}</dd></div>
@@ -72,6 +84,15 @@
     {{ .Content }}
   </div>
 </section>
+
+{{- with $fabric }}
+<section class="section section--tight">
+  <div class="container container--narrow">
+    <h2 class="section__title">Ткань модели</h2>
+    {{ partial "fabric-card.html" (dict "fabric" . "modifier" "fabric-card--detail") }}
+  </div>
+</section>
+{{- end }}
 
 <section class="section" id="sizes">
   <div class="container container--narrow">

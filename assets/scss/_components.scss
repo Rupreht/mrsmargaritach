@@ -389,6 +389,14 @@
   color: var(--c-muted);
 }
 
+.card-model__silhouette {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
 .card-model__cta {
   margin-top: auto;
   align-self: flex-start;
@@ -684,6 +692,46 @@
   color: var(--c-accent);
 }
 
+// Превью коллекций на главной
+.collection-teasers {
+  display: grid;
+  gap: var(--space-4);
+  list-style: none;
+  margin: 0 0 var(--space-6);
+  padding: 0;
+}
+
+.collection-teasers__item {
+  margin: 0;
+}
+
+.collection-teasers__link {
+  display: grid;
+  gap: var(--space-2);
+  height: 100%;
+  padding: var(--space-5);
+  background: var(--c-bg-alt);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-card);
+  color: var(--c-text);
+  text-decoration: none;
+}
+
+.collection-teasers__link:hover {
+  border-color: var(--c-accent);
+}
+
+.collection-teasers__title {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  line-height: 1.2;
+}
+
+.collection-teasers__text {
+  font-size: 0.9375rem;
+  color: var(--c-muted);
+}
+
 // Качество и ткани
 .quality {
   display: grid;
@@ -694,24 +742,53 @@
   color: var(--c-muted);
 }
 
-.quality__facts {
+.fabric-grid {
   display: grid;
   gap: var(--space-4);
-  margin: 0;
+  align-content: start;
+}
+
+.fabric-card {
   padding: var(--space-5);
-  background: var(--c-bg-alt);
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
   border-radius: var(--radius-card);
 }
 
-.quality__fact dt {
+.fabric-card__title {
+  font-size: 1.125rem;
+  margin: 0 0 var(--space-1);
+}
+
+.fabric-card__composition {
+  margin: 0 0 var(--space-4);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
+.fabric-card__props {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.fabric-card__prop dt {
   font-size: 0.8125rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--c-muted);
 }
 
-.quality__fact dd {
+.fabric-card__prop dd {
   margin: var(--space-1) 0 0;
+  font-size: 0.9375rem;
+}
+
+.fabric-card--detail {
+  padding: var(--space-6);
+  background: var(--c-bg-alt);
 }
 
 // Страница модели
@@ -928,6 +1005,10 @@
   color: var(--c-muted);
 }
 
+.site-footer__declaration {
+  font-size: 0.8125rem;
+}
+
 .site-footer__legal {
   margin-top: var(--space-6);
   padding-top: var(--space-4);
@@ -963,13 +1044,9 @@
   .steps,
   .delivery-brief,
   .reviews,
-  .quality__facts {
+  .collection-teasers,
+  .fabric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .quality {
-    grid-template-columns: 1.15fr 0.85fr;
-    align-items: start;
   }
 
   .model__grid {
@@ -1009,6 +1086,10 @@
 
   .benefits {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .fabric-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .site-footer__grid {
