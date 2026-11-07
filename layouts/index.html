@@ -118,7 +118,7 @@
     <div class="quality__content">
       <h2 class="section__title">{{ .title }}</h2>
       <p class="quality__text">{{ .text }}</p>
-      <a class="btn btn--ghost" href="{{ "/#contacts" | relURL }}">Спросить про ткань</a>
+      <a class="btn btn--ghost" href="{{ "#contacts" | relURL }}">Спросить про ткань</a>
     </div>
     <div class="fabric-grid">
       {{- range sort hugo.Data.fabrics "order" }}{{ partial "fabric-card.html" (dict "fabric" .) }}{{ end }}
@@ -129,11 +129,11 @@
 
 <section class="section" id="sizes">
   <div class="container container--narrow">
-    <h2 class="section__title">Размеры 54–72</h2>
-    {{ partial "size-table.html" (dict "caption" "Обхваты в сантиметрах") }}
+    <h2 class="section__title">Размеры 50–72</h2>
+    {{ partial "size-table.html" (dict "caption" "Мерки изделия в сантиметрах") }}
     {{- with $p.sizes_note }}<p class="section__note">{{ . }}</p>{{ end }}
     <p class="section__note">Как снять мерки: грудь — по самой выступающей точке, талия — по самому узкому месту, бёдра — по самым выступающим точкам. Если сомневаетесь, напишите — помогу.</p>
-    <a class="btn btn--primary" href="{{ "/#contacts" | relURL }}">Помогите с размером</a>
+    <a class="btn btn--primary" href="{{ "#contacts" | relURL }}">Помогите с размером</a>
   </div>
 </section>
 
