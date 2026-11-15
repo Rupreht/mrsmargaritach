@@ -20,7 +20,7 @@
 
 - channel: whatsapp
   label: "WhatsApp"
-  url: "https://wa.me/79997777777"
+  url: "https://wa.me/79122265077"
   prefill: "Здравствуйте, Маргарита! Пишу с сайта."
   is_primary: true
   todo: false
@@ -47,15 +47,15 @@
   todo: true
 
 - channel: phone
-  label: "+7 (999) 777-77-77"
-  url: "tel:+79997777777"
+  label: "+7 (912) 226-50-77"
+  url: "tel:+79122265077"
   prefill: ""
   is_primary: false
   todo: false
 
 - channel: email
-  label: ""  # TODO: e-mail владелицы
-  url: ""
-  prefill: ""
+  label: "mrsmargaritach@gmail.com"
+  url: "mailto:mrsmargaritach@gmail.com?subject=Пишу%20с%20сайта:%20"
+  prefill: "Здравствуйте, Маргарита! Пишу с сайта."
   is_primary: false
-  todo: true
+  todo: false
