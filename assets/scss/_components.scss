@@ -767,6 +767,12 @@
   margin: 0 0 var(--space-1);
 }
 
+.fabric-card__subtitle {
+  margin: 0 0 var(--space-2);
+  color: var(--c-muted);
+  font-size: 0.9375rem;
+}
+
 .fabric-card__composition {
   margin: 0 0 var(--space-4);
   font-size: 0.8125rem;

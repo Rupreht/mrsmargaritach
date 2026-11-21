@@ -5,6 +5,7 @@
 {{- $modifier := .modifier | default "" -}}
 <article class="fabric-card{{ with $modifier }} {{ . }}{{ end }}">
   <h3 class="fabric-card__title">{{ $fabric.title }}</h3>
+  {{- with $fabric.subtitle }}<p class="fabric-card__subtitle">{{ . }}</p>{{ end }}
   <p class="fabric-card__composition">{{ $fabric.composition }}</p>
   <dl class="fabric-card__props">
     {{- with $fabric.feel }}
