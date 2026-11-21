@@ -29,8 +29,9 @@
       {{- end }}
       {{- range after 1 (.Params.images | default (slice)) }}
         {{- $src := .src -}}
+        {{- $altText := .alt | default ($.Params.color_name | default $.Title) -}}
         {{- with $.Resources.GetMatch $src }}
-      <img class="model__thumb" src="{{ .RelPermalink }}" alt="{{ $.Params.color_name | default $.Title }}" width="{{ .Width }}" height="{{ .Height }}" loading="lazy" decoding="async">
+      <img class="model__thumb" src="{{ .RelPermalink }}" alt="{{ $altText }}" width="{{ .Width }}" height="{{ .Height }}" loading="lazy" decoding="async">
         {{- end }}
       {{- end }}
     </div>
