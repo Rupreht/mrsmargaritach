@@ -77,7 +77,7 @@ deploy/nginx.conf              конфиг хостинга
 lighthouserc.json              конфиг Lighthouse CI (3 URL, пороги 2.11)
 .htmlvalidate.json             правила html-validate
 scripts/check_og.py            валидатор OG-разметки в собранном public/
-.github/workflows/             build.yml, deploy.yml, links.yml, rollback.yml
+.github/workflows/             ci.yml, deploy.yml, links.yml
 .editorconfig                  отступы и кодировка для редакторов
 ```
 
@@ -124,7 +124,8 @@ scripts/check_og.py            валидатор OG-разметки в соб�
 
 ## Примечания
 
-- В `hugo.toml` используется транспилер `libsass` (работает в Hugo extended без внешних бинарников). В Hugo 0.153+ он помечен deprecated: перед обновлением Hugo нужно поставить Dart Sass и переключить `transpiler` на `dartsass`.
+- Сборка использует Dart Sass (транспилер по умолчанию в Hugo 0.169): локально нужен бинарник `sass`, в CI — шаг `dart sass` (`dw-labs-org/dart-sass-gha`) во всех workflow со сборкой. Без него сборка падает с `no Dart Sass binary found in $PATH`.
 - Шрифты пока системные: самохостинг woff2 (Cormorant Garamond + Inter) — задача этапа M4.
-- CI: `build.yml` собирает сайт, проверяет YAML и front matter, обязательные поля моделей, OG-разметку (`scripts/check_og.py`) и ссылки (`lychee`); `html-validate` и Lighthouse CI подключены, но пока с `continue-on-error` — до первого зелёного прогона.
-- Деплой (`deploy.yml`) отключён до появления хостинга. После настройки: включить `push` в `main`, задать секреты `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SSH_KNOWN_HOSTS` и переменную `SITE_BASE_URL`. Откат — `rollback.yml` (переключение симлинка на предыдущий релиз).
+- CI (`ci.yml`) собирает сайт на каждый push и PR, проверяет YAML и front matter, обязательные поля моделей, OG-разметку (`scripts/check_og.py`) и ссылки (`lychee`); `html-validate` и Lighthouse CI подключены, но пока с `continue-on-error` — до первого зелёного прогона.
+- Деплой — отдельный workflow `deploy.yml`: запускается по `workflow_run` после успешного прогона `ci` на `main` (и вручную через `workflow_dispatch`). Нужны секреты `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SSH_KNOWN_HOSTS` и переменные `SITE_BASE_URL`, `SITE_HOSTNAME`. Откат ручной — переключить симлинк `www` на предыдущий релиз из `releases/`.
+- `links.yml` — ежедневная проверка ссылок на собранном сайте (`lychee` + issue-репорт), собирает сайт тем же шагом `dart sass`.

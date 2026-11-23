@@ -108,10 +108,3 @@ jobs:
         with:
           name: site
           path: public
-
-  deploy:
-    name: "Deploy"
-    needs: ci
-    if: github.ref_name == github.event.repository.default_branch
-    uses: ./.github/workflows/deploy.yml
-    secrets: inherit

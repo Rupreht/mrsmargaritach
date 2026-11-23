@@ -1,8 +1,16 @@
 name: deploy
 
 on:
-  workflow_call:
+  # Деплой запускается только после успешного прогона ci на main
+  # (двухступенчатая схема, без вызова deploy из ci.yml).
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: deploy-production
@@ -18,6 +26,11 @@ env:
 
 jobs:
   deploy:
+    # Только реальный push в main с зелёным ci либо ручной запуск.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     environment: production
     steps:
