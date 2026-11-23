@@ -54,8 +54,8 @@
   todo: false
 
 - channel: email
-  label: "margarita.ch.online@gmail.com"
-  url: "mailto:margarita.ch.online@gmail.com?subject=Пишу%20с%20сайта:%20"
+  label: "stilgrad@gmail.com"
+  url: "mailto:stilgrad@gmail.com?subject=Пишу%20с%20сайта:%20"
   prefill: "Здравствуйте, Маргарита! Пишу с сайта."
   is_primary: false
   todo: false

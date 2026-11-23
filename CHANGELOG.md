@@ -70,6 +70,7 @@
 
 - `deploy.yml` стал самостоятельным workflow: запускается по `workflow_run` после успешного прогона `ci` на `main` (и вручную через `workflow_dispatch`). Job `deploy` удалён из `ci.yml`, `secrets: inherit` больше не нужен.
 - `ci.yml` остался только проверкой: re-run сборки на `main` больше не запускает деплой повторно, а PR не показывают пропущенную job `Deploy`.
+- Контактный e-mail заменён на `stilgrad@gmail.com`: `data/contacts.yaml` (подпись и `mailto:`-ссылка), оферта (`content/offer/index.md`, реквизиты продавца) и политика конфиденциальности (`content/privacy/index.md`, контакт оператора).
 
 ### Fixed
 
