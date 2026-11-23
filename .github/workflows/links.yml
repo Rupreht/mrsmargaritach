@@ -14,6 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: dart sass
+        uses: dw-labs-org/dart-sass-gha@d5c4c43545a79eaaa11cb4ec8363462702346184 # v1.0.1
+
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@d1c81a15d4e6dca7086a17b9c2565cb70fd576bf # v3.3.0
         with:

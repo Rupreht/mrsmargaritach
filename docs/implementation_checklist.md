@@ -39,7 +39,7 @@
 | ID | Решение | Статус | Факт / что осталось |
 | --- | --- | --- | --- |
 | D-1 | Hugo extended ≥ 0.140, Markdown + data | ✅ | 0.169.0, контент в `content/` и `data/` |
-| D-2 | Хостинг в РФ, nginx, rsync-деплой | 🟡 | `deploy/nginx.conf`, `deploy.yml`, `rollback.yml`; хостинга нет, `push` в deploy отключён |
+| D-2 | Хостинг в РФ, nginx, rsync-деплой | ✅ | `deploy/nginx.conf`, `deploy.yml` (workflow_run после зелёного `ci` на `main`); деплой уходит на сервер |
 | D-3 | Без корзины и онлайн-оплаты | ✅ | корзины и платёжных сценариев в коде нет |
 | D-4 | Без форм сбора ПД, deep-links в 4 мессенджера | 🟡 | `<form>` на сайте нет; Telegram и MAX не заполнены в `data/contacts.yaml` |
 | D-5 | Метрика + Вебвизор после согласия | ✅ | `assets/js/consent.js`, загрузка только после «Принять» |
@@ -175,15 +175,17 @@
 
 | Пункт | Статус | Комментарий |
 | --- | --- | --- |
-| `build.yml`: сборка Hugo | ✅ | |
+| `ci.yml`: сборка Hugo | ✅ | бывший `build.yml` |
+| `dart sass` во всех workflow со сборкой | ✅ | `ci.yml`, `deploy.yml`, `links.yml`; без шага — `no Dart Sass binary found in $PATH` |
 | yamllint для `data/` + проверка front matter | ✅ | добавлено 07.11 (venv + yamllint + PyYAML) |
 | Проверка обязательных полей моделей | ✅ | python-скрипт |
 | html-validate по `public/` | 🟡 | добавлено 07.11, `continue-on-error` до первого зелёного прогона |
-| lychee, падение при 404 | ✅ | `build.yml` + `links.yml` с issue-репортом |
+| lychee, падение при 404 | ✅ | `ci.yml` + `links.yml` с issue-репортом |
 | Lighthouse CI на 3 URL | 🟡 | добавлено 07.11 (`lighthouserc.json`), пока без блокировки |
 | `deploy.yml`: baseURL, rsync, симлинк, reload | ✅ | обновлено 07.11 |
+| `deploy` вынесен из `ci.yml` | ✅ | `deploy.yml` — самостоятельный workflow: `workflow_run` после зелёного `ci` на `main` + `workflow_dispatch` |
 | Хранение 5 последних релизов | ✅ | `KEEP_RELEASES`, prune в том же шаге |
-| Откат на предыдущий релиз | ✅ | `rollback.yml` (workflow_dispatch) |
+| Откат на предыдущий релиз | 🟡 | `rollback.yml` удалён в 7276b19; откат — переключить симлинк `www` на предыдущий релиз вручную |
 | Секреты `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SSH_KNOWN_HOSTS` | ✅ | переименованы; known_hosts пишется в шаге |
 | Branch protection на `main` | ⛔ | коммиты идут напрямую в `main` |
 | nginx: HTTPS, HTTP/2, gzip, HSTS, CSP | ✅ | `deploy/nginx.conf` |
@@ -259,7 +261,7 @@
 | B-12 | Служебная строка «Нет коллекции — самостоятельный товар.» попадает в текст страницы | ⛔ открыт | `content/catalog/olive/index.md` |
 | B-13 | Нет кнопки «Скопировать текст» для Telegram (FR-7) | ⛔ открыт | `layouts/partials/contact-buttons.html` |
 | B-14 | `assets/photo/~E5A6295.JPG` — неиспользуемый исходник 5,9 МБ в рабочей копии (в git не попал) | ⛔ открыт | `assets/photo/` |
-| B-15 | html-validate и Lighthouse в CI пока не блокирующие | 🟡 временно | `.github/workflows/build.yml` |
+| B-15 | html-validate и Lighthouse в CI пока не блокирующие | 🟡 временно | `.github/workflows/ci.yml` |
 
 ## Блокеры запуска
 
