@@ -17,7 +17,7 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@d1c81a15d4e6dca7086a17b9c2565cb70fd576bf # v3.3.0
         with:
-          hugo-version: "0.169.0"
+          hugo-version: "0.170.1"
           extended: true
 
       - name: Build
@@ -75,13 +75,6 @@ jobs:
       - name: Open Graph
         run: python3 scripts/check_og.py public
 
-      - name: Node.js
-        # html-validate@11 требует Node ^22.22 || >=24.8. Версия закреплена, чтобы шаг не
-        # зависел от Node в образе раннера (ubuntu-24.04 — 22.x, ubuntu-26.04 — 24.x).
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: "24"
-
       - name: HTML-validate
         env:
           # Тише вывод npm при установке пакета в кэш раннера; ошибки npm остаются в логе.
@@ -102,7 +95,7 @@ jobs:
         # без правки конфига. Полный обход всех страниц: LHCI_ALL_PAGES=1 npx @lhci/cli autorun.
         # Аудиты is-on-https и redirects-http пропущены: в CI сайт отдаётся по http://localhost.
         # Пока не блокирует сборку: на noindex-сайте SEO-аудит Lighthouse заведомо ниже цели.
-        run: npx --yes @lhci/cli@0.14.0 autorun
+        run: npx --yes @lhci/cli@0.16.x autorun
 
       - name: Проверка результата сборки
         run: |
