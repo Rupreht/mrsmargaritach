@@ -14,7 +14,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const DIST_DIR = path.join(__dirname, 'public');
-const BASE_URLS = ['/', '/catalog/'];
+const BASE_URLS = ['/', '/about', '/delivery', '/faq', '/offer', '/privacy', '/catalog/'];
 const SKIPPED_AUDITS = ['is-on-https', 'redirects-http'];
 
 /**
