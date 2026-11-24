@@ -81,7 +81,10 @@ jobs:
         run: npx --yes html-validate@9 "public/**/*.html"
 
       - name: Lighthouse CI
-        # Главная, каталог и карточка модели (п. 2.10, 2.11). Конфиг — lighthouserc.json.
+        # Главная, корень каталога и по одной карточке из каждой коллекции (п. 2.10, 2.11).
+        # Список URL строит .lighthouserc.cjs из public/ — модели добавляются и переименовываются
+        # без правки конфига. Полный обход всех страниц: LHCI_ALL_PAGES=1 npx @lhci/cli autorun.
+        # Аудиты is-on-https и redirects-http пропущены: в CI сайт отдаётся по http://localhost.
         # Пока не блокирует сборку: на noindex-сайте SEO-аудит Lighthouse заведомо ниже цели.
         continue-on-error: true
         run: npx --yes @lhci/cli@0.14.0 autorun

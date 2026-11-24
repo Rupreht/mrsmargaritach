@@ -181,7 +181,7 @@
 | Проверка обязательных полей моделей | ✅ | python-скрипт |
 | html-validate по `public/` | 🟡 | добавлено 07.11, `continue-on-error` до первого зелёного прогона |
 | lychee, падение при 404 | ✅ | `ci.yml` + `links.yml` с issue-репортом |
-| Lighthouse CI на 3 URL | 🟡 | добавлено 07.11 (`lighthouserc.json`), пока без блокировки |
+| Lighthouse CI: главная, каталог, по карточке из коллекции | 🟡 | добавлено 07.11; 24.11 — конфиг `.lighthouserc.cjs` строит URL из `public/` (модели меняются), полный обход — `LHCI_ALL_PAGES=1`; пока без блокировки |
 | `deploy.yml`: baseURL, rsync, симлинк, reload | ✅ | обновлено 07.11 |
 | `deploy` вынесен из `ci.yml` | ✅ | `deploy.yml` — самостоятельный workflow: `workflow_run` после зелёного `ci` на `main` + `workflow_dispatch` |
 | Хранение 5 последних релизов | ✅ | `KEEP_RELEASES`, prune в том же шаге |
