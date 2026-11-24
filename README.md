@@ -101,7 +101,7 @@ scripts/check_og.py            валидатор OG-разметки в соб�
 
 | Параметр | Где | Статус |
 | --- | --- | --- |
-| Домен и `baseURL` | `hugo.toml` | TODO |
+| Домен и `baseURL` | `hugo.toml` | https://stilgrad.ru/ |
 | `noindex = true` → `false` | `hugo.toml` | снимается перед публикацией |
 | Номер счётчика Метрики | `hugo.toml` → `params.metrikaId` | TODO |
 | ОГРНИП, e-mail | `hugo.toml` → `params` | TODO (L-01) |
@@ -109,7 +109,7 @@ scripts/check_og.py            валидатор OG-разметки в соб�
 | Обмеры 50–72 | `data/sizes.yaml` | из `sizes.png` (полуобхват); строка 72 — расчётная |
 | Фото съёмки | `content/**/`, `static/images/` | TODO (M3) |
 | OG-превью 1200×630 | `static/og/og-cover.jpg` | TODO: пока используется `photo/hero.webp` |
-| Юридические тексты | `content/offer`, `content/privacy`, `content/delivery` | черновики, проверить у юриста |
+| Юридические тексты | `content/offer`, `content/privacy`, `content/delivery` | политика — редакция от 24.11.2026; оферта и доставка — проверить у юриста |
 
 ## Changelog
 
