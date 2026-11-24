@@ -179,7 +179,7 @@
 | `dart sass` во всех workflow со сборкой | ✅ | `ci.yml`, `deploy.yml`, `links.yml`; без шага — `no Dart Sass binary found in $PATH` |
 | yamllint для `data/` + проверка front matter | ✅ | добавлено 07.11 (venv + yamllint + PyYAML) |
 | Проверка обязательных полей моделей | ✅ | python-скрипт |
-| html-validate по `public/` | ✅ | 24.11 — 0 ошибок по всем страницам, `continue-on-error` снят; локально `task test:validate` |
+| html-validate по `public/` | ✅ | 24.11 — 0 ошибок по всем страницам, `continue-on-error` снят; локально `task test:validate`. 24.11 — миграция 9.7.1 → 11.21.1 (Node 24 в CI, три новых правила `recommended` на разметке не срабатывают), шаг печатает число страниц и падает при пустом `public/` |
 | lychee, падение при 404 | ✅ | `ci.yml` + `links.yml` с issue-репортом |
 | Lighthouse CI: главная, каталог, по карточке из коллекции | 🟡 | добавлено 07.11; 24.11 — конфиг `.lighthouserc.cjs` строит URL из `public/` (модели меняются), полный обход — `LHCI_ALL_PAGES=1`; пока без блокировки |
 | `deploy.yml`: baseURL, rsync, симлинк, reload | ✅ | обновлено 07.11 |

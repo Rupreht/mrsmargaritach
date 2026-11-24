@@ -48,4 +48,4 @@ tasks:
     deps:
       - build
     cmds:
-      - npx --yes html-validate@9 "public/**/*.html"
+      - npx --yes html-validate@11.21.1 "public/**/*.html"
