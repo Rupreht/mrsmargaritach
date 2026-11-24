@@ -1,7 +1,7 @@
 # Чек-лист выполнения плана
 
 > Версия 1.2 от 07.11.2026. Составлен по [`docs/implementation_plan.md`](implementation_plan.md) (v2.1 от 07.11.2026).
-> Проверка — по фактическому коду, данным и сборке `hugo --minify --gc --environment production` (Hugo 0.169.0 extended).
+> Проверка — по фактическому коду, данным и сборке `hugo --minify --gc --environment production` (Hugo 0.170.1 extended).
 
 **Легенда**
 
@@ -38,7 +38,7 @@
 
 | ID | Решение | Статус | Факт / что осталось |
 | --- | --- | --- | --- |
-| D-1 | Hugo extended ≥ 0.140, Markdown + data | ✅ | 0.169.0, контент в `content/` и `data/` |
+| D-1 | Hugo extended ≥ 0.140, Markdown + data | ✅ | 0.170.1, контент в `content/` и `data/` |
 | D-2 | Хостинг в РФ, nginx, rsync-деплой | ✅ | `deploy/nginx.conf`, `deploy.yml` (workflow_run после зелёного `ci` на `main`); деплой уходит на сервер |
 | D-3 | Без корзины и онлайн-оплаты | ✅ | корзины и платёжных сценариев в коде нет |
 | D-4 | Без форм сбора ПД, deep-links в 4 мессенджера | 🟡 | `<form>` на сайте нет; Telegram и MAX не заполнены в `data/contacts.yaml` |
@@ -133,7 +133,7 @@
 
 | Параметр | Статус | Комментарий |
 | --- | --- | --- |
-| Hugo extended ≥ 0.140, сборка `--minify --gc` | ✅ | 0.169.0 |
+| Hugo extended ≥ 0.140, сборка `--minify --gc` | ✅ | 0.170.1 |
 | Node.js не нужен | ✅ | ни в сборке, ни в рантайме |
 | CSS: SCSS через Hugo Pipes, один файл, fingerprint, ≤ 60 КБ | ✅ | 17,9 КБ raw / 4,1 КБ gzip; транспилер `libsass` (deprecated в 0.153) |
 | JS: ES2020, один бандл ≤ 30 КБ | ✅ | ~5 КБ, `type="module"`, `js.Build` |
