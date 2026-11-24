@@ -179,7 +179,7 @@
 | `dart sass` во всех workflow со сборкой | ✅ | `ci.yml`, `deploy.yml`, `links.yml`; без шага — `no Dart Sass binary found in $PATH` |
 | yamllint для `data/` + проверка front matter | ✅ | добавлено 07.11 (venv + yamllint + PyYAML) |
 | Проверка обязательных полей моделей | ✅ | python-скрипт |
-| html-validate по `public/` | 🟡 | добавлено 07.11, `continue-on-error` до первого зелёного прогона |
+| html-validate по `public/` | ✅ | 24.11 — 0 ошибок по всем страницам, `continue-on-error` снят; локально `task test:validate` |
 | lychee, падение при 404 | ✅ | `ci.yml` + `links.yml` с issue-репортом |
 | Lighthouse CI: главная, каталог, по карточке из коллекции | 🟡 | добавлено 07.11; 24.11 — конфиг `.lighthouserc.cjs` строит URL из `public/` (модели меняются), полный обход — `LHCI_ALL_PAGES=1`; пока без блокировки |
 | `deploy.yml`: baseURL, rsync, симлинк, reload | ✅ | обновлено 07.11 |
@@ -197,7 +197,7 @@
 
 | № | Критерий | Статус | Комментарий |
 | --- | --- | --- | --- |
-| 1 | 8 страниц без 404 и ошибок в консоли, валидный HTML | 🟡 | страницы собираются; html-validate не дал зелёный прогон |
+| 1 | 8 страниц без 404 и ошибок в консоли, валидный HTML | 🟡 | html-validate — 0 ошибок (24.11); консоль и горизонтальный скролл не проверялись |
 | 2 | Новая модель одной папкой | ✅ | проверено структурой каталога |
 | 3 | Deep-links на iOS/Android/десктопе | ⛔ | не проверялось, нет TG/MAX |
 | 4 | Cookie: до согласия нет `mc.yandex.ru`, после — есть | 🟡 | логика есть, Network не проверялся |
@@ -261,7 +261,7 @@
 | B-12 | Служебная строка «Нет коллекции — самостоятельный товар.» попадает в текст страницы | ⛔ открыт | `content/catalog/olive/index.md` |
 | B-13 | Нет кнопки «Скопировать текст» для Telegram (FR-7) | ⛔ открыт | `layouts/partials/contact-buttons.html` |
 | B-14 | `assets/photo/~E5A6295.JPG` — неиспользуемый исходник 5,9 МБ в рабочей копии (в git не попал) | ⛔ открыт | `assets/photo/` |
-| B-15 | html-validate и Lighthouse в CI пока не блокирующие | 🟡 временно | `.github/workflows/ci.yml` |
+| B-15 | Lighthouse в CI пока не блокирующий (html-validate — блокирующий с 24.11) | 🟡 временно | `.github/workflows/ci.yml` |
 
 ## Блокеры запуска
 

@@ -11,7 +11,7 @@
       <ul class="site-footer__list">
         {{- range hugo.Data.contacts }}
           {{- if .url }}
-        <li><a href="{{ .url | safeURL }}"{{ if not (hasPrefix .url "tel:") }} rel="noopener"{{ end }} data-channel="{{ .channel }}">{{ .label }}</a></li>
+        <li><a href="{{ .url | safeURL }}"{{ if not (hasPrefix .url "tel:") }} rel="noopener"{{ end }} data-channel="{{ .channel }}">{{ if hasPrefix .url "tel:" }}{{ partial "phone.html" .label }}{{ else }}{{ .label }}{{ end }}</a></li>
           {{- end }}
         {{- end }}
       </ul>
@@ -35,7 +35,7 @@
         <li>ОГРНИП {{ . }}</li>
         {{- end }}
         <li>ИНН {{ site.Params.inn }}</li>
-        <li><a href="tel:{{ site.Params.phoneRaw }}">{{ site.Params.phone }}</a></li>
+        <li><a href="tel:{{ site.Params.phoneRaw }}">{{ partial "phone.html" site.Params.phone }}</a></li>
         {{- with site.Params.email }}
         <li><a href="mailto:{{ . }}">{{ . }}</a></li>
         {{- end }}
