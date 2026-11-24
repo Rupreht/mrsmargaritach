@@ -42,3 +42,10 @@ tasks:
       - build
     cmds:
       - python3 scripts/check_og.py public
+
+  test:validate:
+    desc: "Валидация HTML (html-validate) по собранному public/"
+    deps:
+      - build
+    cmds:
+      - npx --yes html-validate@9 "public/**/*.html"

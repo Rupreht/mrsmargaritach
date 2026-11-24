@@ -1,0 +1,4 @@
+{{- /* Текст номера телефона с неразрывными символами: правило html-validate tel-non-breaking.
+       Пробел → &nbsp;, дефис → &#8209;. Параметр — строка с номером; по умолчанию site.Params.phone. */ -}}
+{{- $tel := . | default site.Params.phone -}}
+{{- replace (replace $tel " " "&nbsp;") "-" "&#8209;" | safeHTML -}}

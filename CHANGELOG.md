@@ -75,6 +75,9 @@
 - Политика ПД приведена к утверждённой редакции от 24.11.2026: бренд «Маргарита Чистова», домен `stilgrad.ru`, реквизиты ИП, цели и правовые основания обработки, cookie и «Яндекс.Метрика», сроки хранения, права посетителя и контакты для обращений; статус черновика снят.
 - Боевой домен `stilgrad.ru` прописан в `hugo.toml` (`baseURL`), `deploy/nginx.conf`, `.lycheeignore` и `README.md`.
 - Lighthouse CI ускорен: вместо обхода всех страниц сборки проверяются четыре URL — главная, `/catalog/` и по одной карточке из каждой коллекции. Полный обход доступен через `LHCI_ALL_PAGES=1 npx @lhci/cli autorun`. Аудиты `is-on-https` и `redirects-http` исключены из прогона (`collect.settings.skipAudits`) и отключены в `assert` (`"off"`): в CI сайт открывается по `http://localhost`, поэтому проверки HTTPS заведомо не проходили.
+- `.htmlvalidate.json`: правило `valid-id` переведено в режим `relaxed`. Id заголовков юридических страниц (`1-термины-и-определения`, `2-статус-продавца` и т. п.) генерирует Hugo из нумерованных заголовков (`autoHeadingIDType = "github"`); по HTML5 они валидны, но не проходили строгую проверку «id должен начинаться с буквы». Тексты оферты, политики и доставки не переписывались.
+- `ci.yml`: шаг `HTML-validate` стал блокирующим — `continue-on-error` снят, прогон по собранному `public/` даёт 0 ошибок (п. 2.10).
+- `Taskfile.yaml`: новая задача `test:validate` — html-validate по свежей сборке `public/`.
 
 ### Fixed
 
@@ -88,6 +91,7 @@
 - Хлебные крошки: глобальное правило `li + li { margin-top: var(--space-2) }` из `_base.scss` сдвигало каждый следующий пункт вниз, поэтому «Главная», «Каталог» и «Рубашка «Олива»» стояли не в одну линию. В `.breadcrumbs__list` добавлены `align-items: baseline` и сброс `margin-top` у пунктов (как в `.site-footer__list`).
 - `og:image` отсутствовал на главной и текстовых страницах: `head.html` смотрел только на пустой `params.ogImage` и на `images[0]` карточек каталога. Теперь `og:image` формируется партиалом `og-image.html` из `hero.image` главной (`content/_index.md`), обложек моделей и `ogImageDefault`; добавлены `og:image:type`, `width`, `height`, `alt`, а также `twitter:image` и `twitter:image:alt`.
 
+- Ссылки `tel:` не проходили html-validate (правило `tel-non-breaking`, 166 ошибок по всем страницам): номер в футере рвался переносом строки на узких экранах. Пробелы и дефисы в тексте номера теперь неразрывные (`&nbsp;`, `&#8209;`). Форматирование вынесено в партиал `layouts/partials/phone.html` и используется в `footer.html` («Связаться» и «Реквизиты») и `contact-buttons.html`, включая fallback без каналов; в `content/delivery/index.md` сущности прописаны прямо в тексте ссылки. Итог прогона — 0 ошибок, шаг `HTML-validate` в `ci.yml` стал блокирующим.
 - `links.yml`: не хватало шага `dart sass`, поэтому ежедневная проверка ссылок падала на сборке (`no Dart Sass binary found in $PATH`). Шаг добавлен, `Links` снова собирает сайт.
 - Lighthouse CI падал с `Lighthouse was unable to reliably load the page ... (Status code: 404)`: в конфиге был жёстко прописан URL карточки `/catalog/classic/chestnut/`, которой больше нет после перераспределения моделей по коллекциям. Конфиг переехал из `lighthouserc.json` в `.lighthouserc.cjs` и собирает список URL из готового `public/`: главная, `/catalog/` и по одной карточке из каждой коллекции (`/catalog/<collection>/<model>/`), поэтому новые и переименованные модели проверяются без правки конфига.
 

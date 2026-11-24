@@ -76,8 +76,6 @@ jobs:
         run: python3 scripts/check_og.py public
 
       - name: HTML-validate
-        # TODO: убрать continue-on-error после первого зелёного прогона (п. 2.10).
-        continue-on-error: true
         run: npx --yes html-validate@9 "public/**/*.html"
 
       - name: Lighthouse CI
@@ -86,7 +84,6 @@ jobs:
         # без правки конфига. Полный обход всех страниц: LHCI_ALL_PAGES=1 npx @lhci/cli autorun.
         # Аудиты is-on-https и redirects-http пропущены: в CI сайт отдаётся по http://localhost.
         # Пока не блокирует сборку: на noindex-сайте SEO-аудит Lighthouse заведомо ниже цели.
-        continue-on-error: true
         run: npx --yes @lhci/cli@0.14.0 autorun
 
       - name: Проверка результата сборки

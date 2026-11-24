@@ -10,6 +10,13 @@
     ],
     "no-inline-style": "off",
     "no-trailing-whitespace": "off",
+    "tel-non-breaking": "error",
+    "valid-id": [
+      "error",
+      {
+        "relaxed": true
+      }
+    ],
     "void-style": "off"
   }
 }
