@@ -1,7 +1,7 @@
 # Конфигурация сайта «Маргарита Чистова».
 # Стек: Hugo extended ≥ 0.140, без Node.js. См. docs/implementation_plan.md, п. 2.7.
 
-baseURL = "https://example.ru/"   # TODO: заменить на боевой домен после выбора хостинга
+baseURL = "https://stilgrad.ru/"
 locale = "ru-RU"
 defaultContentLanguage = "ru"
 title = "Маргарита Чистова — рубашки, в которых хорошо"
