@@ -2,14 +2,6 @@
 {{ partial "breadcrumbs.html" . }}
 
 {{- if eq .Section "catalog" }}
-{{- $cover := "" -}}
-{{- $alt := .Title -}}
-{{- with .Params.images -}}
-  {{- $cover = (index . 0).src -}}
-  {{- $alt = (index . 0).alt | default $.Title -}}
-{{- end -}}
-{{- $coverImg := "" -}}
-{{- with $cover }}{{ $coverImg = $.Resources.GetMatch . }}{{ end -}}
 {{- $slug := .Params.slug | default .File.BaseFileName -}}
 {{- $silhouette := "" -}}
 {{- with .CurrentSection }}{{ if .Params.model_type }}{{ $silhouette = .Title }}{{ end }}{{ end -}}
@@ -21,8 +13,9 @@
 <article class="model">
   <div class="container model__grid">
     <div class="model__media">
-      {{- with $coverImg }}
-      <img class="model__cover" src="{{ .RelPermalink }}" alt="{{ $alt }}" width="{{ .Width }}" height="{{ .Height }}" fetchpriority="high" decoding="async">
+      {{- /* LCP-картинка (cover) — eager + preload в <head>; sizes берём из lcp-image.html. */ -}}
+      {{- with partial "lcp-image.html" . }}
+      {{ partial "responsive-img.html" (dict "img" .img "sizes" .sizes "alt" .alt "class" "model__cover" "eager" true) }}
       {{- else }}
       <div class="model__placeholder" style="background-color: {{ .Params.color_hex | default "#DED3C4" }}" aria-hidden="true"></div>
       <p class="model__placeholder-note">Фото модели появятся после съёмки.</p>
@@ -31,7 +24,7 @@
         {{- $src := .src -}}
         {{- $altText := .alt | default ($.Params.color_name | default $.Title) -}}
         {{- with $.Resources.GetMatch $src }}
-      <img class="model__thumb" src="{{ .RelPermalink }}" alt="{{ $altText }}" width="{{ .Width }}" height="{{ .Height }}" loading="lazy" decoding="async">
+      {{ partial "responsive-img.html" (dict "img" . "sizes" "(max-width: 767px) 100vw, 60vw" "alt" $altText "class" "model__thumb") }}
         {{- end }}
       {{- end }}
     </div>

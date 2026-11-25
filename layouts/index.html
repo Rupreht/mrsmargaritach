@@ -1,12 +1,6 @@
 {{ define "main" }}
 {{- $p := .Params -}}
 {{- $hero := $p.hero | default dict -}}
-{{- $heroImg := "" -}}
-{{- with $hero.image -}}
-  {{- /* Сначала ресурс страницы (page bundle), затем глобальные assets/ (например, assets/photo/hero.webp). */ -}}
-  {{- $heroImg = $.Resources.GetMatch . -}}
-  {{- if not $heroImg }}{{ $heroImg = resources.Get . }}{{ end -}}
-{{- end -}}
 
 <section class="hero" id="hero">
   <div class="container hero__inner">
@@ -20,8 +14,9 @@
       </div>
     </div>
     <div class="hero__media">
-      {{- with $heroImg }}
-      <img class="hero__image" src="{{ .RelPermalink }}" alt="{{ $hero.image_alt | default $.Title }}" width="{{ .Width }}" height="{{ .Height }}" fetchpriority="high" decoding="async">
+      {{- /* LCP-картинка (hero) — eager + preload в <head>; sizes берём из lcp-image.html. */ -}}
+      {{- with partial "lcp-image.html" . }}
+      {{ partial "responsive-img.html" (dict "img" .img "sizes" .sizes "alt" .alt "class" "hero__image" "eager" true) }}
       {{- else }}
       <div class="hero__placeholder" aria-hidden="true"></div>
       {{- end }}

@@ -137,9 +137,9 @@
 | Node.js не нужен | ✅ | ни в сборке, ни в рантайме |
 | CSS: SCSS через Hugo Pipes, один файл, fingerprint, ≤ 60 КБ | ✅ | 17,9 КБ raw / 4,1 КБ gzip; транспилер `libsass` (deprecated в 0.153) |
 | JS: ES2020, один бандл ≤ 30 КБ | ✅ | ~5 КБ, `type="module"`, `js.Build` |
-| Изображения: WebP 480/800/1200/1600, `srcset`/`sizes`, width/height | ⛔ | ресайза нет, картинки отдаются как есть |
-| LCP: `loading=eager`, `fetchpriority`, preload | 🟡 | `fetchpriority="high"` есть, preload нет |
-| Остальные изображения: lazy + async | ✅ | `loading="lazy" decoding="async"` |
+| Изображения: WebP 480/800/1200/1600, `srcset`/`sizes`, width/height | ✅ | `partials/responsive-img.html`: WebP q78 на лету, ширины до исходной, srcset+sizes+width/height |
+| LCP: `loading=eager`, `fetchpriority`, preload | ✅ | hero главной и cover модели: eager + `fetchpriority="high"` + `<link rel="preload" imagesrcset/imagesizes>` |
+| Остальные изображения: lazy + async | ✅ | `loading="lazy" decoding="async"` + srcset |
 | Self-hosted woff2 + preload | ⛔ | системный стек |
 | HTML: семантика, один H1, без inline-стилей | 🟡 | inline `style` у плейсхолдеров моделей |
 | Браузеры и устройства | ⛔ | не тестировалось |
@@ -255,7 +255,7 @@
 | B-6 | Не было цели `scroll_75` | ✅ исправлено 07.11 | `assets/js/main.js` |
 | B-7 | В nginx не было `error_page 404` — кастомная 404 не отдавалась | ✅ исправлено 07.11 | `deploy/nginx.conf` |
 | B-8 | На `/catalog/` нет фильтра, хотя п. 2.2 и FR-5 его требуют | ⛔ открыт | `layouts/_default/list.html` |
-| B-9 | Нет `srcset`/ресайза изображений и preload для LCP | ⛔ открыт | `layouts/partials/model-card.html`, `layouts/_default/single.html` |
+| B-9 | Нет `srcset`/ресайза изображений и preload для LCP | ✅ исправлено 25.11 | `partials/responsive-img.html`, `partials/lcp-image.html` |
 | B-10 | OG-изображение 1200×630 не формируется | 🟡 механизм готов: `ogImageDefault` + `static/og/og-cover.jpg`; файла нет — используется hero 910×1044 | `layouts/partials/og-image.html`, `scripts/check_og.py` |
 | B-11 | `notes` из `data/sizes.yaml` не выводятся; длина 60-го расходится с описанием «Оливы» (74 vs 73 см) | ⛔ открыт | `layouts/partials/size-table.html` |
 | B-12 | Служебная строка «Нет коллекции — самостоятельный товар.» попадает в текст страницы | ⛔ открыт | `content/catalog/olive/index.md` |
