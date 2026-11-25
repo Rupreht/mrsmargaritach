@@ -51,5 +51,10 @@ site.Params.brand) -}}
   {{- end }}
   <link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
 
+  {{- /* Preload LCP-изображения: hero главной / cover модели (п. 2.7). */ -}}
+  {{- with partial "lcp-image.html" . }}
+  {{ partial "responsive-img.html" (dict "img" .img "sizes" .sizes "eager" true "link" true) }}
+  {{- end }}
+
   {{ partial "seo-jsonld.html" . }}
 </head>

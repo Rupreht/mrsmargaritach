@@ -1,0 +1,42 @@
+{{- /*
+  LCP-кандидат страницы: hero главной или cover модели (docs/implementation_plan.md, п. 2.7).
+  Возвращает dict { img, sizes, alt } или пустой dict, если LCP-картинки нет.
+  Используется и в <head> (preload), и в теле (сам <img>) — единый источник sizes,
+  чтобы preload и <img> не разъехались по атрибутам (иначе двойная загрузка).
+*/ -}}
+{{- $page := . -}}
+{{- $img := "" -}}
+{{- $sizes := "" -}}
+{{- $alt := $page.Title -}}
+
+{{- if $page.IsHome -}}
+  {{- $hero := $page.Params.hero | default dict -}}
+  {{- with $hero.image -}}
+    {{- $res := $page.Resources.GetMatch . -}}
+    {{- if not $res }}{{ $res = resources.Get . }}{{ end -}}
+    {{- with $res -}}
+      {{- $img = . -}}
+      {{- $alt = $hero.image_alt | default $page.Title -}}
+      {{- /* Hero: на ≥768px колонка ≈ 0.95fr сетки .hero__inner, на мобильном — вся ширина. */ -}}
+      {{- $sizes = "(max-width: 767px) 100vw, 50vw" -}}
+    {{- end -}}
+  {{- end -}}
+{{- else if and (eq $page.Section "catalog") $page.IsPage -}}
+  {{- with $page.Params.images -}}
+    {{- with index . 0 -}}
+      {{- $first := . -}}
+      {{- with $page.Resources.GetMatch .src -}}
+        {{- $img = . -}}
+        {{- $alt = $first.alt | default $page.Title -}}
+        {{- /* Cover модели: на ≥768px колонка 1.1fr сетки .model__grid, на мобильном — вся ширина. */ -}}
+        {{- $sizes = "(max-width: 767px) 100vw, 60vw" -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $img -}}
+  {{- return (dict "img" $img "sizes" $sizes "alt" $alt) -}}
+{{- else -}}
+  {{- return dict -}}
+{{- end -}}

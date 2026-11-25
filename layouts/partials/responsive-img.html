@@ -1,0 +1,51 @@
+{{- /*
+  Адаптивная картинка: srcset/sizes + WebP через Hugo Image Processing.
+
+  Вход (dict):
+    img       — ресурс изображения (обязательно)
+    sizes     — атрибут sizes (обязательно)
+    alt       — alt-текст
+    class     — CSS-класс(ы), только для <img>
+    eager     — bool: LCP (eager + fetchpriority="high"), по умолчанию false
+    link      — bool: вывести <link rel="preload"> вместо <img> (для <head>)
+    widths    — slice ширин, по умолчанию [480 800 1200 1600]
+    quality   — качество WebP, по умолчанию 78
+*/ -}}
+{{- $img := .img -}}
+{{- $widths := .widths | default (slice 480 800 1200 1600) -}}
+{{- $quality := .quality | default 78 -}}
+
+{{- $srcset := slice -}}
+{{- $first := "" -}}
+{{- $fallback := "" -}}
+{{- range $w := $widths -}}
+  {{- if le $w $img.Width -}}
+    {{- $r := $img.Resize (printf "%dx webp q%d" $w $quality) -}}
+    {{- $srcset = $srcset | append (printf "%s %dw" $r.RelPermalink $r.Width) -}}
+    {{- if not $first }}{{ $first = $r.RelPermalink }}{{ end -}}
+    {{- if eq $w 800 }}{{ $fallback = $r.RelPermalink }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $srcset -}}
+  {{- /* Исходник уже 480px — отдаём как есть, единичным кандидатом. */ -}}
+  {{- $first = $img.RelPermalink -}}
+  {{- $fallback = $img.RelPermalink -}}
+  {{- $srcset = slice (printf "%s %dw" $img.RelPermalink $img.Width) -}}
+{{- end -}}
+{{- if not $fallback }}{{ $fallback = $first }}{{ end -}}
+{{- $src := $fallback -}}
+{{- $srcset = delimit $srcset ", " -}}
+
+{{- if .link -}}
+{{- /*
+  Go html/template экранирует imagesrcset как обычный URL (пробелы → %20), а браузер
+  разбирает imagesrcset по правилам srcset (литеральные пробелы). Обходим экранирование
+  через safeHTML: все данные внутри — наши rel-permalink'и и статические sizes.
+*/ -}}
+{{- $fp := "" -}}
+{{- if .eager }}{{ $fp = " fetchpriority=\"high\"" }}{{ end -}}
+{{- $link := printf "<link rel=\"preload\" as=\"image\" href=\"%s\" imagesrcset=\"%s\" imagesizes=\"%s\"%s>" $src $srcset .sizes $fp -}}
+{{- $link | safeHTML -}}
+{{- else -}}
+<img{{ with .class }} class="{{ . }}"{{ end }} src="{{ $src }}" srcset="{{ $srcset }}" sizes="{{ .sizes }}" alt="{{ .alt }}" width="{{ $img.Width }}" height="{{ $img.Height }}" loading="{{ if .eager }}eager{{ else }}lazy{{ end }}"{{ if .eager }} fetchpriority="high"{{ end }} decoding="async">
+{{- end -}}
