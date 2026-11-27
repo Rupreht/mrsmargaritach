@@ -1,6 +1,6 @@
 {{- /* JSON-LD: Organization, BreadcrumbList, Product, FAQPage (FR-13).
-       В городской сборке Organization получает areaServed, а при наличии
-       адреса самовывоза добавляется Place (docs/SEO.md). */ -}}
+       В городской сборке при наличии адреса самовывоза добавляется Place
+       (docs/SEO.md). */ -}}
 {{- $graph := slice -}}
 {{- $city := partial "city-data.html" . -}}
 
@@ -13,7 +13,6 @@
 -}}
 {{- with site.Params.email }}{{ $org = merge $org (dict "email" .) }}{{ end -}}
 {{- with site.Params.ogImage }}{{ $org = merge $org (dict "logo" (. | absURL)) }}{{ end -}}
-{{- with $city }}{{ $org = merge $org (dict "areaServed" (dict "@type" "City" "name" .name)) }}{{ end -}}
 {{- $graph = $graph | append $org -}}
 
 {{- with $city -}}
@@ -23,7 +22,6 @@
       "@type" "Place"
       "name" (printf "%s — %s" site.Params.brand $point.name)
       "address" (dict "@type" "PostalAddress" "streetAddress" $point.address "addressLocality" $city.name "addressCountry" "RU")
-      "areaServed" (dict "@type" "City" "name" $city.name)
     ) -}}
   {{- end -}}
 {{- end -}}
