@@ -80,8 +80,15 @@
     </div>
     <div class="card-grid">
       {{- range . }}
-      {{- $modelURL := printf "catalog/%s/%s/" .collection .slug | relURL }}
-      <div class="card-grid__item">
+        {{- /* Карточку берём из настоящей страницы каталога по collection+slug:
+               content/catalog смонтирован в городскую сборку (scripts/build.sh),
+               поэтому доступны обложка и все поля модели. */ -}}
+        {{- $model := site.GetPage (printf "/catalog/%s/%s" .collection .slug) }}
+        {{- with $model }}
+        {{ partial "model-card.html" . }}
+        {{- else }}
+        {{- /* Фолбэк: карточка модели не найдена — цветной плейсхолдер. */ -}}
+        {{- $modelURL := printf "catalog/%s/%s/" .collection .slug | relURL }}
         <article class="card-model">
           <a class="card-model__media" href="{{ $modelURL }}">
             <span class="card-model__swatch" style="background-color: {{ .color_hex | default "#DED3C4" }}" aria-hidden="true"></span>
@@ -93,7 +100,7 @@
             <a class="btn btn--secondary btn--s card-model__cta" href="{{ $modelURL }}">Смотреть модель</a>
           </div>
         </article>
-      </div>
+        {{- end }}
       {{- end }}
     </div>
     <p class="section__note">Размеры 50–72, свободный крой. Полное описание, ткани и размерная сетка — в карточках каталога.</p>
@@ -128,7 +135,7 @@
 
 {{ partial "cta.html" (dict
   "id" "contacts"
-  "title" (printf "Подобрать размер для %s" .name_to)
+  "title" "Подобрать размер для Вас"
   "text" "Напишите в удобном канале — помогу с размером, тканью и сроком доставки."
   "prefill" .prefill
 ) }}
