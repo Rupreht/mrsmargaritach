@@ -35,6 +35,76 @@ hugo server --config hugo.toml,city-config/moscow.toml --contentDir city-content
 
 Собранный сайт появляется в `public/` (каталог в `.gitignore`).
 
+## Docker
+
+Всё, что нужно для локальной сборки и проверок, есть в контейнерах — Hugo, Dart Sass,
+Python с `yamllint`, Node, lychee и Task ставить на машину не требуется.
+Сборка мультистадийная: тяжёлый builder отбрасывается, а на выходе — лёгкий образ
+`nginx:stable-alpine` только со статикой.
+
+```bash
+# собранный сайт в nginx: http://localhost:8080
+docker compose up --build
+
+# то же без compose
+docker build -t mrsmargaritach:local .
+docker run --rm -p 8080:80 mrsmargaritach:local
+
+# проверки как в ci.yml: сборка, YAML/front matter, поля моделей, города,
+# Open Graph, html-validate (собирается из контекста — смонтированные
+# каталоги не нужны, свежий код подхватывает --build)
+docker compose run --rm --build test
+
+# проверки + Lighthouse и lychee
+docker compose run --rm --build -e CHECK_LIGHTHOUSE=1 -e CHECK_LINKS=1 test
+
+# hugo server с live-reload: http://localhost:1313
+# (каталог проекта монтируется в /site)
+docker compose --profile tools up
+
+# shell с тулчейном (hugo, sass, node, lychee, task)
+docker compose run --rm --profile tools --entrypoint bash tools
+```
+
+Через Taskfile:
+
+```bash
+task docker:up       # сайт в nginx
+task docker:test     # проверки
+task docker:serve    # hugo server
+task docker:shell    # shell с тулчейном
+```
+
+Стадии (`Dockerfile`):
+
+| Стадия | Что внутри | Назначение |
+| --- | --- | --- |
+| `tools` | Hugo extended 0.170.1, Dart Sass, Python + yamllint, Node 22, lychee, Task | `hugo server`, ручные проверки, `task` |
+| `builder` | `tools` + исходники → `bash scripts/build.sh dist` | сборка основного сайта и городов |
+| `test` | `builder` + Chromium | прогон проверок `ci.yml`, Lighthouse |
+| `nginx` (по умолчанию) | `nginx:stable-alpine` + `dist/` + `docker/nginx.conf` | финальный образ |
+
+Что учесть:
+
+- `HUGO_BASE_URL` — `baseURL` сборки, по умолчанию `http://localhost:8080/`,
+  чтобы ссылки работали в локальном превью. Для образа «как в проде»:
+  `HUGO_BASE_URL=https://stilgrad.ru/ docker compose build`.
+- `docker/nginx.conf` — контейнерный вариант боевого `deploy/nginx.conf`: только HTTP
+  (TLS терминируется снаружи), та же логика хостов `map $host $city_dir`, те же
+  301 с алиасов городов. Город проверяется заголовком `Host`:
+  `curl -H "Host: ekb.stilgrad.ru" http://localhost:8080/`.
+- `SITE_PORT` и `HUGO_PORT` переопределяют порты `8080` и `1313`.
+- Образ собирается под архитектуру хоста (`TARGETARCH`): бинарники Hugo, Dart Sass,
+  Node, lychee и Task скачиваются под `amd64` или `arm64`. Мультиарх-сборка:
+  `docker buildx build --platform linux/amd64,linux/arm64 -t mrsmargaritach:local .`.
+- `test` собирается из контекста (`COPY . .`), поэтому проверки не зависят от
+  монтирования каталогов хоста: `docker compose run --rm --build test`.
+  `SKIP_BUILD=1` отключает пересборку внутри образа.
+- `tools` (live-reload) требует смонтированного каталога проекта. Если Docker
+  Desktop не отдаёт каталог (File sharing) или Colima запущена без монтирования
+  (`colima start --mount-type virtiofs`), скрипт `dev` в контейнере скажет об
+  этом прямо — вместо пустого сайта.
+
 ## Структура проекта
 
 ```text
@@ -78,6 +148,11 @@ assets/
 archetypes/                    шаблоны новых страниц: default, model, collection
 static/favicon.svg
 deploy/nginx.conf              конфиг хостинга
+Dockerfile                     мультистадийная сборка: tools → builder → test → nginx
+compose.yaml                   compose: site (nginx), test (проверки), tools (hugo server)
+docker/nginx.conf              контейнерный конфиг nginx (HTTP-only, те же map/301)
+docker/site-common.conf        общие настройки серверов: заголовки, gzip, кэш, 404
+docker/check.sh                проверки в контейнере по шагам ci.yml
 .lighthouserc.cjs              конфиг Lighthouse CI (главная, каталог, карточки)
 .htmlvalidate.json             правила html-validate
 scripts/check_og.py            валидатор OG-разметки в собранном public/

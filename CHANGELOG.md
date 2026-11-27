@@ -51,6 +51,13 @@
 - Поле `og_image` в архетипах `default.md` и `model.md` — точечный оверрайд OG-превью.
 - Адаптивные изображения: партиал `layouts/partials/responsive-img.html` — ресайз WebP q78 на лету (ширины 480/800/1200/1600, только до исходного размера), `srcset` + `sizes`, сохранены `width`/`height`; применён к hero главной, cover и дополнительным фото модели, карточкам каталога и `figure`.
 - Preload LCP-изображения: партиал `layouts/partials/lcp-image.html` — hero главной и cover модели, `<link rel="preload" as="image" imagesrcset imagesizes fetchpriority="high">` в `<head>`; `imagesrcset` собран поверх экранирования Go через `safeHTML`.
+- `Dockerfile` — мультистадийная сборка: стадия `tools` (Hugo extended 0.170.1, Dart Sass, Python + yamllint, Node 22, lychee, Task — всё с проверкой SHA256), `builder` (`scripts/build.sh dist`), `test` (+ Chromium для Lighthouse) и финальный лёгкий `nginx:stable-alpine` только со статикой.
+- `compose.yaml` — сервисы `site` (собранный сайт в nginx, `http://localhost:8080`), `test` (проверки `ci.yml` в контейнере) и `tools` (`hugo server` с live-reload).
+- `docker/check.sh` — проверки в контейнере по шагам `ci.yml`: сборка, `yamllint`, front matter, обязательные поля моделей, городские данные и сборки, Open Graph, `html-validate`; Lighthouse и lychee — по флагам `CHECK_LIGHTHOUSE` и `CHECK_LINKS`.
+- `docker/dev.sh` — запуск `hugo server` в контейнере с подсказкой, если каталог проекта не смонтирован (Colima без общих каталогов, Docker Desktop без file sharing).
+- `docker/nginx.conf` и `docker/site-common.conf` — контейнерный вариант боевого `deploy/nginx.conf`: HTTP-only, та же логика `map $host $city_dir`, те же 301 с алиасов городов, схема редиректа берётся из `X-Forwarded-Proto`.
+- `Taskfile.yaml` — задачи `docker:build`, `docker:run`, `docker:up`, `docker:test`, `docker:test:full`, `docker:serve`, `docker:shell`.
+- `.dockerignore` — в контекст сборки не попадают `.git`, `public/`, `dist/`, `resources/`, `.lighthouseci/`, `.env`.
 
 ### Changed
 

@@ -70,3 +70,41 @@ tasks:
       - build
     cmds:
       - npx --yes html-validate@11.21.1 "public/**/*.html"
+
+  docker:build:
+    desc: "Docker: финальный образ (nginx + собранный сайт)"
+    cmd: docker build -t mrsmargaritach:local .
+
+  docker:run:
+    desc: "Docker: собранный сайт в nginx на http://localhost:8080"
+    cmds:
+      - docker build -t mrsmargaritach:local .
+      - docker run --rm -p 8080:80 mrsmargaritach:local
+
+  docker:up:
+    desc: "Docker Compose: сайт в nginx (http://localhost:8080)"
+    cmd: docker compose up --build
+
+  docker:down:
+    desc: "Docker Compose: down"
+    cmd: docker compose down
+
+  docker:down:v:
+    desc: "Docker Compose: Deleting named volumes"
+    cmd: docker compose down -v
+
+  docker:test:
+    desc: "Docker: проверки как в ci.yml (сборка, YAML, OG, html-validate)"
+    cmd: docker compose run --rm --build test
+
+  docker:test:full:
+    desc: "Docker: проверки + Lighthouse и lychee"
+    cmd: docker compose run --rm --build -e CHECK_LIGHTHOUSE=1 -e CHECK_LINKS=1 test
+
+  docker:serve:
+    desc: "Docker: hugo server с live-reload (http://localhost:1313)"
+    cmd: docker compose --profile tools up --build
+
+  docker:shell:
+    desc: "Docker: shell с тулчейном (hugo, sass, node, lychee, task)"
+    cmd: docker compose run --rm --profile tools --entrypoint bash tools
