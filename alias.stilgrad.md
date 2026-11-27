@@ -4,7 +4,7 @@
 
 | № | Город | Аэропорт | Код IATA | Домен по IATA | Человекочитаемый домен | Основной домен
 | --- | --- | --- | --- | --- | --- | ---
-| 1 | Москва | Sheremetyevo / Domodedovo / Vnukovo | MOW | mow.stilgrad.ru | moscow.stilgrad.ru | moscow.stilgrad.ru
+| 1 | Москва | Sheremetyevo / Domodedovo / Vnukovo | MOW | mow.stilgrad.ru | msk.stilgrad.ru | moscow.stilgrad.ru
 | 2 | Санкт-Петербург | Pulkovo Airport | LED | led.stilgrad.ru | saint-petersburg.stilgrad.ru | spb.stilgrad.ru
 | 3 | Новосибирск | Tolmachevo International Airport | OVB | ovb.stilgrad.ru | novosibirsk.stilgrad.ru | nsk.stilgrad.ru
 | 4 | Екатеринбург | Koltsovo International Airport | SVX | svx.stilgrad.ru | ekaterinburg.stilgrad.ru | ekb.stilgrad.ru
