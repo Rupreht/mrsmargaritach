@@ -2,8 +2,9 @@
  * Конфигурация Lighthouse CI.
  *
  * URL не перечислены статически: модели каталога появляются и переименовываются,
- * поэтому список собирается из готового `public/` — главная, корень каталога и
- * по одной карточке из каждой коллекции (`/catalog/<collection>/<model>/`).
+ * поэтому список собирается из готового `public/` — главная, корень каталога,
+ * по одной карточке из каждой коллекции (`/catalog/<collection>/<model>/`) и
+ * городские лендинги Москвы и Екатеринбурга (`/cities/<code>/`).
  * Полный обход всех страниц сборки: `LHCI_ALL_PAGES=1 npx @lhci/cli autorun`.
  *
  * Аудиты `is-on-https` и `redirects-http` пропущены: в CI сайт отдаётся по http://localhost.
@@ -19,6 +20,10 @@ const path = require('node:path');
 const DIST_NAME = process.env.LHCI_STATIC_DIST_DIR || 'public';
 const DIST_DIR = path.join(__dirname, DIST_NAME);
 const BASE_URLS = ['/', '/about', '/delivery', '/faq', '/offer', '/privacy', '/catalog/'];
+// Городские лендинги, которые проверяются в Lighthouse. Остальные 14 городов
+// собираются, но в прогон не входят: это удлиняет CI, а их SEO-аудит заведомо
+// ниже цели из-за noindex (ready: false в data/cities.yaml).
+const CITY_URL_CODES = ['moscow', 'ekb'];
 const SKIPPED_AUDITS = ['is-on-https', 'redirects-http'];
 
 /**
@@ -53,7 +58,7 @@ function modelUrls(distDir) {
 }
 
 /**
- * Городские лендинги: `/cities/<code>/` для каждой собранной городской версии.
+ * Городские лендинги из CITY_URL_CODES: `/cities/<code>/`, если сборка есть.
  * @param {string} distDir каталог сборки Hugo
  * @return {string[]}
  */
@@ -61,9 +66,9 @@ function cityUrls(distDir) {
   const citiesDir = path.join(distDir, 'cities');
   if (!fs.existsSync(citiesDir)) return [];
 
-  return subdirectories(citiesDir)
-    .filter(code => fs.existsSync(path.join(citiesDir, code, 'index.html')))
-    .map(code => `/cities/${code}/`);
+  return CITY_URL_CODES.filter(code =>
+    fs.existsSync(path.join(citiesDir, code, 'index.html'))
+  ).map(code => `/cities/${code}/`);
 }
 
 const collect = {
