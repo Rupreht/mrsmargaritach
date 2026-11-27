@@ -7,12 +7,14 @@
 
 ### Added
 
-- Городские поддомены (IATA-коды) для локального поиска: `mow`, `led`, `kzn`, `svx`, `ovb` + алиасы `msk/spb/ekb/nsk` с 301-редиректами. Данные — `data/cities.yaml`, контент — `city-content/<code>/`, конфиги — `city-config/<code>.toml`.
+- Городские поддомены для локального поиска: 16 городов, канонический хост каждого — «Основной домен» из `alias.stilgrad.md` (`moscow`, `spb`, `nsk`, `ekb`, `kazan`, `krsk`, `nn`, `chel`, `ufa`, `krd`, `samara`, `rostov`, `omsk`, `voronezh`, `perm`, `vlg`), домены по IATA и человекочитаемые — алиасы с 301-редиректами. Данные — `data/cities.yaml`, контент — `city-content/<code>/`, конфиги — `city-config/<code>.toml`.
 - Шаблоны городского мини-сайта: лендинг (`partials/city-home.html`), «Доставка и примерка» и «Вопросы» (`layouts/city/single.html`), «Каталог» с подборкой моделей основного домена (`layouts/city-catalog/single.html`), переключатель городов в подвале.
 - JSON-LD городской сборки: `Organization` с `areaServed`, `Place` с адресом самовывоза (Екатеринбург).
-- `scripts/build.sh` — мультисборка: основной сайт в `dist/`, города в `dist/cities/<code>/`.
-- `deploy/nginx.conf` — wildcard-хосты `*.stilgrad.ru`, `map $host $city_dir` для root, 301 для алиасов, catch-all неизвестных поддоменов.
-- CI: проверка `data/cities.yaml` (обязательные поля, уникальность кодов и алиасов, наличие конфига и контента) и наличия городских сборок.
+- `scripts/build.sh` — мультисборка: основной сайт в `dist/`, города в `dist/cities/<code>/`; список городов берётся из `alias.stilgrad.md` (`scripts/list_domains.py --column main`).
+- `scripts/list_domains.py` — уникальные домены из таблицы `alias.stilgrad.md` с фильтром по колонкам (`iata`, `human`, `main`).
+- `scripts/sync_city_domains.py` — сверка `data/cities.yaml` с `alias.stilgrad.md`: коды, алиасы, наличие `city-config/<code>.toml` и `city-content/<code>/_index.md`; шаг CI и задача `task domains:check`.
+- `deploy/nginx.conf` — wildcard-хосты `*.stilgrad.ru`, `map $host $city_dir` для root, 301 с алиасов на канонический хост города, catch-all неизвестных поддоменов.
+- CI: проверка `data/cities.yaml` (обязательные поля, уникальность кодов и алиасов, наличие конфига и контента), сверка с `alias.stilgrad.md` и наличия городских сборок.
 - Архетип `archetypes/city.md`; `docs/SEO.md` — раздел «Локальная стратегия (городские поддомены)».
 - Контентная модель «каталог → коллекция → модели»: дочерние секции (коллекции) внутри каталога, с шаблоном, различающим корень каталога и страницу коллекции.
 - Коллекция «Осенний кэжуал» с тремя моделями: «Каштан» (МК-ОС001), «Мускатный орех» (МК-ОС002), «Лесной мох» (МК-ОС003). Каждая модель содержит id/артикул, название, фасон/крой, материал, цвет, детали, стоимость, наличие и размеры.
@@ -52,6 +54,7 @@
 
 ### Changed
 
+- Домены городских поддоменов приведены к таблице `alias.stilgrad.md`: каноническими стали «основные» домены (`mow → moscow`, `led → spb`, `ovb → nsk`, `svx → ekb`, `kzn → kazan`), а домены по IATA и человекочитаемые отдают на них 301. Добавлены 11 городов (`krsk`, `nn`, `chel`, `ufa`, `krd`, `samara`, `rostov`, `omsk`, `voronezh`, `perm`, `vlg`) в статусе `ready: false`; каталоги `city-config/` и `city-content/` переименованы под новые коды.
 - `baseURL` приведён к боевому домену `https://stilgrad.ru/`; в `params` добавлены `mainBaseURL` и `domain`.
 - Деплой публикует `dist/` (мультисборка) вместо `public/`; сборка — через `scripts/build.sh`.
 - `layouts/index.html`, `header.html`, `footer.html`, `seo-jsonld.html`, `baseof.html` учитывают городской контекст (`site.Params.cityCode`).

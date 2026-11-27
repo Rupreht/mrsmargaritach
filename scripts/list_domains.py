@@ -9,12 +9,15 @@
 
 Запуск:
     python3 scripts/list_domains.py [ФАЙЛ] [--column {iata,human,main} ...]
-                                    [--sort]
+                                    [--domain stilgrad.ru] [--sort]
 
     ФАЙЛ                — путь к таблице (по умолчанию alias.stilgrad.md
                           в корне репозитория);
     --column, -c        — какие колонки читать (можно указать несколько раз);
                           по умолчанию — все колонки с доменами;
+    --domain, -d        — оставить только поддомены этой зоны и вывести сами
+                          метки (`moscow.stilgrad.ru` → `moscow`); используется
+                          при сборке городов;
     --sort, -s          — сортировать по алфавиту вместо порядка в таблице.
 
 Коды выхода:
@@ -119,6 +122,11 @@ def main(argv: list[str] | None = None) -> int:
         "main (основная); можно указать несколько раз",
     )
     parser.add_argument(
+        "-d",
+        "--domain",
+        help="оставить только поддомены этой зоны и вывести сами метки",
+    )
+    parser.add_argument(
         "-s",
         "--sort",
         action="store_true",
@@ -131,6 +139,12 @@ def main(argv: list[str] | None = None) -> int:
     except OSError as exc:
         print(f"Не удалось прочитать {args.path}: {exc}", file=sys.stderr)
         return 2
+
+    if args.domain:
+        suffix = "." + args.domain.strip(".")
+        domains = [
+            domain[: -len(suffix)] for domain in domains if domain.endswith(suffix)
+        ]
 
     if not domains:
         print(f"В {args.path} не найдено ни одного домена", file=sys.stderr)

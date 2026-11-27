@@ -31,13 +31,29 @@
 Задача: закрыть локальный интент «примерить/купить рубашку больших размеров рядом»
 и получить привязку региона в Яндекс.Вебмастере, которая работает на хосте.
 
-| Город | Поддомен (IATA) | Алиасы (301) | Регион Вебмастера |
+Домены берутся из `alias.stilgrad.md` — единственного источника: канонический
+хост города — колонка «Основной домен», алиасы — «Домен по IATA» и
+«Человекочитаемый домен». Сверка конфигурации с таблицей:
+`python3 scripts/sync_city_domains.py` (запускается в CI).
+
+| Город | Канонический поддомен | Алиасы (301) | Регион Вебмастера |
 | --- | --- | --- | --- |
-| Москва | `mow.stilgrad.ru` | `msk` | Москва |
-| Санкт-Петербург | `led.stilgrad.ru` | `spb` | Санкт-Петербург |
-| Казань | `kzn.stilgrad.ru` | — | Казань |
-| Екатеринбург | `svx.stilgrad.ru` | `ekb` | Екатеринбург |
-| Новосибирск | `ovb.stilgrad.ru` | `nsk` | Новосибирск |
+| Москва | `moscow.stilgrad.ru` | `mow` | Москва |
+| Санкт-Петербург | `spb.stilgrad.ru` | `led`, `saint-petersburg` | Санкт-Петербург |
+| Новосибирск | `nsk.stilgrad.ru` | `ovb`, `novosibirsk` | Новосибирск |
+| Екатеринбург | `ekb.stilgrad.ru` | `svx`, `ekaterinburg` | Екатеринбург |
+| Казань | `kazan.stilgrad.ru` | `kzn` | Казань |
+| Красноярск | `krsk.stilgrad.ru` | `kja`, `krasnoyarsk` | Красноярск |
+| Нижний Новгород | `nn.stilgrad.ru` | `goj`, `nizhny-novgorod` | Нижний Новгород |
+| Челябинск | `chel.stilgrad.ru` | `cek`, `chelyabinsk` | Челябинск |
+| Уфа | `ufa.stilgrad.ru` | — | Уфа |
+| Краснодар | `krd.stilgrad.ru` | `krr`, `krasnodar` | Краснодар |
+| Самара | `samara.stilgrad.ru` | `kuf` | Самара |
+| Ростов-на-Дону | `rostov.stilgrad.ru` | `rov`, `rostov-na-donu` | Ростов-на-Дону |
+| Омск | `omsk.stilgrad.ru` | `oms` | Омск |
+| Воронеж | `voronezh.stilgrad.ru` | `voz` | Воронеж |
+| Пермь | `perm.stilgrad.ru` | `pee` | Пермь |
+| Волгоград | `vlg.stilgrad.ru` | `vog`, `volgograd` | Волгоград |
 
 Правила:
 

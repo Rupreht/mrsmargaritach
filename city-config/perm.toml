@@ -1,0 +1,13 @@
+# Городская сборка: perm.stilgrad.ru (docs/SEO.md, «Локальная стратегия»).
+# Канонический хост города — «Основной домен» из alias.stilgrad.md; домены по
+# IATA и человекочитаемые отдают на него 301 (deploy/nginx.conf).
+# Мержится с hugo.toml: hugo --config hugo.toml,city-config/perm.toml \
+#   --contentDir city-content/perm --destination public/cities/perm
+# baseURL задаёт canonical/og:url/sitemap/robots для этого хоста.
+baseURL = "https://perm.stilgrad.ru/"
+
+[params]
+  # Город закрыт от индексации, пока в data/cities.yaml ready: false.
+  # После сбора фактов и ready: true — снять (false).
+  noindex = true
+  cityCode = "perm"

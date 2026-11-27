@@ -30,7 +30,7 @@ hugo --minify --gc --environment production
 python3 scripts/check_og.py public   # проверка OG-разметки после сборки
 
 # городской мини-сайт локально
-hugo server --config hugo.toml,city-config/mow.toml --contentDir city-content/mow
+hugo server --config hugo.toml,city-config/moscow.toml --contentDir city-content/moscow
 ```
 
 Собранный сайт появляется в `public/` (каталог в `.gitignore`).
@@ -82,6 +82,9 @@ deploy/nginx.conf              конфиг хостинга
 .htmlvalidate.json             правила html-validate
 scripts/check_og.py            валидатор OG-разметки в собранном public/
 scripts/build.sh               мультисборка: основной сайт + городские поддомены
+scripts/list_domains.py        домены из alias.stilgrad.md (--column main — канонические)
+scripts/sync_city_domains.py   сверка data/cities.yaml с alias.stilgrad.md
+alias.stilgrad.md              таблица городов и доменов — источник истины
 city-config/<code>.toml        конфиг городской сборки: baseURL + cityCode
 city-content/<code>/           городской мини-сайт: лендинг, доставка, каталог, вопросы
 data/cities.yaml               факты по городам: ПВЗ, сроки доставки, подборки моделей
@@ -101,24 +104,40 @@ data/cities.yaml               факты по городам: ПВЗ, срок�
 
 ## Городские поддомены
 
-Пять городов живут на отдельных поддоменах (IATA-коды) — так Яндекс.Вебмастер
-позволяет привязать регион к хосту. Всё собирается из одного репозитория.
+Шестнадцать городов живут на отдельных поддоменах — так Яндекс.Вебмастер
+позволяет привязать регион к хосту. Всё собирается из одного репозитория, а
+домены берутся из `alias.stilgrad.md`: канонический хост города — колонка
+«Основной домен», домены по IATA и человекочитаемые отдают на него 301.
 
-| Город | Хост | Алиасы (301) |
+| Город | Канонический хост | Алиасы (301) |
 | --- | --- | --- |
-| Москва | `mow.stilgrad.ru` | `msk` |
-| Санкт-Петербург | `led.stilgrad.ru` | `spb` |
-| Казань | `kzn.stilgrad.ru` | — |
-| Екатеринбург | `svx.stilgrad.ru` | `ekb` |
-| Новосибирск | `ovb.stilgrad.ru` | `nsk` |
+| Москва | `moscow.stilgrad.ru` | `mow` |
+| Санкт-Петербург | `spb.stilgrad.ru` | `led`, `saint-petersburg` |
+| Новосибирск | `nsk.stilgrad.ru` | `ovb`, `novosibirsk` |
+| Екатеринбург | `ekb.stilgrad.ru` | `svx`, `ekaterinburg` |
+| Казань | `kazan.stilgrad.ru` | `kzn` |
+| Красноярск | `krsk.stilgrad.ru` | `kja`, `krasnoyarsk` |
+| Нижний Новгород | `nn.stilgrad.ru` | `goj`, `nizhny-novgorod` |
+| Челябинск | `chel.stilgrad.ru` | `cek`, `chelyabinsk` |
+| Уфа | `ufa.stilgrad.ru` | — |
+| Краснодар | `krd.stilgrad.ru` | `krr`, `krasnodar` |
+| Самара | `samara.stilgrad.ru` | `kuf` |
+| Ростов-на-Дону | `rostov.stilgrad.ru` | `rov`, `rostov-na-donu` |
+| Омск | `omsk.stilgrad.ru` | `oms` |
+| Воронеж | `voronezh.stilgrad.ru` | `voz` |
+| Пермь | `perm.stilgrad.ru` | `pee` |
+| Волгоград | `vlg.stilgrad.ru` | `vog`, `volgograd` |
 
 Как устроено:
 
+- `alias.stilgrad.md` — источник доменов: `code` = «Основной домен», `aliases` = «Домен по IATA» + «Человекочитаемый домен».
 - `data/cities.yaml` — единственный источник фактов: сроки, ПВЗ, подборки моделей, `ready`.
 - `city-content/<code>/` — контент мини-сайта: лендинг, доставка и примерка, каталог, вопросы.
 - `city-config/<code>.toml` — `baseURL` и `params.cityCode` городской сборки.
-- `scripts/build.sh` — собирает `dist/` (основной сайт) и `dist/cities/<code>/` (города).
-- nginx (`deploy/nginx.conf`) — `map $host $city_dir` подставляет root, алиасы отдают 301 на IATA-хост.
+- `scripts/build.sh` — собирает `dist/` (основной сайт) и `dist/cities/<code>/` (города); список городов берёт из таблицы (`scripts/list_domains.py --column main`).
+- `python3 scripts/sync_city_domains.py` — сверка `data/cities.yaml` с таблицей (запускается в CI).
+- nginx (`deploy/nginx.conf`) — `map $host $city_dir` подставляет root, алиасы отдают 301 на канонический хост.
+
 
 Правило публикации: пока в `data/cities.yaml` стоит `ready: false`, страница
 закрыта от индексации и не показывается в переключателе городов. Чтобы открыть
@@ -146,7 +165,7 @@ data/cities.yaml               факты по городам: ПВЗ, срок�
 | OG-превью 1200×630 | `static/og/og-cover.jpg` | TODO: пока используется `photo/hero.webp` |
 | Юридические тексты | `content/offer`, `content/privacy`, `content/delivery` | политика — редакция от 24.11.2026; оферта и доставка — проверить у юриста |
 | Городские факты: ПВЗ, сроки, отзывы | `data/cities.yaml` | TODO: заполнить и поставить `ready: true` |
-| DNS поддоменов и wildcard TLS | панель NetAngels | TODO: CNAME `mow/led/kzn/svx/ovb` + алиасы `msk/spb/ekb/nsk` |
+| DNS поддоменов и wildcard TLS | панель NetAngels | TODO: wildcard `*.stilgrad.ru` — 16 канонических хостов и 24 алиаса из `alias.stilgrad.md` |
 | Подтверждение прав в Вебмастере | `static/` | TODO: положить HTML-файл Яндекса |
 
 ## Changelog
