@@ -145,6 +145,11 @@ for code in $(python3 scripts/list_domains.py --column main --domain stilgrad.ru
     test -f "$DIST/cities/$code/index.html"
     test -f "$DIST/cities/$code/sitemap.xml"
     test -f "$DIST/cities/$code/robots.txt"
+    # Идентичные ассеты — симлинки на копию основного сайта (без дублей).
+    for asset in css js photo favicon.svg .htaccess; do
+        test -L "$DIST/cities/$code/$asset"
+        test -e "$DIST/cities/$code/$asset"
+    done
 done
 echo "Городские сборки на месте"
 

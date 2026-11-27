@@ -11,6 +11,7 @@
 - Шаблоны городского мини-сайта: лендинг (`partials/city-home.html`), «Доставка и примерка» и «Вопросы» (`layouts/city/single.html`), «Каталог» с подборкой моделей основного домена (`layouts/city-catalog/single.html`), переключатель городов в подвале.
 - JSON-LD городской сборки: `Organization` с `areaServed`, `Place` с адресом самовывоза (Екатеринбург).
 - `scripts/build.sh` — мультисборка: основной сайт в `dist/`, города в `dist/cities/<code>/`; список городов берётся из `alias.stilgrad.md` (`scripts/list_domains.py --column main`).
+- `scripts/deploy.sh` — мультихостовый деплой: один релиз раскладывается на все виртуальные хосты (`<host>/releases/<RELEASE>`, `www -> releases/<RELEASE>`, prune старых релизов, `touch <host>/reload`); список городов — из `alias.stilgrad.md`.
 - `scripts/list_domains.py` — уникальные домены из таблицы `alias.stilgrad.md` с фильтром по колонкам (`iata`, `human`, `main`).
 - `scripts/sync_city_domains.py` — сверка `data/cities.yaml` с `alias.stilgrad.md`: коды, алиасы, наличие `city-config/<code>.toml` и `city-content/<code>/_index.md`; шаг CI и задача `task domains:check`.
 - `deploy/nginx.conf` — wildcard-хосты `*.stilgrad.ru`, `map $host $city_dir` для root, 301 с алиасов на канонический хост города, catch-all неизвестных поддоменов.
@@ -61,6 +62,9 @@
 
 ### Changed
 
+- `deploy.yml` — публикует релиз на все виртуальные хосты (`stilgrad.ru` и 16 городских поддоменов), а не в один каталог `SITE_HOSTNAME`: у каждого хоста свой `releases/<RELEASE>` и симлинк `www`. Переменная `SITE_HOSTNAME` больше не нужна.
+- `scripts/build.sh` — флаг `--no-shared-links` (и `SHARED_ASSETS=0`) собирает городские поддомены самодостаточными, без относительных симлинков на основной сайт: так каждая городская сборка публикуется в отдельный виртуальный хост.
+- `scripts/build.sh` больше не дублирует идентичные ассеты в городских сборках: `css/`, `js/`, `photo/`, `favicon.svg` и `.htaccess` кладутся в `dist/cities/<code>/` относительными симлинками на копию основного сайта (`../../css` и т. п.) — на хостинге и в образе nginx файлы хранятся в одном экземпляре; если содержимое разошлось, остаётся собственная копия города.
 - Домены городских поддоменов приведены к таблице `alias.stilgrad.md`: каноническими стали «основные» домены (`mow → moscow`, `led → spb`, `ovb → nsk`, `svx → ekb`, `kzn → kazan`), а домены по IATA и человекочитаемые отдают на них 301. Добавлены 11 городов (`krsk`, `nn`, `chel`, `ufa`, `krd`, `samara`, `rostov`, `omsk`, `voronezh`, `perm`, `vlg`) в статусе `ready: false`; каталоги `city-config/` и `city-content/` переименованы под новые коды.
 - `baseURL` приведён к боевому домену `https://stilgrad.ru/`; в `params` добавлены `mainBaseURL` и `domain`.
 - Деплой публикует `dist/` (мультисборка) вместо `public/`; сборка — через `scripts/build.sh`.

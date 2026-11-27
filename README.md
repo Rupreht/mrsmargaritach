@@ -157,6 +157,7 @@ docker/check.sh                проверки в контейнере по ш�
 .htmlvalidate.json             правила html-validate
 scripts/check_og.py            валидатор OG-разметки в собранном public/
 scripts/build.sh               мультисборка: основной сайт + городские поддомены
+scripts/deploy.sh              раскладка релиза по виртуальным хостам (www-симлинки)
 scripts/list_domains.py        домены из alias.stilgrad.md (--column main — канонические)
 scripts/sync_city_domains.py   сверка data/cities.yaml с alias.stilgrad.md
 alias.stilgrad.md              таблица городов и доменов — источник истины
@@ -209,7 +210,8 @@ data/cities.yaml               факты по городам: ПВЗ, срок�
 - `data/cities.yaml` — единственный источник фактов: сроки, ПВЗ, подборки моделей, `ready`.
 - `city-content/<code>/` — контент мини-сайта: лендинг, доставка и примерка, каталог, вопросы.
 - `city-config/<code>.toml` — `baseURL` и `params.cityCode` городской сборки.
-- `scripts/build.sh` — собирает `dist/` (основной сайт) и `dist/cities/<code>/` (города); список городов берёт из таблицы (`scripts/list_domains.py --column main`).
+- `scripts/build.sh` — собирает `dist/` (основной сайт) и `dist/cities/<code>/` (города); список городов берёт из таблицы (`scripts/list_domains.py --column main`). По умолчанию идентичные ассеты городов кладёт симлинками на основной сайт — без дублирования; с `--no-shared-links` оставляет собственные копии, чтобы городская сборка была самодостаточной для отдельного виртуального хоста.
+- `scripts/deploy.sh` — раскладывает один релиз по всем виртуальным хостам: `<host>/releases/<RELEASE>/`, атомарный симлинк `www -> releases/<RELEASE>`, prune старых релизов и `touch <host>/reload`; список городов берёт из `alias.stilgrad.md`.
 - `python3 scripts/sync_city_domains.py` — сверка `data/cities.yaml` с таблицей (запускается в CI).
 - nginx (`deploy/nginx.conf`) — `map $host $city_dir` подставляет root, алиасы отдают 301 на канонический хост.
 
@@ -261,5 +263,5 @@ data/cities.yaml               факты по городам: ПВЗ, срок�
 - CI (`ci.yml`) собирает сайт на каждый push и PR, проверяет YAML и front matter, обязательные поля моделей, OG-разметку (`scripts/check_og.py`) и валидность HTML (`html-validate@11.21.1`, блокирующий шаг); Lighthouse CI подключён и тоже блокирующий. Проверки ссылок в `ci.yml` нет: lychee ходит по уже развёрнутым доменам, для push/PR это ложные падения — см. `links.yml`.
 - `html-validate` запускается через `npx` и требует Node ≥ 22.22 (в CI нужная версия ставится шагом `actions/setup-node`). Сам сайт по-прежнему собирается Hugo без Node; локальный прогон — `task test:validate`.
 - Lighthouse CI (`.lighthouserc.cjs`) собирает список URL из готового `public/`: главная, корень каталога и по одной карточке из каждой коллекции (`/catalog/<collection>/<model>/`). Модели можно добавлять, удалять и переименовывать без правки конфига. Полный обход всех страниц сборки — `LHCI_ALL_PAGES=1 npx --yes @lhci/cli@0.14.0 autorun` (в разы дольше). Аудиты `is-on-https` и `redirects-http` пропущены (`collect.settings.skipAudits`) и отключены в `assert` (`"off"`): в CI сайт отдаётся по `http://localhost`, проверки HTTPS к нему неприменимы. Локально: `hugo --minify --gc && npx --yes @lhci/cli@0.14.0 autorun` (нужен установленный Chrome).
-- Деплой — отдельный workflow `deploy.yml`: запускается по `workflow_run` после успешного прогона `ci` на `main` (и вручную через `workflow_dispatch`). Нужны секреты `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SSH_KNOWN_HOSTS` и переменные `SITE_BASE_URL`, `SITE_HOSTNAME`. Откат ручной — переключить симлинк `www` на предыдущий релиз из `releases/`.
+- Деплой — отдельный workflow `deploy.yml`: запускается по `workflow_run` после успешного прогона `ci` на `main` (и вручную через `workflow_dispatch`). Нужны секреты `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SSH_KNOWN_HOSTS` и переменная `SITE_BASE_URL`. На хостинге каждый виртуальный хост — отдельный каталог в домашней директории SSH-пользователя (`stilgrad.ru/`, `moscow.stilgrad.ru/`, …): `scripts/deploy.sh` кладёт релиз в `<host>/releases/<RELEASE>`, атомарно переключает `<host>/www` и делает `touch <host>/reload`. Хранятся 5 последних релизов; откат — вручную переключить `www` на предыдущий релиз: `ssh … "ln -sfn releases/<старый-ts> <host>/www"`.
 - `links.yml` — ручная проверка ссылок (`lychee` + issue-репорт): Actions → Links → Run workflow, плюс ночной прогон по расписанию. Собирает сайт тем же шагом `dart sass` и проверяет внешние адреса и городские поддомены, которые отвечают только после деплоя; в блокирующий `ci.yml` не входит.

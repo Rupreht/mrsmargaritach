@@ -130,6 +130,11 @@ jobs:
             test -f "public/cities/$code/index.html"
             test -f "public/cities/$code/sitemap.xml"
             test -f "public/cities/$code/robots.txt"
+            # Идентичные ассеты — симлинки на копию основного сайта (без дублей).
+            for asset in css js photo favicon.svg .htaccess; do
+              test -L "public/cities/$code/$asset"
+              test -e "public/cities/$code/$asset"
+            done
           done
           echo "Городские сборки на месте"
 

@@ -20,8 +20,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  RELEASES_DIR: "${{ vars.SITE_HOSTNAME }}/releases"
-  CURRENT_LINK: "${{ vars.SITE_HOSTNAME }}/www"
+  # Один релиз раскладывается на все виртуальные хосты: основной сайт и
+  # города. Список городов scripts/deploy.sh берёт из alias.stilgrad.md.
   KEEP_RELEASES: 5
 
 jobs:
@@ -46,8 +46,10 @@ jobs:
           extended: true
 
       - name: Build
-        # Мультисборка: dist/ — основной сайт, dist/cities/<code>/ — городские поддомены.
-        run: bash scripts/build.sh dist "${{ vars.SITE_BASE_URL }}"
+        # Мультисборка: dist/ — основной сайт, dist/cities/<code>/ — города.
+        # --no-shared-links: каждая городская сборка самодостаточна, потому что
+        # публикуется в отдельный виртуальный хост со своим каталогом www.
+        run: bash scripts/build.sh dist "${{ vars.SITE_BASE_URL }}" --no-shared-links
 
       - name: Setup known_hosts
         run: |
@@ -61,22 +63,12 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Upload release
+      - name: Deploy release to all virtual hosts
+        # Раскладка по хостам: <host>/releases/<RELEASE> + www -> releases/<RELEASE>,
+        # prune старых релизов и touch <host>/reload. Логика — в scripts/deploy.sh.
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           RELEASE=$(date -u +%Y%m%d%H%M%S)
-          echo "RELEASE=$RELEASE" >> "$GITHUB_ENV"
-          echo "PRUNE_FROM=$(( ${{ env.KEEP_RELEASES }} + 1 ))" >> "$GITHUB_ENV"
-          rsync -az --delete dist/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ env.RELEASES_DIR }}/$RELEASE/"
-
-      - name: Switch symlink and prune old releases
-        run: |
-          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "
-            set -e
-            ln -sfn 'releases/${{ env.RELEASE }}' '${{ env.CURRENT_LINK }}'
-            ls -1dt '${{ env.RELEASES_DIR }}'/*/ | tail -n +${{ env.PRUNE_FROM }} | xargs -r rm -rf
-            readlink '${{ env.CURRENT_LINK }}'
-          "
-
-      - name: Reload nginx
-        run: |
-          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "touch ${{ vars.SITE_HOSTNAME }}/reload"
+          bash scripts/deploy.sh "$RELEASE" dist
