@@ -134,6 +134,8 @@
 - Lighthouse CI падал с `Lighthouse was unable to reliably load the page ... (Status code: 404)`: в конфиге был жёстко прописан URL карточки `/catalog/classic/chestnut/`, которой больше нет после перераспределения моделей по коллекциям. Конфиг переехал из `lighthouserc.json` в `.lighthouserc.cjs` и собирает список URL из готового `public/`: главная, `/catalog/` и по одной карточке из каждой коллекции (`/catalog/<collection>/<model>/`), поэтому новые и переименованные модели проверяются без правки конфига.
 - CI падал на шаге «Проверка городских данных и сборок» с `moscow: нет алиаса msk (есть в таблице)`: в `alias.stilgrad.md` у Москвы человекочитаемый домен `msk.stilgrad.ru`, а в `data/cities.yaml` алиас не был описан. `msk` добавлен в `aliases` Москвы (`mow`, `msk`) и в 301-редиректы nginx (`deploy/nginx.conf`, `docker/nginx.conf`); таблицы алиасов в `README.md` и `docs/SEO.md` синхронизированы.
 - Lighthouse CI проверял все 16 городских лендингов из `public/cities/`, из-за чего прогон заметно удлинялся. `cityUrls()` в `.lighthouserc.cjs` ограничена списком `CITY_URL_CODES` — `moscow` и `ekb`; остальные города по-прежнему собираются и проверяются в CI, но в Lighthouse не входят.
+- Деплой «зависал» на первом хосте: лог обрывался после предупреждения ssh `connection is not using a post-quantum key exchange algorithm`, шаг молча ждал. `scripts/deploy.sh` теперь работает только в неинтерактивном режиме (`BatchMode=yes`, `StrictHostKeyChecking=yes`, `ConnectTimeout=20`, `ServerAliveInterval=15`/`ServerAliveCountMax=4`), глушит это предупреждение (`-o WarnWeakCrypto=no` — с проверкой поддержки через `ssh -G`, чтобы не сломать старые клиенты), передаёт те же опции в rsync (`-e`), обрывает залипшую передачу по `--timeout` (`RSYNC_TIMEOUT`, по умолчанию 600 с) и печатает видимые маркеры: проверка доступа до раскладки, «файлы загружены, переключаю www» после rsync и адрес хоста в сообщении об ошибке. `--stats` показывает объём передачи по каждому хосту.
+- `scripts/deploy.sh`: вызов без exclude-шаблонов (CDN-хост) падал в bash 3.2 (macOS) с `excludes[@]: unbound variable` под `set -u` — пустой массив больше не разыменовывается.
 
 ### Docs
 
@@ -147,6 +149,7 @@
 - `docs/tz.md` — в требования к галерее добавлены две коллекции-силуэта.
 - `README.md`: раздел «OG-превью для соцсетей», команда `python3 scripts/check_og.py public`, `scripts/` в структуре проекта и строка про OG-превью 1200×630 в списке задач до запуска.
 - `docs/implementation_checklist.md`: обновлены FR-12, «OG + Twitter Card» и B-10 — `og:image` выводится на всех страницах, механизм поддержки файла 1200×630 готов.
+- `README.md`: в описании `scripts/deploy.sh` — неинтерактивный ssh (BatchMode и таймауты), `RSYNC_TIMEOUT` и подписанные ошибки по хостам.
 
 ### Security
 
