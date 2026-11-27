@@ -26,8 +26,11 @@ tasks:
     silent: true
 
   build:all:
-    desc: "мультисборка: основной сайт + городские поддомены в dist/"
-    cmd: bash scripts/build.sh dist
+    desc: "мультисборка: основной сайт + городские поддомены в public/"
+    env:
+      SITE_BASE_URL: '{{ .SITE_BASE_URL | default "http://localhost"}}'
+      MEDIA_BASE_URL: '{{ .MEDIA_BASE_URL | default "http://localhost" }}'
+    cmd: bash scripts/build.sh public $SITE_BASE_URL
     silent: true
 
   test:og:all:
