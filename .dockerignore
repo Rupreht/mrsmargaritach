@@ -1,0 +1,25 @@
+# Артефакты сборки и локальные файлы не нужны в контексте сборки образа.
+.git
+.github
+.gitignore
+.dockerignore
+
+public/
+dist/
+resources/
+.lighthouseci/
+node_modules/
+
+.env
+*.log
+.DS_Store
+.idea/
+.vscode/
+.hugo_build.lock
+__pycache__/
+*.pyc
+
+# Документация и картинки корня не участвуют в сборке сайта.
+docs/
+CHANGELOG.md
+~sizes.png

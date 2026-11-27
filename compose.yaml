@@ -1,0 +1,55 @@
+# Локальный запуск и проверки в контейнерах (см. README, раздел «Docker»).
+#
+#   docker compose up --build          # собранный сайт в nginx: http://localhost:8080
+#   docker compose run --rm test       # проверки как в ci.yml
+#   docker compose --profile tools up  # hugo server с live-reload: http://localhost:1313
+#
+# Переменные (можно задать в окружении или в .env.local):
+#   SITE_PORT    — порт превью собранного сайта (по умолчанию 8080)
+#   HUGO_PORT    — порт hugo server (по умолчанию 1313)
+#   HUGO_BASE_URL — baseURL сборки (по умолчанию http://localhost:8080/)
+name: mrsmargaritach
+
+services:
+  # Финальный образ: только статика и nginx.
+  site:
+    build:
+      context: .
+      args:
+        HUGO_BASE_URL: ${HUGO_BASE_URL:-http://localhost:${SITE_PORT:-8080}/}
+    image: mrsmargaritach:local
+    ports:
+      - "${SITE_PORT:-8080}:80"
+    restart: unless-stopped
+
+  # Проверки из ci.yml: сборка, YAML/front matter, поля моделей, города,
+  # Open Graph, html-validate. Lighthouse и lychee — по флагам CHECK_*.
+  # Собирается из контекста (COPY . .), поэтому не зависит от монтирования
+  # каталогов хоста; свежие исходники подхватываются флагом --build.
+  test:
+    profiles: [test]
+    build:
+      context: .
+      target: test
+    image: mrsmargaritach:test
+    environment:
+      DIST: dist
+      LHCI_STATIC_DIST_DIR: dist
+    command: ["check"]
+
+  # Тулчейн без сборки сайта: hugo server с live-reload, task, lychee, yamllint.
+  # Каталог проекта монтируется — без него live-reload невозможен.
+  tools:
+    profiles: [tools]
+    build:
+      context: .
+      target: tools
+    image: mrsmargaritach:tools
+    working_dir: /site
+    volumes:
+      - .:/site
+    ports:
+      - "${HUGO_PORT:-1313}:1313"
+    environment:
+      HUGO_BASE_URL: ${HUGO_BASE_URL:-http://localhost:${HUGO_PORT:-1313}/}
+    command: ["dev"]

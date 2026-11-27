@@ -7,13 +7,17 @@
  * Полный обход всех страниц сборки: `LHCI_ALL_PAGES=1 npx @lhci/cli autorun`.
  *
  * Аудиты `is-on-https` и `redirects-http` пропущены: в CI сайт отдаётся по http://localhost.
+ *
+ * Каталог сборки можно переопределить переменной LHCI_STATIC_DIST_DIR
+ * (в контейнере сборка лежит в dist/, локально и в CI — в public/).
  */
 'use strict';
 
 const fs = require('node:fs');
 const path = require('node:path');
 
-const DIST_DIR = path.join(__dirname, 'public');
+const DIST_NAME = process.env.LHCI_STATIC_DIST_DIR || 'public';
+const DIST_DIR = path.join(__dirname, DIST_NAME);
 const BASE_URLS = ['/', '/about', '/delivery', '/faq', '/offer', '/privacy', '/catalog/'];
 const SKIPPED_AUDITS = ['is-on-https', 'redirects-http'];
 
@@ -63,7 +67,7 @@ function cityUrls(distDir) {
 }
 
 const collect = {
-  staticDistDir: './public',
+  staticDistDir: `./${DIST_NAME}`,
   numberOfRuns: 1,
   settings: {
     preset: 'desktop',
