@@ -91,6 +91,7 @@
 - `Taskfile.yaml`: новая задача `test:validate` — html-validate по свежей сборке `public/`.
 - `html-validate` обновлён 9.7.1 → 11.21.1 в `ci.yml` и `Taskfile.yaml`; версия закреплена точно. Причина — `npm warn deprecated glob@10.5.0`: линтер версии 9 тянул `glob@^10`, в 11.x этой зависимости нет, предупреждение исчезло. В `recommended` за 10–11-ю мажорные версии добавились три правила — `autocomplete-password`, `valid-for`, `presentation-role-style`; на разметке сайта (17 страниц) ни одно не срабатывает: форм и полей пароля нет, `<label>` только оборачивает контрол (без `for`), `role="presentation"` не используется.
 - `ci.yml`: шаг `HTML-validate` собирает список файлов через `find` и падает, если в `public/` нет HTML (раньше пустой глоб давал молчаливый зелёный результат), и печатает число проверенных страниц. Блок `Node.js` (`actions/setup-node@v7.1.0`) ставит Node 24 — `html-validate@11` требует Node ^22.22 || >=24.8. Вывод npm при установке пакета приглушён (`npm_config_loglevel: error`), ошибки npm остаются в логе.
+- Проверка ссылок вынесена из `ci.yml` в ручной workflow `links.yml`: lychee проверяет внешние адреса (контакты, маркетплейсы, городские поддомены `*.stilgrad.ru`), которые отвечают только после деплоя, поэтому на push/PR она давала ложные падения. Запуск — Actions → Links → Run workflow (`workflow_dispatch`) или `repository_dispatch`, плюс ночной прогон по расписанию; результат уходит в issue, сборка не блокируется.
 
 ### Fixed
 
