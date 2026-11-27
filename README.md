@@ -187,7 +187,7 @@ data/cities.yaml               факты по городам: ПВЗ, срок�
 
 | Город | Канонический хост | Алиасы (301) |
 | --- | --- | --- |
-| Москва | `moscow.stilgrad.ru` | `mow` |
+| Москва | `moscow.stilgrad.ru` | `mow`, `msk` |
 | Санкт-Петербург | `spb.stilgrad.ru` | `led`, `saint-petersburg` |
 | Новосибирск | `nsk.stilgrad.ru` | `ovb`, `novosibirsk` |
 | Екатеринбург | `ekb.stilgrad.ru` | `svx`, `ekaterinburg` |

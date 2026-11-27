@@ -28,7 +28,7 @@
 #   ready      — можно публиковать (см. правило выше)
 
 - code: moscow
-  aliases: ["mow"]
+  aliases: ["mow", "msk"]
   name: "Москва"
   name_in: "в Москве"
   name_to: "в Москву"
