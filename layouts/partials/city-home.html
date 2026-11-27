@@ -1,0 +1,134 @@
+{{- /* Лендинг городского мини-сайта (поддомен <code>.stilgrad.ru).
+       Контекст — главная страница городской сборки. Факты берутся из
+       data/cities.yaml по site.Params.cityCode. */ -}}
+{{- $city := partial "city-data.html" . -}}
+{{- $hero := .Params.hero | default dict -}}
+
+<section class="hero" id="hero">
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <p class="hero__eyebrow">{{ $hero.eyebrow | default site.Params.brand }}</p>
+      <h1 class="hero__title">{{ $hero.title | default .Title }}</h1>
+      <p class="hero__subtitle">{{ $hero.subtitle }}</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#contacts">{{ $hero.cta_label | default "Написать мне" }}</a>
+        <a class="btn btn--ghost" href="{{ "/delivery/" | relURL }}">Доставка и примерка</a>
+      </div>
+    </div>
+    <div class="hero__media">
+      {{- with partial "lcp-image.html" . }}
+      {{ partial "responsive-img.html" (dict "img" .img "sizes" .sizes "alt" .alt "class" "hero__image" "eager" true) }}
+      {{- else }}
+      <div class="hero__placeholder" aria-hidden="true"></div>
+      {{- end }}
+    </div>
+  </div>
+</section>
+
+{{- with .Content }}
+<section class="section section--tight">
+  <div class="container container--narrow prose">{{ . }}</div>
+</section>
+{{- end }}
+
+{{- with $city }}
+{{- /* Примерка и оплата: факты из договора с СДЭК (см. data/cities.yaml). */ -}}
+<section class="section" id="fitting">
+  <div class="container container--narrow">
+    <h2 class="section__title">Примерка {{ .name_in }}</h2>
+    <p class="section__note">{{ .fitting_note }}</p>
+    <ul class="delivery-brief">
+      <li class="delivery-brief__item">
+        <h3 class="delivery-brief__title">Доставка {{ .name_to }}</h3>
+        <p class="delivery-brief__text">{{ .delivery_days }}. Стоимость — {{ .delivery_cost }}.</p>
+      </li>
+      <li class="delivery-brief__item">
+        <h3 class="delivery-brief__title">Частичный выкуп</h3>
+        <p class="delivery-brief__text">Заказывайте два размера или цвета — при получении забираете только то, что подошло, остальное возвращаете в пункте выдачи.</p>
+      </li>
+      <li class="delivery-brief__item">
+        <h3 class="delivery-brief__title">Оплата</h3>
+        <p class="delivery-brief__text">Наложенный платёж при получении или онлайн — как удобнее. Чек приходит на каждый платёж.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+{{- with .pickup_points }}
+<section class="section section--tight" id="pickup">
+  <div class="container container--narrow">
+    <h2 class="section__title">Где получить</h2>
+    <ul class="delivery-brief">
+      {{- range . }}
+      <li class="delivery-brief__item">
+        <h3 class="delivery-brief__title">{{ .name }}</h3>
+        {{- with .address }}<p class="delivery-brief__text">{{ . }}</p>{{ end }}
+        {{- with .hours }}<p class="delivery-brief__text">Режим работы: {{ . }}</p>{{ end }}
+      </li>
+      {{- end }}
+    </ul>
+  </div>
+</section>
+{{- end }}
+
+{{- with .featured }}
+<section class="section" id="models">
+  <div class="container">
+    <div class="section__head">
+      <h2 class="section__title">Модели</h2>
+      <a class="section__link" href="{{ printf "%scatalog/" site.Params.mainBaseURL }}">Весь каталог</a>
+    </div>
+    <div class="card-grid">
+      {{- range . }}
+      <div class="card-grid__item">
+        <article class="card-model">
+          <a class="card-model__media" href="{{ printf "%scatalog/%s/%s/" site.Params.mainBaseURL .collection .slug }}">
+            <span class="card-model__swatch" style="background-color: {{ .color_hex | default "#DED3C4" }}" aria-hidden="true"></span>
+            <span class="visually-hidden">{{ .title }}</span>
+          </a>
+          <div class="card-model__body">
+            <h3 class="card-model__title"><a href="{{ printf "%scatalog/%s/%s/" site.Params.mainBaseURL .collection .slug }}">{{ .title }}</a></h3>
+            <p class="card-model__price">{{ lang.FormatNumber 0 .price }} ₽</p>
+            <a class="btn btn--secondary btn--s card-model__cta" href="{{ printf "%scatalog/%s/%s/" site.Params.mainBaseURL .collection .slug }}">Смотреть модель</a>
+          </div>
+        </article>
+      </div>
+      {{- end }}
+    </div>
+    <p class="section__note">Размеры 50–72, свободный крой. Полное описание, ткани и размерная сетка — в карточках на основном сайте.</p>
+  </div>
+</section>
+{{- end }}
+
+<section class="section section--steps" id="steps">
+  <div class="container">
+    <h2 class="section__title">Как заказать</h2>
+    <ol class="steps">
+      <li class="steps__item">
+        <span class="steps__num" aria-hidden="true">1</span>
+        <h3 class="steps__title">Напишите мне</h3>
+        <p class="steps__text">Расскажите про размер и цвет. Можно просто прислать мерки — подскажу по опыту.</p>
+      </li>
+      <li class="steps__item">
+        <span class="steps__num" aria-hidden="true">2</span>
+        <h3 class="steps__title">Отшиваю и отправляю</h3>
+        <p class="steps__text">Отправляю СДЭК {{ .name_to }}. Трек-номер присылаю в переписке.</p>
+      </li>
+      <li class="steps__item">
+        <span class="steps__num" aria-hidden="true">3</span>
+        <h3 class="steps__title">Меряете в ПВЗ</h3>
+        <p class="steps__text">Вскрываете посылку, примеряете и забираете только подошедшее. Наложенный платёж — по факту.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+{{ partial "reviews.html" . }}
+
+{{ partial "cta.html" (dict
+  "id" "contacts"
+  "title" (printf "Подобрать размер для %s" .name_to)
+  "text" "Напишите в удобном канале — помогу с размером, тканью и сроком доставки."
+  "prefill" .prefill
+) }}
+{{- end }}

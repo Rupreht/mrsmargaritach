@@ -1,0 +1,10 @@
+{{- /* Возвращает запись города текущей сборки из data/cities.yaml.
+       Городская сборка определяется параметром site.Params.cityCode
+       (переопределяется в city-config/<code>.toml). На основном сайте — false. */ -}}
+{{- $city := false -}}
+{{- with site.Params.cityCode -}}
+  {{- with where hugo.Data.cities "code" . -}}
+    {{- $city = index . 0 -}}
+  {{- end -}}
+{{- end -}}
+{{- return $city -}}

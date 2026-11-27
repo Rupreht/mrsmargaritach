@@ -48,6 +48,20 @@ function modelUrls(distDir) {
   });
 }
 
+/**
+ * Городские лендинги: `/cities/<code>/` для каждой собранной городской версии.
+ * @param {string} distDir каталог сборки Hugo
+ * @return {string[]}
+ */
+function cityUrls(distDir) {
+  const citiesDir = path.join(distDir, 'cities');
+  if (!fs.existsSync(citiesDir)) return [];
+
+  return subdirectories(citiesDir)
+    .filter(code => fs.existsSync(path.join(citiesDir, code, 'index.html')))
+    .map(code => `/cities/${code}/`);
+}
+
 const collect = {
   staticDistDir: './public',
   numberOfRuns: 1,
@@ -69,7 +83,7 @@ if (process.env.LHCI_ALL_PAGES === '1') {
       `[lighthouserc] Нет сборки в ${DIST_DIR} — сначала выполните: hugo --minify --gc\n`
     );
   }
-  collect.url = [...BASE_URLS, ...modelUrls(DIST_DIR)];
+  collect.url = [...BASE_URLS, ...modelUrls(DIST_DIR), ...cityUrls(DIST_DIR)];
 }
 
 module.exports = {

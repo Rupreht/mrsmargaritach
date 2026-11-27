@@ -1,5 +1,8 @@
-{{- /* JSON-LD: Organization, BreadcrumbList, Product, FAQPage (FR-13). */ -}}
+{{- /* JSON-LD: Organization, BreadcrumbList, Product, FAQPage (FR-13).
+       В городской сборке Organization получает areaServed, а при наличии
+       адреса самовывоза добавляется Place (docs/SEO.md). */ -}}
 {{- $graph := slice -}}
+{{- $city := partial "city-data.html" . -}}
 
 {{- $org := dict
   "@type" "Organization"
@@ -10,7 +13,20 @@
 -}}
 {{- with site.Params.email }}{{ $org = merge $org (dict "email" .) }}{{ end -}}
 {{- with site.Params.ogImage }}{{ $org = merge $org (dict "logo" (. | absURL)) }}{{ end -}}
+{{- with $city }}{{ $org = merge $org (dict "areaServed" (dict "@type" "City" "name" .name)) }}{{ end -}}
 {{- $graph = $graph | append $org -}}
+
+{{- with $city -}}
+  {{- with .pickup_points -}}
+    {{- $point := index . 0 -}}
+    {{- $graph = $graph | append (dict
+      "@type" "Place"
+      "name" (printf "%s — %s" site.Params.brand $point.name)
+      "address" (dict "@type" "PostalAddress" "streetAddress" $point.address "addressLocality" $city.name "addressCountry" "RU")
+      "areaServed" (dict "@type" "City" "name" $city.name)
+    ) -}}
+  {{- end -}}
+{{- end -}}
 
 {{- if not .IsHome -}}
   {{- $crumbs := slice -}}
@@ -28,7 +44,8 @@
   {{- $graph = $graph | append (dict "@type" "BreadcrumbList" "itemListElement" $items) -}}
 {{- end -}}
 
-{{- if and (eq .Section "catalog") .IsPage -}}
+{{- $isModel := and (eq .Section "catalog") .IsPage (not (in (slice "city" "city-catalog") .Type)) -}}
+{{- if $isModel -}}
   {{- $availability := "https://schema.org/InStock" -}}
   {{- if eq .Params.status "под заказ" }}{{ $availability = "https://schema.org/PreOrder" }}{{ end -}}
   {{- if eq .Params.status "снята с продажи" }}{{ $availability = "https://schema.org/Discontinued" }}{{ end -}}

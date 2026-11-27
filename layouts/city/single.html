@@ -1,0 +1,32 @@
+{{ define "main" }}
+{{ partial "breadcrumbs.html" . }}
+{{- $city := partial "city-data.html" . }}
+
+<article class="page">
+  <header class="page-header">
+    <div class="container container--narrow">
+      <h1 class="page-header__title">{{ .Title }}</h1>
+      {{- with .Description }}<p class="page-header__intro">{{ . }}</p>{{ end }}
+    </div>
+  </header>
+
+  {{- with .Params.faq }}
+  <div class="container container--narrow">
+    {{ partial "faq.html" (dict "items" . "id" "faq-city") }}
+  </div>
+  {{- end }}
+
+  <div class="container container--narrow prose">
+    {{ .Content }}
+  </div>
+</article>
+
+{{- with $city }}
+{{ partial "cta.html" (dict
+  "id" "contacts"
+  "title" "Остались вопросы?"
+  "text" (printf "Напишите — отвечу лично по доставке %s." .name_to)
+  "prefill" .prefill
+) }}
+{{- end }}
+{{ end }}

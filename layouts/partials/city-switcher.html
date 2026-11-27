@@ -1,0 +1,17 @@
+{{- /* Переключатель городов в подвале. Показываются только города с ready: true
+       (см. data/cities.yaml); ссылка на основной сайт — всегда на поддомене. */ -}}
+{{- $cities := where hugo.Data.cities "ready" true -}}
+{{- $current := site.Params.cityCode -}}
+{{- if or $cities $current }}
+    <div class="site-footer__col">
+      <h2 class="site-footer__title">Города</h2>
+      <ul class="site-footer__list">
+        {{- range $cities }}
+          {{- if ne .code $current }}
+        <li><a href="{{ printf "https://%s.%s/" .code site.Params.domain }}">{{ .name }}</a></li>
+          {{- end }}
+        {{- end }}
+        <li><a href="{{ site.Params.mainBaseURL }}">Основной сайт</a></li>
+      </ul>
+    </div>
+{{- end }}
