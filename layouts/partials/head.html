@@ -16,9 +16,11 @@ site.Params.brand) -}}
   <meta name="robots" content="noindex, nofollow">
   {{- end }}
   <meta property="og:site_name" content="{{ site.Params.brand }}">
+  {{- /* product — только карточка модели; городской каталог и городские страницы — website. */ -}}
+  {{- $isModel := and (eq .Section "catalog") .IsPage (not (in (slice "city" "city-catalog") .Type)) -}}
   <meta property="og:title" content="{{ $title }}">
   <meta property="og:description" content="{{ $description }}">
-  <meta property="og:type" content="{{ if and (eq .Section "catalog") .IsPage }}product{{ else }}website{{ end }}">
+  <meta property="og:type" content="{{ if $isModel }}product{{ else }}website{{ end }}">
   <meta property="og:url" content="{{ .Permalink }}">
   <meta property="og:locale" content="ru_RU">
   {{- $og := partial "og-image.html" . -}}

@@ -25,8 +25,12 @@ Node.js не требуется ни для сборки, ни для работ
 ```bash
 hugo version                 # нужен extended ≥ 0.140
 hugo server                  # http://localhost:1313
+bash scripts/build.sh dist   # основной сайт + городские поддомены в dist/
 hugo --minify --gc --environment production
 python3 scripts/check_og.py public   # проверка OG-разметки после сборки
+
+# городской мини-сайт локально
+hugo server --config hugo.toml,city-config/mow.toml --contentDir city-content/mow
 ```
 
 Собранный сайт появляется в `public/` (каталог в `.gitignore`).
@@ -77,6 +81,10 @@ deploy/nginx.conf              конфиг хостинга
 .lighthouserc.cjs              конфиг Lighthouse CI (главная, каталог, карточки)
 .htmlvalidate.json             правила html-validate
 scripts/check_og.py            валидатор OG-разметки в собранном public/
+scripts/build.sh               мультисборка: основной сайт + городские поддомены
+city-config/<code>.toml        конфиг городской сборки: baseURL + cityCode
+city-content/<code>/           городской мини-сайт: лендинг, доставка, каталог, вопросы
+data/cities.yaml               факты по городам: ПВЗ, сроки доставки, подборки моделей
 .github/workflows/             ci.yml, deploy.yml, links.yml
 .editorconfig                  отступы и кодировка для редакторов
 ```
@@ -91,7 +99,34 @@ scripts/check_og.py            валидатор OG-разметки в соб�
 
 Пока изображений нет, карточка показывает цветной плейсхолдер — вёрстка не ломается.
 
-## OG-превью для соцсетей
+## Городские поддомены
+
+Пять городов живут на отдельных поддоменах (IATA-коды) — так Яндекс.Вебмастер
+позволяет привязать регион к хосту. Всё собирается из одного репозитория.
+
+| Город | Хост | Алиасы (301) |
+| --- | --- | --- |
+| Москва | `mow.stilgrad.ru` | `msk` |
+| Санкт-Петербург | `led.stilgrad.ru` | `spb` |
+| Казань | `kzn.stilgrad.ru` | — |
+| Екатеринбург | `svx.stilgrad.ru` | `ekb` |
+| Новосибирск | `ovb.stilgrad.ru` | `nsk` |
+
+Как устроено:
+
+- `data/cities.yaml` — единственный источник фактов: сроки, ПВЗ, подборки моделей, `ready`.
+- `city-content/<code>/` — контент мини-сайта: лендинг, доставка и примерка, каталог, вопросы.
+- `city-config/<code>.toml` — `baseURL` и `params.cityCode` городской сборки.
+- `scripts/build.sh` — собирает `dist/` (основной сайт) и `dist/cities/<code>/` (города).
+- nginx (`deploy/nginx.conf`) — `map $host $city_dir` подставляет root, алиасы отдают 301 на IATA-хост.
+
+Правило публикации: пока в `data/cities.yaml` стоит `ready: false`, страница
+закрыта от индексации и не показывается в переключателе городов. Чтобы открыть
+город, нужны конкретные ПВЗ СДЭК с адресами и режимом, реальные сроки и
+стоимость доставки, отзывы с согласием (`consent: true`). Карточки моделей не
+дублируются: городской каталог ссылается на основной домен.
+
+
 
 `og:image` выводится на каждой странице: у карточки модели — `images[0].src`, у главной — `hero.image` из `content/_index.md`. Остальные страницы берут общий файл, если он есть: положите `static/og/og-cover.jpg` размером 1200×630 — он подхватится автоматически (параметр `ogImageDefault` в `hugo.toml`). Глобальный оверрайд — `params.ogImage` (он же `Organization.logo`), точечный — поле `og_image` во front matter страницы или модели.
 
@@ -110,6 +145,9 @@ scripts/check_og.py            валидатор OG-разметки в соб�
 | Фото съёмки | `content/**/`, `static/images/` | TODO (M3) |
 | OG-превью 1200×630 | `static/og/og-cover.jpg` | TODO: пока используется `photo/hero.webp` |
 | Юридические тексты | `content/offer`, `content/privacy`, `content/delivery` | политика — редакция от 24.11.2026; оферта и доставка — проверить у юриста |
+| Городские факты: ПВЗ, сроки, отзывы | `data/cities.yaml` | TODO: заполнить и поставить `ready: true` |
+| DNS поддоменов и wildcard TLS | панель NetAngels | TODO: CNAME `mow/led/kzn/svx/ovb` + алиасы `msk/spb/ekb/nsk` |
+| Подтверждение прав в Вебмастере | `static/` | TODO: положить HTML-файл Яндекса |
 
 ## Changelog
 

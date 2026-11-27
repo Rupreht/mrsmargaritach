@@ -6,6 +6,7 @@
 
 # Сборка Hugo
 public/
+dist/
 resources/
 
 # Локальные секреты и логи

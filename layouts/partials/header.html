@@ -7,9 +7,23 @@
 
     <nav class="site-nav" aria-label="Основная навигация">
       {{- $current := . -}}
-      {{- range site.Menus.main }}
-        {{- $active := or ($current.IsMenuCurrent "main" .) ($current.HasMenuCurrent "main" .) }}
-        <a class="site-nav__link" href="{{ .URL }}"{{ if $active }} aria-current="page"{{ end }}>{{ .Name }}</a>
+      {{- if site.Params.cityCode }}
+        {{- /* Городской поддомен: только разделы, которые есть в этой сборке. */ -}}
+        {{- $cityNav := slice
+          (dict "name" "Каталог" "url" ("/catalog/" | relURL))
+          (dict "name" "Доставка и примерка" "url" ("/delivery/" | relURL))
+          (dict "name" "Вопросы" "url" ("/faq/" | relURL)) -}}
+        {{- range $cityNav }}
+        <a class="site-nav__link" href="{{ .url }}"{{ if eq $current.RelPermalink .url }} aria-current="page"{{ end }}>{{ .name }}</a>
+        {{- end }}
+      {{- else }}
+        {{- range site.Menus.main }}
+          {{- $item := . }}
+          {{- with site.GetPage $item.PageRef }}
+            {{- $active := or ($current.IsMenuCurrent "main" $item) ($current.HasMenuCurrent "main" $item) }}
+        <a class="site-nav__link" href="{{ .RelPermalink }}"{{ if $active }} aria-current="page"{{ end }}>{{ $item.Name }}</a>
+          {{- end }}
+        {{- end }}
       {{- end }}
     </nav>
 

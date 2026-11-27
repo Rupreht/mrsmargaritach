@@ -25,6 +25,23 @@ tasks:
     cmd: hugo --minify --gc --environment production --baseURL "$SITE_BASE_URL"
     silent: true
 
+  build:all:
+    desc: "мультисборка: основной сайт + городские поддомены в dist/"
+    cmd: bash scripts/build.sh dist
+    silent: true
+
+  test:og:all:
+    desc: "OG-проверка основного сайта и городов (dist/)"
+    deps:
+      - build:all
+    cmds:
+      - python3 scripts/check_og.py dist
+
+  domains:
+    desc: "Уникальные домены из alias.stilgrad.md"
+    cmd: python3 scripts/list_domains.py -s
+    silent: true
+
   clean:
     desc: "Очистка ./public/"
     cmd: rm -rf ./public

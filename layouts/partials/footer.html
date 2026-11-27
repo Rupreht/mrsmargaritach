@@ -21,11 +21,18 @@
       <h2 class="site-footer__title">Документы</h2>
       <ul class="site-footer__list">
         <li><a href="{{ "/delivery/" | relURL }}">Доставка и возврат</a></li>
+        {{- if site.Params.cityCode }}
+        <li><a href="{{ printf "%soffer/" site.Params.mainBaseURL }}">Публичная оферта</a></li>
+        <li><a href="{{ printf "%sprivacy/" site.Params.mainBaseURL }}">Политика конфиденциальности</a></li>
+        {{- else }}
         <li><a href="{{ "/offer/" | relURL }}">Публичная оферта</a></li>
         <li><a href="{{ "/privacy/" | relURL }}">Политика конфиденциальности</a></li>
+        {{- end }}
         <li><button class="link-button" type="button" data-consent-settings>Настройки cookie</button></li>
       </ul>
     </div>
+
+    {{ partial "city-switcher.html" . }}
 
     <div class="site-footer__col">
       <h2 class="site-footer__title">Реквизиты</h2>

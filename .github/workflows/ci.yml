@@ -21,9 +21,10 @@ jobs:
           extended: true
 
       - name: Build
+        # Мультисборка: public/ — основной сайт, public/cities/<code>/ — города.
         run: |
           hugo env
-          hugo --minify --gc --environment production
+          bash scripts/build.sh public
 
       - name: Проверка YAML и front matter
         run: |
@@ -71,6 +72,63 @@ jobs:
               sys.exit(1)
           print("Обязательные поля на месте")
           PY
+
+      - name: Проверка городских данных и сборок
+        run: |
+          python3 - <<'PY'
+          import pathlib, sys, yaml
+
+          errors = []
+          cities = yaml.safe_load(pathlib.Path("data/cities.yaml").read_text(encoding="utf-8"))
+          required = ("code", "name", "name_in", "name_to", "prefill", "seo")
+          seen_codes, seen_aliases = set(), set()
+          for city in cities:
+              code = city.get("code", "")
+              for field in required:
+                  if not city.get(field):
+                      errors.append(f"{code or '?'}: нет поля {field}")
+              # ready — обязательный булев флаг; false означает «не публиковать».
+              if "ready" not in city or not isinstance(city["ready"], bool):
+                  errors.append(f"{code or '?'}: нет булева поля ready")
+              if code in seen_codes:
+                  errors.append(f"{code}: код повторяется")
+              seen_codes.add(code)
+              for alias in city.get("aliases") or []:
+                  if alias in seen_aliases:
+                      errors.append(f"{alias}: алиас повторяется")
+                  seen_aliases.add(alias)
+              for suffix in ("seo.title", "seo.description"):
+                  section, key = suffix.split(".")
+                  if not (city.get(section) or {}).get(key):
+                      errors.append(f"{code}: нет {suffix}")
+              if not pathlib.Path(f"city-config/{code}.toml").is_file():
+                  errors.append(f"{code}: нет city-config/{code}.toml")
+              if not pathlib.Path(f"city-content/{code}/_index.md").is_file():
+                  errors.append(f"{code}: нет city-content/{code}/_index.md")
+
+          # Front matter городского контента (лежит вне content/, общий чек его не видит).
+          for path in sorted(pathlib.Path("city-content").rglob("*.md")):
+              text = path.read_text(encoding="utf-8")
+              parts = text.split("---", 2)
+              if len(parts) < 3:
+                  errors.append(f"{path}: незакрытый front matter")
+                  continue
+              try:
+                  yaml.safe_load(parts[1])
+              except yaml.YAMLError as exc:
+                  errors.append(f"{path}: {exc}")
+
+          if errors:
+              print("\n".join(errors))
+              sys.exit(1)
+          print(f"Города: {len(cities)} — поля и конфиги на месте")
+          PY
+          for code in mow led kzn svx ovb; do
+            test -f "public/cities/$code/index.html"
+            test -f "public/cities/$code/sitemap.xml"
+            test -f "public/cities/$code/robots.txt"
+          done
+          echo "Городские сборки на месте"
 
       - name: Open Graph
         run: python3 scripts/check_og.py public

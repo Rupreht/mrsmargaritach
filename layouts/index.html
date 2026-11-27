@@ -1,4 +1,8 @@
 {{ define "main" }}
+{{- if site.Params.cityCode -}}
+{{/* Городская сборка (поддомен <code>.stilgrad.ru): отдельный лендинг. */}}
+{{ partial "city-home.html" . }}
+{{- else -}}
 {{- $p := .Params -}}
 {{- $hero := $p.hero | default dict -}}
 
@@ -188,4 +192,5 @@
   "title" ($final.title | default "Давайте подберём ваш размер")
   "text" ($final.text | default "")
 ) }}
+{{- end -}}
 {{ end }}

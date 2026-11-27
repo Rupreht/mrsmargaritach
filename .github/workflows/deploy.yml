@@ -46,7 +46,8 @@ jobs:
           extended: true
 
       - name: Build
-        run: hugo --minify --gc --environment production --baseURL "${{ vars.SITE_BASE_URL }}"
+        # Мультисборка: dist/ — основной сайт, dist/cities/<code>/ — городские поддомены.
+        run: bash scripts/build.sh dist "${{ vars.SITE_BASE_URL }}"
 
       - name: Setup known_hosts
         run: |
@@ -65,7 +66,7 @@ jobs:
           RELEASE=$(date -u +%Y%m%d%H%M%S)
           echo "RELEASE=$RELEASE" >> "$GITHUB_ENV"
           echo "PRUNE_FROM=$(( ${{ env.KEEP_RELEASES }} + 1 ))" >> "$GITHUB_ENV"
-          rsync -az --delete public/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ env.RELEASES_DIR }}/$RELEASE/"
+          rsync -az --delete dist/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ env.RELEASES_DIR }}/$RELEASE/"
 
       - name: Switch symlink and prune old releases
         run: |

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="{{ site.Language.Locale | default "ru" }}">
 {{ partial "head.html" . }}
-<body class="{{ if .IsHome }}page-home{{ else }}page-{{ .Section | default "page" }}{{ end }}"
+<body class="{{ if .IsHome }}page-home{{ else }}page-{{ .Section | default "page" }}{{ end }}{{ if site.Params.cityCode }} page-city{{ end }}"
       data-metrika-id="{{ site.Params.metrikaId }}">
   <a class="skip-link" href="#main">Перейти к содержанию</a>
   {{ partial "header.html" . }}

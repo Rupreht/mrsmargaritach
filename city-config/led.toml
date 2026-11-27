@@ -1,0 +1,11 @@
+# Городская сборка: led.stilgrad.ru (docs/SEO.md, «Локальная стратегия»).
+# Мержится с hugo.toml: hugo --config hugo.toml,city-config/led.toml \
+#   --contentDir city-content/led --destination public/cities/led
+# baseURL задаёт canonical/og:url/sitemap/robots для этого хоста.
+baseURL = "https://led.stilgrad.ru/"
+
+[params]
+  # Город закрыт от индексации, пока в data/cities.yaml ready: false.
+  # После сбора фактов и ready: true — снять (false).
+  noindex = true
+  cityCode = "led"
