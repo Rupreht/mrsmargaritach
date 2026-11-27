@@ -68,7 +68,11 @@
   {{- with .Params.images }}{{ $cover = (index . 0).src }}{{ end -}}
   {{- with $cover -}}
     {{- with $.Resources.GetMatch . -}}
-      {{- $product = merge $product (dict "image" (.Permalink | absURL)) -}}
+      {{- $img := partial "cdn-url.html" .RelPermalink -}}
+      {{- if not (or (hasPrefix $img "http://") (hasPrefix $img "https://")) -}}
+        {{- $img = (.Permalink | absURL) -}}
+      {{- end -}}
+      {{- $product = merge $product (dict "image" $img) -}}
     {{- end -}}
   {{- end -}}
   {{- $graph = $graph | append $product -}}

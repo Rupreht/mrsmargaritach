@@ -1,0 +1,25 @@
+{{- /*
+  Возвращает URL медиа-ресурса для CDN.
+
+  Вход: относительный путь ресурса (например "/catalog/classic/onyx/cover_480x.webp").
+  Выход: абсолютный CDN-URL вида "https://cdn.stilgrad.ru/catalog/.../cover_480x.webp",
+  если задан MEDIA_BASE_URL (переменная окружения) или site.Params.mediaBaseURL.
+  Если база не задана (локальная разработка / hugo server) — путь возвращается как есть,
+  чтобы превью работало на localhost без CDN.
+
+  Медиа генерируется один раз и деплоится только на CDN-хост; все хосты
+  (основной сайт и городские поддомены) ссылаются на него абсолютными URL.
+*/ -}}
+{{- $path := . -}}
+{{- $base := os.Getenv "MEDIA_BASE_URL" -}}
+{{- with site.Params.mediaBaseURL -}}{{ $base = . }}{{ end -}}
+{{- if and $base $path -}}
+  {{- if hasPrefix $path "http://" -}}
+    {{- return $path -}}
+  {{- else if hasPrefix $path "https://" -}}
+    {{- return $path -}}
+  {{- end -}}
+  {{- return (printf "%s/%s" (strings.TrimSuffix "/" $base) (strings.TrimPrefix "/" $path)) -}}
+{{- else -}}
+  {{- return $path -}}
+{{- end -}}

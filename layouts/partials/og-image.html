@@ -1,4 +1,6 @@
-{{- /* OG-изображение страницы (FR-12). Возвращает dict: url, type, width, height, alt.
+{{- /* Кандидат OG-изображения: URL, тип, размеры, alt.
+       CDN-медиа (cdn.<domain>) не проверяется в scripts/check_og.py:
+       файл лежит на CDN, а не в сборке, и это отдельный хост. */ -}}
        Кандидаты перебираются по порядку, побеждает первый найденный файл:
          1. site.Params.ogImage — глобальный оверрайд (он же Organization.logo);
          2. og_image во front matter страницы;
@@ -51,7 +53,12 @@
       {{- $res := $page.Resources.GetMatch $src -}}
       {{- if not $res }}{{ $res = resources.Get $src }}{{ end -}}
       {{- with $res -}}
-        {{- $url = .Permalink -}}
+        {{- /* Медиа каталога/hero живёт на CDN (см. partials/cdn-url.html).
+               В локальной сборке без медиа-базы — абсолютный URL страницы. */ -}}
+        {{- $url = partial "cdn-url.html" .RelPermalink -}}
+        {{- if not (or (hasPrefix $url "http://") (hasPrefix $url "https://")) -}}
+          {{- $url = .Permalink -}}
+        {{- end -}}
         {{- $type = .MediaType.Type -}}
         {{- $width = .Width -}}
         {{- $height = .Height -}}

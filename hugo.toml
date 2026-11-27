@@ -26,7 +26,6 @@ disableKinds = ["taxonomy", "term", "rss"]
   phone = "+7 (912) 226-50-77"
   phoneRaw = "+79122265077"
   city = "Екатеринбург"
-  pickup = "Екатеринбург, Сахарова 29/4"
   priceCurrency = "RUB"
 
   # Основной домен: с городских поддоменов ссылки на карточки моделей и
@@ -36,6 +35,13 @@ disableKinds = ["taxonomy", "term", "rss"]
   # Домен без схемы: из него собираются адреса городских поддоменов
   # (<code>.<domain>) в переключателе городов.
   domain = "stilgrad.ru"
+
+  # Базовый URL CDN для медиа (изображения каталога и hero). Медиа генерируется
+  # один раз и деплоится только на CDN-хост (cdn.<domain>); все хосты ссылаются
+  # на него абсолютными URL. Пусто — относительные ссылки (локальная разработка).
+  # В проде задаётся переменной MEDIA_BASE_URL в scripts/build.sh, например
+  # https://cdn.stilgrad.ru/. См. docs/SEO.md, «CDN».
+  mediaBaseURL = ""
 
   # Код города текущей сборки — канонический поддомен из alias.stilgrad.md
   # (колонка «Основной домен»). Пусто на основном сайте; переопределяется
@@ -73,6 +79,12 @@ disableKinds = ["taxonomy", "term", "rss"]
     [minify.tdewolff.html]
       # Запрещает удалять кавычки вокруг атрибутов при минификации
       keepQuotes = true
+
+# Разрешаем шаблонам читать базу CDN из окружения (partials/cdn-url.html).
+# Значение задаёт scripts/build.sh (переменная MEDIA_BASE_URL).
+[security]
+  [security.funcs]
+    getenv = ['^HUGO_', '^CI$', '^MEDIA_BASE_URL$']
 
 [[menus.main]]
   name = "Каталог"

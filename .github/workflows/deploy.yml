@@ -20,8 +20,9 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # Один релиз раскладывается на все виртуальные хосты: основной сайт и
-  # города. Список городов scripts/deploy.sh берёт из alias.stilgrad.md.
+  # Один релиз раскладывается на все виртуальные хосты: основной сайт, города
+  # и CDN (медиа + cities.json). Список городов scripts/deploy.sh берёт из
+  # alias.stilgrad.md.
   KEEP_RELEASES: 5
 
 jobs:
@@ -46,10 +47,13 @@ jobs:
           extended: true
 
       - name: Build
-        # Мультисборка: dist/ — основной сайт, dist/cities/<code>/ — города.
-        # --no-shared-links: каждая городская сборка самодостаточна, потому что
-        # публикуется в отдельный виртуальный хост со своим каталогом www.
-        run: bash scripts/build.sh dist "${{ vars.SITE_BASE_URL }}" --no-shared-links
+        # Мультисборка: dist/ — основной сайт, dist/cities/<code>/ — города
+        # (с полным каталогом, одинаковая структура), dist/cdn/ — медиа и cities.json.
+        # MEDIA_BASE_URL — база CDN: медиа генерируется один раз и деплоится
+        # только на cdn.<домен>; страницы ссылаются на него абсолютными URL.
+        env:
+          MEDIA_BASE_URL: ${{ vars.CDN_BASE_URL }}
+        run: bash scripts/build.sh dist "${{ vars.SITE_BASE_URL }}"
 
       - name: Setup known_hosts
         run: |
@@ -69,6 +73,7 @@ jobs:
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
+          CDN_HOST: ${{ vars.CDN_HOST }}
         run: |
           RELEASE=$(date -u +%Y%m%d%H%M%S)
           bash scripts/deploy.sh "$RELEASE" dist

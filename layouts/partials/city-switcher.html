@@ -1,17 +1,30 @@
-{{- /* Переключатель городов в подвале. Показываются только города с ready: true
-       (см. data/cities.yaml); ссылка на основной сайт — всегда на поддомене. */ -}}
-{{- $cities := where hugo.Data.cities "ready" true -}}
+{{- /*
+  Переключатель городов в подвале — выпадающий список всех 16 городов
+  (см. data/cities.yaml) плюс «Основной сайт». Список рендерится серверно
+  (работает без JS); JS подхватывает cities.json с CDN, чтобы список
+  приходил из одного источника, и обрабатывает смену города.
+  Ссылки — на канонические поддомены; переход между городами ожидаем.
+*/ -}}
 {{- $current := site.Params.cityCode -}}
-{{- if or $cities $current }}
-    <div class="site-footer__col">
-      <h2 class="site-footer__title">Города</h2>
-      <ul class="site-footer__list">
-        {{- range $cities }}
-          {{- if ne .code $current }}
-        <li><a href="{{ printf "https://%s.%s/" .code site.Params.domain }}">{{ .name }}</a></li>
-          {{- end }}
-        {{- end }}
-        <li><a href="{{ site.Params.mainBaseURL }}">Основной сайт</a></li>
-      </ul>
-    </div>
-{{- end }}
+{{- $citiesURL := partial "cdn-url.html" "cities.json" -}}
+<div class="site-footer__col">
+  <label class="site-footer__title" for="city-select">Город</label>
+  <select class="city-select" id="city-select" name="city"
+          data-city-select
+          data-current="{{ $current }}"
+          data-main-url="{{ site.Params.mainBaseURL }}"
+          data-cities-url="{{ $citiesURL }}">
+    <option value="{{ site.Params.mainBaseURL }}">Основной сайт</option>
+    {{- range hugo.Data.cities }}
+    <option value="https://{{ .code }}.{{ site.Params.domain }}/"{{ if eq .code $current }} selected{{ end }}>{{ .name }}</option>
+    {{- end }}
+  </select>
+  <noscript>
+    <ul class="site-footer__list">
+      {{- range hugo.Data.cities }}
+      <li><a href="https://{{ .code }}.{{ site.Params.domain }}/">{{ .name }}</a></li>
+      {{- end }}
+      <li><a href="{{ site.Params.mainBaseURL }}">Основной сайт</a></li>
+    </ul>
+  </noscript>
+</div>

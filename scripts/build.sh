@@ -1,62 +1,53 @@
 #!/usr/bin/env bash
-# Мультисборка сайта: основной домен + городские поддомены.
+# Мультисборка сайта: основной домен + городские поддомены + CDN-набор.
 #
 # Использование:
-#   scripts/build.sh [DEST] [APEX_BASEURL] [--no-shared-links]
+#   scripts/build.sh [DEST] [APEX_BASEURL] [MEDIA_BASEURL]
 #     DEST         — корень сборки (по умолчанию public)
-#     APEX_BASEURL — baseURL основного сайта (пусто — берётся из hugo.toml)
-#     --no-shared-links — не заменять одинаковые ассеты городов симлинками:
-#                         города остаются самодостаточными и годятся для
-#                         отдельного виртуального хоста (деплой, scripts/deploy.sh).
-#                         Эквивалент SHARED_ASSETS=0.
+#     APEX_BASEURL — baseURL основного сайта (пусто — из hugo.toml)
+#     MEDIA_BASEURL — база CDN для медиа, например https://cdn.stilgrad.ru/
+#                     (пусто — относительные ссылки, локальная разработка).
+#                     Можно задать переменной окружения MEDIA_BASE_URL.
 #
 # Результат:
-#   $DEST/                 — stilgrad.ru
-#   $DEST/cities/<code>/   — <code>.stilgrad.ru: канонические домены городов
-#                            из alias.stilgrad.md (колонка «Основной домен»)
+#   $DEST/                 — stilgrad.ru (HTML, css/, js/; медиа — на CDN)
+#   $DEST/cities/<code>/   — <code>.stilgrad.ru: полный каталог + городские страницы
+#   $DEST/cdn/             — CDN-набор: catalog/, photo/, cities.json
 #
-# Городская сборка мержит hugo.toml с city-config/<code>.toml и читает
-# контент из city-content/<code>; layouts/assets/data общие.
-#
-# По умолчанию идентичные ассеты в городах не дублируются: css/, js/, photo/,
-# favicon.svg и .htaccess одинаковы во всех сборках (общие assets/static и
-# контент-хэшированные имена), поэтому вместо копии в каталог города кладётся
-# относительный симлинк на экземпляр основного сайта ($DEST/...). Для локального
-# nginx и образа Docker это экономит место. С --no-shared-links остаются копии.
+# Городская сборка монтирует общий content/catalog рядом с city-content/<code>
+# (одинаковая структура каталога на всех сайтах) и читает layouts/assets/data
+# общие. Медиа (catalog/, photo/) генерируется один раз и публикуется только на CDN;
+# все хосты ссылаются на него абсолютными URL (MEDIA_BASE_URL).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Аргументы: два позиционных (DEST, APEX_BASEURL) и флаг --no-shared-links.
-# Флаг можно ставить в любом месте; SHARED_ASSETS=0 делает то же самое.
-NO_SHARED_LINKS=0
-if [ "${SHARED_ASSETS:-1}" = "0" ]; then
-  NO_SHARED_LINKS=1
-fi
 DEST="public"
 APEX_BASE=""
+MEDIA_BASE="${MEDIA_BASE_URL:-}"
 POSITIONAL=0
 for arg in "$@"; do
   case "$arg" in
-    --no-shared-links)
-      NO_SHARED_LINKS=1
-      continue
-      ;;
+    # Устаревший флаг: каталог больше не дублируется по хостам (медиа на CDN).
+    --no-shared-links) continue ;;
   esac
   POSITIONAL=$((POSITIONAL + 1))
   case "$POSITIONAL" in
     1) DEST="$arg" ;;
     2) APEX_BASE="$arg" ;;
+    3) MEDIA_BASE="$arg" ;;
     *)
       echo "Неизвестный аргумент: $arg" >&2
-      echo "Использование: scripts/build.sh [DEST] [APEX_BASEURL] [--no-shared-links]" >&2
+      echo "Использование: scripts/build.sh [DEST] [APEX_BASEURL] [MEDIA_BASEURL]" >&2
       exit 2
       ;;
   esac
 done
 
-# Список городов — из alias.stilgrad.md, чтобы конфигурация не расходилась с
-# таблицей доменов. Переопределяется переменной окружения CITIES.
+# Шаблоны читают базу CDN через os.Getenv "MEDIA_BASE_URL".
+export MEDIA_BASE_URL="$MEDIA_BASE"
+
+# Список городов — из alias.stilgrad.md; переопределяется переменной CITIES.
 if [ -n "${CITIES:-}" ]; then
   CITY_CODES="$CITIES"
 else
@@ -73,31 +64,59 @@ fi
 echo "==> Основной сайт → $DEST"
 hugo "${APEX_ARGS[@]}"
 
-# Файлы/каталоги, одинаковые во всех сборках: вместо копии — симлинк на основной
-# сайт. Если содержимое вдруг разойдётся (изменилась обработка ассетов), симлинк
-# не создаётся — остаётся собственная копия города (безопасный фолбэк).
-# В режиме --no-shared-links симлинки не создаются: каждая городская сборка
-# самодостаточна и публикуется в отдельный виртуальный хост.
-SHARED_ASSETS=(css js photo favicon.svg .htaccess)
+# Конфиг монтирования для городской сборки: город + общий каталог + общие
+# ассеты/data/layouts. Файл пересоздаётся под каждый город (нужно расширение .toml).
+mounts_dir="$(mktemp -d)"
+mounts_file="$mounts_dir/mounts.toml"
+trap 'rm -rf "$mounts_dir"' EXIT
 
 for code in $CITY_CODES; do
+  cat > "$mounts_file" <<EOF
+[module]
+  [[module.mounts]]
+    source = "city-content/${code}"
+    target = "content"
+  [[module.mounts]]
+    source = "content/catalog"
+    target = "content/catalog"
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+  [[module.mounts]]
+    source = "data"
+    target = "data"
+  [[module.mounts]]
+    source = "layouts"
+    target = "layouts"
+  [[module.mounts]]
+    source = "i18n"
+    target = "i18n"
+  [[module.mounts]]
+    source = "archetypes"
+    target = "archetypes"
+EOF
+
   echo "==> Городская сборка $code → $DEST/cities/$code"
   hugo --minify --gc --environment production \
-    --config "hugo.toml,city-config/${code}.toml" \
-    --contentDir "city-content/${code}" \
+    --config "hugo.toml,city-config/${code}.toml,${mounts_file}" \
     --destination "$DEST/cities/${code}"
-
-  if [ "$NO_SHARED_LINKS" -eq 0 ]; then
-    for asset in "${SHARED_ASSETS[@]}"; do
-      city_asset="$DEST/cities/$code/$asset"
-      apex_asset="$DEST/$asset"
-      if [ -e "$city_asset" ] && [ -e "$apex_asset" ] \
-          && diff -rq "$city_asset" "$apex_asset" >/dev/null 2>&1; then
-        rm -rf "$city_asset"
-        ln -s "../../$asset" "$city_asset"
-      fi
-    done
-  fi
 done
 
+# CDN-набор: медиа (catalog/photo) в одном экземпляре + список городов.
+# catalog/ и photo/ на самих хостах не нужны — они раздаются с CDN.
+echo "==> CDN-набор → $DEST/cdn"
+mkdir -p "$DEST/cdn"
+for media in catalog photo; do
+  if [ -d "$DEST/$media" ]; then
+    cp -Rl "$DEST/$media" "$DEST/cdn/$media" 2>/dev/null \
+      || cp -R "$DEST/$media" "$DEST/cdn/$media"
+  fi
+done
+python3 "$SCRIPT_DIR/build_cities_json.py" \
+  --out "$DEST/cdn/cities.json" --domain "${DOMAIN:-stilgrad.ru}"
+
 echo "==> Готово: $(find "$DEST" -name index.html | wc -l | tr -d ' ') index.html"
+

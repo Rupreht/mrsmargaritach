@@ -141,17 +141,26 @@ PY
 
 python3 scripts/sync_city_domains.py
 
+# CDN-набор: cities.json со всеми городами + медиа.
+test -f "$DIST/cdn/cities.json"
+python3 - "$DIST" <<'PY'
+import json, sys, pathlib
+data = json.loads(pathlib.Path(sys.argv[1], "cdn", "cities.json").read_text(encoding="utf-8"))
+if len(data) != 16:
+    print(f"cities.json: ожидалось 16 городов, найдено {len(data)}")
+    sys.exit(1)
+print(f"cities.json: {len(data)} городов")
+PY
+
 for code in $(python3 scripts/list_domains.py --column main --domain stilgrad.ru); do
     test -f "$DIST/cities/$code/index.html"
     test -f "$DIST/cities/$code/sitemap.xml"
     test -f "$DIST/cities/$code/robots.txt"
-    # Идентичные ассеты — симлинки на копию основного сайта (без дублей).
-    for asset in css js photo favicon.svg .htaccess; do
-        test -L "$DIST/cities/$code/$asset"
-        test -e "$DIST/cities/$code/$asset"
-    done
+    # Полный каталог на каждом городе — одинаковая структура на всех сайтах.
+    test -f "$DIST/cities/$code/catalog/index.html"
+    test -f "$DIST/cities/$code/catalog/classic/index.html"
 done
-echo "Городские сборки на месте"
+echo "Городские сборки и CDN-набор на месте"
 
 step "Open Graph"
 python3 scripts/check_og.py "$DIST"

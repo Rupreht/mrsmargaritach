@@ -5,13 +5,20 @@ site.Params.brand) -}}
 {{- $description := .Description | default site.Params.description -}}
 {{- with .Params.seo }}{{ with .description }}{{ $description = . }}{{ end }}{{ end -}}
 {{- $description = $description | replaceRE "[\r\n]+" " " | strings.TrimSpace | safeHTML -}}
+{{- /* Каноникал: карточки моделей на городских поддоменах указывают на основной
+       домен — структура каталога одинаковая везде, но дубли не индексируются.
+       Городские лендинги/доставка/вопросы остаются self-canonical. */ -}}
+{{- $canonical := .Permalink -}}
+{{- if and site.Params.cityCode (eq .Section "catalog") .IsPage (not (in (slice "city" "city-catalog") .Type)) -}}
+  {{- $canonical = printf "%s%s" site.Params.mainBaseURL (strings.TrimPrefix "/" .RelPermalink) -}}
+{{- end -}}
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#FAF7F0">
   <title>{{ $title }}</title>
   <meta name="description" content="{{ $description }}">
-  <link rel="canonical" href="{{ .Permalink }}">
+  <link rel="canonical" href="{{ $canonical }}">
   {{- if site.Params.noindex }}
   <meta name="robots" content="noindex, nofollow">
   {{- end }}
@@ -21,7 +28,7 @@ site.Params.brand) -}}
   <meta property="og:title" content="{{ $title }}">
   <meta property="og:description" content="{{ $description }}">
   <meta property="og:type" content="{{ if $isModel }}product{{ else }}website{{ end }}">
-  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:url" content="{{ $canonical }}">
   <meta property="og:locale" content="ru_RU">
   {{- $og := partial "og-image.html" . -}}
   {{- with $og.url }}
