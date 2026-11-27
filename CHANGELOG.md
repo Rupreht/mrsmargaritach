@@ -5,6 +5,8 @@
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-11-28
+
 ### Added
 
 - **Общий CDN-хост `cdn.stilgrad.ru`**: медиа каталога и hero (`catalog/`, `photo/`) и `cities.json` генерируются один раз и деплоятся только на CDN; основной сайт и все городские поддомены ссылаются на него абсолютными URL (`layouts/partials/cdn-url.html`, переменная `MEDIA_BASE_URL`). `og:image` на CDN исключён из проверки `scripts/check_og.py`.
