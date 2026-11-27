@@ -76,26 +76,27 @@
   <div class="container">
     <div class="section__head">
       <h2 class="section__title">Модели</h2>
-      <a class="section__link" href="{{ printf "%scatalog/" site.Params.mainBaseURL }}">Весь каталог</a>
+      <a class="section__link" href="{{ "/catalog/" | relURL }}">Весь каталог</a>
     </div>
     <div class="card-grid">
       {{- range . }}
+      {{- $modelURL := printf "catalog/%s/%s/" .collection .slug | relURL }}
       <div class="card-grid__item">
         <article class="card-model">
-          <a class="card-model__media" href="{{ printf "%scatalog/%s/%s/" site.Params.mainBaseURL .collection .slug }}">
+          <a class="card-model__media" href="{{ $modelURL }}">
             <span class="card-model__swatch" style="background-color: {{ .color_hex | default "#DED3C4" }}" aria-hidden="true"></span>
             <span class="visually-hidden">{{ .title }}</span>
           </a>
           <div class="card-model__body">
-            <h3 class="card-model__title"><a href="{{ printf "%scatalog/%s/%s/" site.Params.mainBaseURL .collection .slug }}">{{ .title }}</a></h3>
+            <h3 class="card-model__title"><a href="{{ $modelURL }}">{{ .title }}</a></h3>
             <p class="card-model__price">{{ lang.FormatNumber 0 .price }} ₽</p>
-            <a class="btn btn--secondary btn--s card-model__cta" href="{{ printf "%scatalog/%s/%s/" site.Params.mainBaseURL .collection .slug }}">Смотреть модель</a>
+            <a class="btn btn--secondary btn--s card-model__cta" href="{{ $modelURL }}">Смотреть модель</a>
           </div>
         </article>
       </div>
       {{- end }}
     </div>
-    <p class="section__note">Размеры 50–72, свободный крой. Полное описание, ткани и размерная сетка — в карточках на основном сайте.</p>
+    <p class="section__note">Размеры 50–72, свободный крой. Полное описание, ткани и размерная сетка — в карточках каталога.</p>
   </div>
 </section>
 {{- end }}

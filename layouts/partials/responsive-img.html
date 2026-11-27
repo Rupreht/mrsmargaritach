@@ -21,16 +21,17 @@
 {{- range $w := $widths -}}
   {{- if le $w $img.Width -}}
     {{- $r := $img.Resize (printf "%dx webp q%d" $w $quality) -}}
-    {{- $srcset = $srcset | append (printf "%s %dw" $r.RelPermalink $r.Width) -}}
-    {{- if not $first }}{{ $first = $r.RelPermalink }}{{ end -}}
-    {{- if eq $w 800 }}{{ $fallback = $r.RelPermalink }}{{ end -}}
+    {{- $u := partial "cdn-url.html" $r.RelPermalink -}}
+    {{- $srcset = $srcset | append (printf "%s %dw" $u $r.Width) -}}
+    {{- if not $first }}{{ $first = $u }}{{ end -}}
+    {{- if eq $w 800 }}{{ $fallback = $u }}{{ end -}}
   {{- end -}}
 {{- end -}}
 {{- if not $srcset -}}
   {{- /* Исходник уже 480px — отдаём как есть, единичным кандидатом. */ -}}
-  {{- $first = $img.RelPermalink -}}
-  {{- $fallback = $img.RelPermalink -}}
-  {{- $srcset = slice (printf "%s %dw" $img.RelPermalink $img.Width) -}}
+  {{- $first = partial "cdn-url.html" $img.RelPermalink -}}
+  {{- $fallback = $first -}}
+  {{- $srcset = slice (printf "%s %dw" $first $img.Width) -}}
 {{- end -}}
 {{- if not $fallback }}{{ $fallback = $first }}{{ end -}}
 {{- $src := $fallback -}}

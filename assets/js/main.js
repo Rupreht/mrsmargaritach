@@ -78,6 +78,59 @@ function initConsentSettings() {
   });
 }
 
+/* Переключатель городов (подвал): выпадающий список всех городов.
+   Базовый список рендерится серверно; JS подхватывает cities.json с CDN
+   (единый источник) и обрабатывает смену города. */
+function initCitySwitcher() {
+  const select = document.querySelector("[data-city-select]");
+  if (!select) return;
+
+  const host = window.location.hostname;
+  const selectByHost = () => {
+    const option = Array.from(select.options).find((item) => {
+      try {
+        return item.value && new URL(item.value, window.location.origin).hostname === host;
+      } catch (error) {
+        return false;
+      }
+    });
+    if (option) select.value = option.value;
+  };
+
+  selectByHost();
+  select.addEventListener("change", () => {
+    if (select.value) window.location.href = select.value;
+  });
+
+  const url = select.dataset.citiesUrl;
+  const mainURL = select.dataset.mainUrl || "";
+  if (!url || !window.fetch) return;
+
+  fetch(url, { credentials: "omit" })
+    .then((response) => (response.ok ? response.json() : null))
+    .then((cities) => {
+      if (!Array.isArray(cities) || !cities.length) return;
+      select.innerHTML = "";
+      if (mainURL) {
+        const option = document.createElement("option");
+        option.value = mainURL;
+        option.textContent = "Основной сайт";
+        select.appendChild(option);
+      }
+      cities.forEach((city) => {
+        if (!city || !city.code || !city.url) return;
+        const option = document.createElement("option");
+        option.value = city.url;
+        option.textContent = city.name || city.code;
+        select.appendChild(option);
+      });
+      selectByHost();
+    })
+    .catch(() => {
+      /* CDN недоступен — остаются серверные опции, список продолжает работать */
+    });
+}
+
 function start() {
   initConsent();
   initFilters();
@@ -85,6 +138,7 @@ function start() {
   initStickyCta();
   initScrollDepth();
   initConsentSettings();
+  initCitySwitcher();
 }
 
 if (document.readyState === "loading") {

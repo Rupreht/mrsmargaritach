@@ -199,6 +199,9 @@ def check_page(page_path, public_dir):
     og_image = absolute_url(image_values[0]) if image_values else None
     if image_values and image_values[0].strip() and not og_image:
         errors.append("og:image не абсолютный URL: %s" % image_values[0])
+    # Медиа на CDN (cdn.<domain>): файл лежит не в сборке, хост отличается —
+    # такие og:image/twitter:image из проверки исключаем (см. docs/SEO.md).
+    on_cdn = bool(og_image and og_image.netloc.startswith("cdn."))
 
     declared = None
     width_values = props.get("og:image:width", [])
@@ -208,10 +211,10 @@ def check_page(page_path, public_dir):
             declared = (int(width_values[0]), int(height_values[0]))
         except ValueError:
             errors.append("og:image:width/height должны быть целыми числами")
-    elif og_image:
+    elif og_image and not on_cdn:
         warnings.append("нет og:image:width/height — соцсети не знают пропорции превью")
 
-    if og_image:
+    if og_image and not on_cdn:
         if not props.get("og:image:alt", [""])[0].strip():
             warnings.append("нет og:image:alt — превью будет без описания")
         if not props.get("og:image:type", [""])[0].strip():
@@ -266,7 +269,7 @@ def check_page(page_path, public_dir):
         twitter_image = parser.names.get("twitter:image", [""])[0].strip()
         if twitter_card == "summary_large_image" and not twitter_image:
             warnings.append("twitter:card=summary_large_image без twitter:image")
-        elif twitter_image and og_image:
+        elif twitter_image and og_image and not on_cdn:
             if urlparse(twitter_image).path != og_image.path:
                 warnings.append("twitter:image отличается от og:image")
 
