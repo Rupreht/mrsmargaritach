@@ -54,7 +54,7 @@ disableKinds = ["taxonomy", "term", "rss"]
   declarationDate = "28.12.2023"
 
   # Аналитика: счётчик грузится только после согласия на cookie (п. 2.9).
-  metrikaId = ""         # TODO: номер счётчика Яндекс.Метрики
+  metrikaId = "114730476"
 
   # Глобальный оверрайд OG-превью (он же Organization.logo). Путь в static/ или assets/.
   # Пусто — превью берётся со страницы: og_image → images[0] → ogImageDefault → hero.image.

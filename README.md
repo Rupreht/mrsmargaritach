@@ -237,20 +237,23 @@ data/cities.yaml               факты по городам: ПВЗ, срок�
 
 ## Что заполнить до запуска
 
+> Проверка по фактическому коду и данным на 28.11.2026.
+> Легенда: ✅ готово · 🟡 частично · ⛔ не сделано / заблокировано.
+
 | Параметр | Где | Статус |
 | --- | --- | --- |
-| Домен и `baseURL` | `hugo.toml` | https://stilgrad.ru/ |
-| `noindex = true` → `false` | `hugo.toml` | снимается перед публикацией |
-| Номер счётчика Метрики | `hugo.toml` → `params.metrikaId` | TODO |
-| ОГРНИП, e-mail | `hugo.toml` → `params` | TODO (L-01) |
-| Telegram, MAX, Wildberries, e-mail | `data/contacts.yaml` | TODO |
-| Обмеры 50–72 | `data/sizes.yaml` | из `sizes.png` (полуобхват); строка 72 — расчётная |
-| Фото съёмки | `content/**/`, `static/images/` | TODO (M3) |
-| OG-превью 1200×630 | `static/og/og-cover.jpg` | TODO: пока используется `photo/hero.webp` |
-| Юридические тексты | `content/offer`, `content/privacy`, `content/delivery` | политика — редакция от 24.11.2026; оферта и доставка — проверить у юриста |
-| Городские факты: ПВЗ, сроки, отзывы | `data/cities.yaml` | TODO: заполнить и поставить `ready: true` |
-| DNS поддоменов и wildcard TLS | панель NetAngels | TODO: wildcard `*.stilgrad.ru` — 16 канонических хостов, 24 алиаса и CDN-хост `cdn.stilgrad.ru` |
-| Подтверждение прав в Вебмастере | `static/` | TODO: положить HTML-файл Яндекса |
+| Домен и `baseURL` | `hugo.toml` | ✅ `https://stilgrad.ru/` |
+| `noindex = true` → `false` | `hugo.toml` | ⛔ всё ещё `true` — снять перед публикацией |
+| Номер счётчика Метрики | `hugo.toml` → `params.metrikaId` | ✅ `114730476` |
+| ОГРНИП, e-mail | `hugo.toml` → `params` | 🟡 ОГРНИП/ИНН/телефон заполнены; `params.email` пуст — e-mail есть только в `data/contacts.yaml` и юртекстах |
+| Telegram, MAX, Wildberries, e-mail | `data/contacts.yaml` | 🟡 e-mail и Wildberries заполнены; Telegram и MAX пусты (`todo: true`) |
+| Обмеры 50–72 | `data/sizes.yaml` | ✅ заполнены все размеры 50–72 (12 строк, полуобхват); строка 72 — расчётная |
+| Фото съёмки | `content/**/`, `static/images/` | 🟡 59 фото у 7 моделей (cover + галереи); `static/images/` не используется; финал съёмки (M3) подтвердить |
+| OG-превью 1200×630 | `static/og/og-cover.jpg` | ⛔ файла нет — пока используется `photo/hero.webp` |
+| Юридические тексты | `content/offer`, `content/privacy`, `content/delivery` | 🟡 политика — редакция от 24.11.2026; оферта — черновик до проверки юристом (L-04); доставка — готова |
+| Городские факты: ПВЗ, сроки, отзывы | `data/cities.yaml` | ⛔ все 16 городов `ready: false`, `pickup_points` пусты |
+| DNS поддоменов и wildcard TLS | панель NetAngels | ⛔ вне кода: wildcard `*.stilgrad.ru` — 16 канонических хостов, 24 алиаса и CDN-хост `cdn.stilgrad.ru` |
+| Подтверждение прав в Вебмастере | `static/` | ⛔ файла подтверждения Яндекса нет |
 
 ## Changelog
 
