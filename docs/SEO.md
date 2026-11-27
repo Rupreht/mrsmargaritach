@@ -38,7 +38,7 @@
 
 | Город | Канонический поддомен | Алиасы (301) | Регион Вебмастера |
 | --- | --- | --- | --- |
-| Москва | `moscow.stilgrad.ru` | `mow` | Москва |
+| Москва | `moscow.stilgrad.ru` | `mow`, `msk` | Москва |
 | Санкт-Петербург | `spb.stilgrad.ru` | `led`, `saint-petersburg` | Санкт-Петербург |
 | Новосибирск | `nsk.stilgrad.ru` | `ovb`, `novosibirsk` | Новосибирск |
 | Екатеринбург | `ekb.stilgrad.ru` | `svx`, `ekaterinburg` | Екатеринбург |
