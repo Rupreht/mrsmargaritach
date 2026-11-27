@@ -119,4 +119,3 @@ python3 "$SCRIPT_DIR/build_cities_json.py" \
   --out "$DEST/cdn/cities.json" --domain "${DOMAIN:-stilgrad.ru}"
 
 echo "==> Готово: $(find "$DEST" -name index.html | wc -l | tr -d ' ') index.html"
-

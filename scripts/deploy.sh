@@ -193,4 +193,3 @@ for code in $CITY_CODES; do
 done
 
 echo "==> Готово: release $RELEASE опубликован на всех хостах (медиа — на $CDN_HOST)"
-
