@@ -21,25 +21,29 @@
   <div class="container">
     <div class="card-grid">
       {{- range . }}
-      <div class="card-grid__item">
+        {{- /* Карточку берём из настоящей страницы каталога по collection+slug:
+               content/catalog смонтирован в городскую сборку (scripts/build.sh). */ -}}
+        {{- $model := site.GetPage (printf "/catalog/%s/%s" .collection .slug) }}
+        {{- with $model }}
+        {{ partial "model-card.html" . }}
+        {{- else }}
+        {{- /* Фолбэк: карточка модели не найдена — цветной плейсхолдер. */ -}}
+        {{- $modelURL := printf "catalog/%s/%s/" .collection .slug | relURL }}
         <article class="card-model">
-          <a class="card-model__media" href="{{ printf "%scatalog/%s/%s/" site.Params.mainBaseURL .collection .slug }}">
+          <a class="card-model__media" href="{{ $modelURL }}">
             <span class="card-model__swatch" style="background-color: {{ .color_hex | default "#DED3C4" }}" aria-hidden="true"></span>
             <span class="visually-hidden">{{ .title }}</span>
           </a>
           <div class="card-model__body">
-            <h3 class="card-model__title"><a href="{{ printf "%scatalog/%s/%s/" site.Params.mainBaseURL .collection .slug }}">{{ .title }}</a></h3>
+            <h3 class="card-model__title"><a href="{{ $modelURL }}">{{ .title }}</a></h3>
             <p class="card-model__price">{{ lang.FormatNumber 0 .price }} ₽</p>
-            <a class="btn btn--secondary btn--s card-model__cta" href="{{ printf "%scatalog/%s/%s/" site.Params.mainBaseURL .collection .slug }}">Смотреть модель</a>
+            <a class="btn btn--secondary btn--s card-model__cta" href="{{ $modelURL }}">Смотреть модель</a>
           </div>
         </article>
-      </div>
+        {{- end }}
       {{- end }}
     </div>
-    <p class="section__note">
-      Размеры 50–72, свободный крой.
-      <a href="{{ printf "%scatalog/" site.Params.mainBaseURL }}">Полный каталог, ткани и размерная сетка — на основном сайте</a>.
-    </p>
+    <p class="section__note">Размеры 50–72, свободный крой. Полное описание, ткани и размерная сетка — в карточках каталога.</p>
   </div>
 </section>
 {{- end }}
