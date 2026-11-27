@@ -133,6 +133,7 @@
 - `links.yml`: не хватало шага `dart sass`, поэтому ежедневная проверка ссылок падала на сборке (`no Dart Sass binary found in $PATH`). Шаг добавлен, `Links` снова собирает сайт.
 - Lighthouse CI падал с `Lighthouse was unable to reliably load the page ... (Status code: 404)`: в конфиге был жёстко прописан URL карточки `/catalog/classic/chestnut/`, которой больше нет после перераспределения моделей по коллекциям. Конфиг переехал из `lighthouserc.json` в `.lighthouserc.cjs` и собирает список URL из готового `public/`: главная, `/catalog/` и по одной карточке из каждой коллекции (`/catalog/<collection>/<model>/`), поэтому новые и переименованные модели проверяются без правки конфига.
 - CI падал на шаге «Проверка городских данных и сборок» с `moscow: нет алиаса msk (есть в таблице)`: в `alias.stilgrad.md` у Москвы человекочитаемый домен `msk.stilgrad.ru`, а в `data/cities.yaml` алиас не был описан. `msk` добавлен в `aliases` Москвы (`mow`, `msk`) и в 301-редиректы nginx (`deploy/nginx.conf`, `docker/nginx.conf`); таблицы алиасов в `README.md` и `docs/SEO.md` синхронизированы.
+- Lighthouse CI проверял все 16 городских лендингов из `public/cities/`, из-за чего прогон заметно удлинялся. `cityUrls()` в `.lighthouserc.cjs` ограничена списком `CITY_URL_CODES` — `moscow` и `ekb`; остальные города по-прежнему собираются и проверяются в CI, но в Lighthouse не входят.
 
 ### Docs
 
