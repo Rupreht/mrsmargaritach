@@ -97,9 +97,34 @@ function initCitySwitcher() {
     if (option) select.value = option.value;
   };
 
+  const allowedHosts = new Set(
+    Array.from(select.options)
+      .map((item) => {
+        try {
+          return item.value ? new URL(item.value, window.location.origin).hostname : null;
+        } catch (error) {
+          return null;
+        }
+      })
+      .filter(Boolean)
+  );
+
+  const getSafeNavigationUrl = (value) => {
+    if (!value) return null;
+    try {
+      const parsed = new URL(value, window.location.origin);
+      const isHttp = parsed.protocol === "http:" || parsed.protocol === "https:";
+      const isAllowedHost = allowedHosts.has(parsed.hostname);
+      return isHttp && isAllowedHost ? parsed.href : null;
+    } catch (error) {
+      return null;
+    }
+  };
+
   selectByHost();
   select.addEventListener("change", () => {
-    if (select.value) window.location.href = select.value;
+    const safeUrl = getSafeNavigationUrl(select.value);
+    if (safeUrl) window.location.href = safeUrl;
   });
 
   const url = select.dataset.citiesUrl;
