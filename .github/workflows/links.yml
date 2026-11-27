@@ -1,5 +1,10 @@
 name: Links
 
+# Ручная проверка ссылок. Lychee ходит по внешним адресам из сборки — контакты,
+# маркетплейсы и городские поддомены *.stilgrad.ru, — а они отвечают только
+# после деплоя. Поэтому проверка вынесена из ci.yml (push/PR) сюда: запуск
+# вручную через Actions → Links → Run workflow (или repository_dispatch),
+# плюс ночной прогон по расписанию. Сборка не блокируется: отчёт уходит в issue.
 on:
   repository_dispatch:
   workflow_dispatch:
@@ -31,6 +36,8 @@ jobs:
         id: lychee
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
+          # --root-dir: внутренние ссылки проверяются по локальной сборке,
+          # внешние — реальными запросами к уже развёрнутым доменам.
           args: "--root-dir public --accept '200..299,498' public"
           fail: false
 

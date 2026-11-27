@@ -160,7 +160,10 @@ jobs:
 
       - name: Проверка результата сборки
         run: |
-          # Базовая проверка: ключевые файлы на месте (ссылки проверяет lychee ниже).
+          # Базовая проверка: ключевые файлы на месте.
+          # Ссылки здесь не проверяются: lychee ходит по внешним адресам
+          # (включая городские поддомены), которые отвечают только после деплоя.
+          # Полная проверка ссылок — ручной workflow links.yml.
           set -e
           test -f public/index.html
           test -f public/404.html
@@ -168,12 +171,6 @@ jobs:
           test -f public/favicon.svg
           test -f public/.htaccess
           test -f public/robots.txt
-
-      - name: Link Checker
-        id: lychee
-        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
-        with:
-          args: "--root-dir public --accept '200..299,498' --cache --max-cache-age 1d public"
 
       - name: Upload artifact
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
