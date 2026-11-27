@@ -14,7 +14,6 @@
           data-current="{{ $current }}"
           data-main-url="{{ site.Params.mainBaseURL }}"
           data-cities-url="{{ $citiesURL }}">
-    <option value="{{ site.Params.mainBaseURL }}">Основной сайт</option>
     {{- range hugo.Data.cities }}
     <option value="https://{{ .code }}.{{ site.Params.domain }}/"{{ if eq .code $current }} selected{{ end }}>{{ .name }}</option>
     {{- end }}
@@ -24,7 +23,6 @@
       {{- range hugo.Data.cities }}
       <li><a href="https://{{ .code }}.{{ site.Params.domain }}/">{{ .name }}</a></li>
       {{- end }}
-      <li><a href="{{ site.Params.mainBaseURL }}">Основной сайт</a></li>
     </ul>
   </noscript>
 </div>
