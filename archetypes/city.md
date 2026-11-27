@@ -1,5 +1,6 @@
 ---
-# Городской лендинг (поддомен <code>.stilgrad.ru).
+# Городской лендинг: канонический поддомен <code>.stilgrad.ru из alias.stilgrad.md
+# (колонка «Основной домен»); домены по IATA и человекочитаемые — 301 на него.
 # Создание: hugo new content --kind city ../city-content/<code>/_index.md
 # Факты (ПВЗ, сроки, отзывы) — в data/cities.yaml по полю code.
 title: "Рубашки больших размеров в <Городе>"
