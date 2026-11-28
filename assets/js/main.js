@@ -1,5 +1,6 @@
 import { initConsent, resetConsent, trackGoal } from "./consent.js";
 import { initFilters } from "./filters.js";
+import { initEcommerce } from "./ecommerce.js";
 
 /* Цели Метрики (FR-14): data-channel → имя цели. */
 const CHANNEL_GOALS = {
@@ -158,6 +159,7 @@ function initCitySwitcher() {
 
 function start() {
   initConsent();
+  initEcommerce();
   initFilters();
   initTracking();
   initStickyCta();

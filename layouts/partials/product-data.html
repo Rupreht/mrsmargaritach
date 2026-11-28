@@ -1,0 +1,18 @@
+{{- /* Данные товара для Ecommerce Яндекс.Метрики (FR-14, п. 2.9).
+       Контекст — страница модели (content/catalog/<collection>/<model>).
+       Возвращает dict: id, name, price, brand, category, variant. */ -}}
+{{- $page := . -}}
+{{- $id := "" -}}
+{{- with $page.Params.article }}{{ $id = printf "%v" . }}{{ end -}}
+{{- if not $id }}{{ with $page.Params.slug }}{{ $id = printf "%v" . }}{{ end }}{{ end -}}
+{{- if not $id }}{{ with $page.File }}{{ $id = .BaseFileName }}{{ end }}{{ end -}}
+{{- $category := "" -}}
+{{- with $page.CurrentSection }}{{ if .Params.model_type }}{{ $category = .Title }}{{ end }}{{ end -}}
+{{- return (dict
+  "id" $id
+  "name" $page.Title
+  "price" ($page.Params.price | default 0)
+  "brand" (site.Params.brand | default "")
+  "category" $category
+  "variant" ($page.Params.color_name | default "")
+) -}}

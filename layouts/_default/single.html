@@ -10,7 +10,14 @@
   {{- with where hugo.Data.fabrics "id" . }}{{ $fabric = index . 0 }}{{ end -}}
 {{- end -}}
 
-<article class="model">
+{{- $ec := partial "product-data.html" . }}
+<article class="model" data-ec-detail
+         data-ec-id="{{ $ec.id }}"
+         data-ec-name="{{ $ec.name }}"
+         data-ec-price="{{ $ec.price }}"
+         data-ec-brand="{{ $ec.brand }}"
+         data-ec-category="{{ $ec.category }}"
+         data-ec-variant="{{ $ec.variant }}">
   <div class="container model__grid">
     <div class="model__media">
       {{- /* LCP-картинка (cover) — eager + preload в <head>; sizes берём из lcp-image.html. */ -}}
