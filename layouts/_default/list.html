@@ -29,12 +29,14 @@
 <section class="section">
   <div class="container">
     <div class="card-grid" data-model-grid>
-      {{- range $standalone }}
+      {{- range $i, $p := $standalone }}
       <div class="card-grid__item"
            data-model
-           data-sizes="{{ delimit (.Params.sizes | default (slice)) " " }}"
-           data-color="{{ .Params.color_name | default "" }}">
-        {{ partial "model-card.html" . }}
+           data-ec-list="Каталог"
+           data-ec-position="{{ add $i 1 }}"
+           data-sizes="{{ delimit ($p.Params.sizes | default (slice)) " " }}"
+           data-color="{{ $p.Params.color_name | default "" }}">
+        {{ partial "model-card.html" $p }}
       </div>
       {{- end }}
     </div>
@@ -44,6 +46,7 @@
 
 {{- /* Коллекции */ -}}
 {{- range $collections }}
+{{- $list := .Title }}
 <section class="section">
   <div class="container">
     <div class="section__head">
@@ -52,12 +55,14 @@
     </div>
     {{- with .Description }}<p class="section__subtitle">{{ . }}</p>{{ end }}
     <div class="card-grid" data-model-grid>
-      {{- range first 3 .RegularPages }}
+      {{- range $i, $p := first 3 .RegularPages }}
       <div class="card-grid__item"
            data-model
-           data-sizes="{{ delimit (.Params.sizes | default (slice)) " " }}"
-           data-color="{{ .Params.color_name | default "" }}">
-        {{ partial "model-card.html" . }}
+           data-ec-list="{{ $list }}"
+           data-ec-position="{{ add $i 1 }}"
+           data-sizes="{{ delimit ($p.Params.sizes | default (slice)) " " }}"
+           data-color="{{ $p.Params.color_name | default "" }}">
+        {{ partial "model-card.html" $p }}
       </div>
       {{- end }}
     </div>
@@ -78,6 +83,7 @@
        Фильтры по размеру и цвету — без перезагрузки (FR-5).
        ─────────────────────────────────────────────────────────────────────────── */ -}}
 {{- else if eq .Section "catalog" }}
+{{- $list := .Title }}
 
 <header class="page-header">
   <div class="container">
@@ -122,12 +128,14 @@
     </div>
 
     <div class="card-grid" data-model-grid>
-      {{- range $models }}
+      {{- range $i, $p := $models }}
       <div class="card-grid__item"
            data-model
-           data-sizes="{{ delimit (.Params.sizes | default (slice)) " " }}"
-           data-color="{{ .Params.color_name | default "" }}">
-        {{ partial "model-card.html" . }}
+           data-ec-list="{{ $list }}"
+           data-ec-position="{{ add $i 1 }}"
+           data-sizes="{{ delimit ($p.Params.sizes | default (slice)) " " }}"
+           data-color="{{ $p.Params.color_name | default "" }}">
+        {{ partial "model-card.html" $p }}
       </div>
       {{- end }}
     </div>

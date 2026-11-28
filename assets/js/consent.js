@@ -29,6 +29,9 @@ function loadMetrika(id) {
   if (!id || window.__mmMetrikaLoaded) return;
   window.__mmMetrikaLoaded = true;
 
+  // Контейнер данных электронной коммерции: объявляем до init счётчика.
+  window.dataLayer = window.dataLayer || [];
+
   window.ym = window.ym || function () {
     (window.ym.a = window.ym.a || []).push(arguments);
   };
@@ -44,6 +47,7 @@ function loadMetrika(id) {
     trackLinks: true,
     accurateTrackBounce: true,
     webvisor: true,
+    ecommerce: true,
   });
 }
 

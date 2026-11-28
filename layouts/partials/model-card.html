@@ -11,7 +11,14 @@
 {{- $sizes := .Params.sizes | default (slice) -}}
 {{- $silhouette := "" -}}
 {{- with .CurrentSection }}{{ if .Params.model_type }}{{ $silhouette = .Title }}{{ end }}{{ end -}}
-<article class="card-model">
+{{- $ec := partial "product-data.html" . }}
+<article class="card-model"
+         data-ec-id="{{ $ec.id }}"
+         data-ec-name="{{ $ec.name }}"
+         data-ec-price="{{ $ec.price }}"
+         data-ec-brand="{{ $ec.brand }}"
+         data-ec-category="{{ $ec.category }}"
+         data-ec-variant="{{ $ec.variant }}">
   <a class="card-model__media" href="{{ .RelPermalink }}">
     {{- with $img }}
     {{ partial "responsive-img.html" (dict "img" . "sizes" "(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw" "alt" $alt) }}

@@ -5,6 +5,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- **Электронная коммерция Яндекс.Метрики**: счётчик инициализируется с `ecommerce: true`, контейнер `window.dataLayer` объявляется до `init` в `assets/js/consent.js` и в новом `assets/js/ecommerce.js`. Шаблоны отдают данные товара через `data-ec-*` (партиал `layouts/partials/product-data.html`, а также `model-card.html`, `single.html`, `list.html`). Модуль `assets/js/ecommerce.js` отправляет события `impressions` (список моделей), `click` (переход на карточку из списка) и `detail` (просмотр карточки) с `currencyCode: "RUB"`; `add`/`remove`/`purchase` не используются — на сайте нет корзины, заказ оформляется в личном диалоге.
+
 ## [0.1.1] — 2026-11-28
 
 ### Changed
